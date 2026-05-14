@@ -11,7 +11,7 @@ const stats = [
 ]
 
 const socialLinks = [
-  { name: 'Discord', icon: '/icons/discord.svg', url: '#', members: '15,847' },
+  { name: 'Discord', icon: '/icons/discord.svg', url: 'https://discord.gg/vNjDDVf', members: '15,847' },
   { name: 'YouTube', icon: '/icons/youtube.svg', url: '#', members: '25K' },
   { name: 'Twitter', icon: '/icons/twitter.svg', url: '#', members: '8.2K' },
   { name: 'TikTok', icon: '/icons/tiktok.svg', url: '#', members: '12K' },
@@ -62,7 +62,9 @@ export function Community() {
 
             {/* Discord CTA */}
             <motion.a
-              href="#"
+              href="https://discord.gg/vNjDDVf"
+              target="_blank"
+              rel="noopener noreferrer"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] transition-colors group"
@@ -124,6 +126,8 @@ export function Community() {
                     <motion.a
                       key={social.name}
                       href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       initial={{ opacity: 0, x: 20 }}
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}

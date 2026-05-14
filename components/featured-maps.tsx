@@ -7,43 +7,63 @@ import Image from 'next/image'
 const featuredMaps = [
   {
     id: 1,
-    title: 'CYBER CITY 2077',
-    category: 'Open World RPG',
-    image: '/maps/cyber-city.jpg',
-    players: '250K+',
+    title: 'MOUNT BANDA NEIRA',
+    category: 'Adventure Exploration',
+    image: '/maps/mount-banda-neira.jpg',
+    players: '180K+',
     rating: '4.9',
-    status: 'LIVE',
-    description: 'A massive cyberpunk metropolis with dynamic weather and NPC systems.',
+    status: 'FEATURED',
+    description: 'Jelajahi keindahan gunung Banda Neira dengan pemandangan alam yang memukau.',
   },
   {
     id: 2,
-    title: 'BATTLE ARENA',
-    category: 'Competitive FPS',
-    image: '/maps/battle-arena.jpg',
-    players: '180K+',
+    title: 'AV NIGHT VIBES',
+    category: 'Social Hangout',
+    image: '/maps/av-night-vibes.jpg',
+    players: '250K+',
     rating: '4.8',
     status: 'POPULAR',
-    description: 'Fast-paced competitive shooter with ranked matchmaking.',
+    description: 'Rasakan suasana malam yang aesthetic dengan musik dan lighting keren.',
   },
   {
     id: 3,
-    title: 'SKYLINE RACING',
-    category: 'Racing Simulator',
-    image: '/maps/skyline-racing.jpg',
+    title: 'PERTARUNGAN BAWAH TANAH',
+    category: 'Fighting Arena',
+    image: '/maps/pertarungan-bawah-tanah.jpg',
     players: '320K+',
     rating: '4.9',
-    status: 'FEATURED',
-    description: 'High-speed racing through futuristic cityscapes with custom vehicles.',
+    status: 'LIVE',
+    description: 'Arena pertarungan underground yang intens dengan sistem combat epic.',
   },
   {
     id: 4,
-    title: 'HORROR MANSION',
-    category: 'Survival Horror',
-    image: '/maps/horror-mansion.jpg',
-    players: '150K+',
+    title: 'MENJADI PETANI',
+    category: 'Farming Simulator',
+    image: '/maps/menjadi-petani.jpg',
+    players: '200K+',
     rating: '4.7',
+    status: 'POPULAR',
+    description: 'Kelola pertanian impianmu, tanam, panen, dan bangun kerajaan pertanian.',
+  },
+  {
+    id: 5,
+    title: 'PARKOUR CITY BLUE',
+    category: 'Parkour Challenge',
+    image: '/maps/parkour-city-blue.jpg',
+    players: '280K+',
+    rating: '4.8',
+    status: 'FEATURED',
+    description: 'Tantangan parkour di kota futuristik dengan obstacle yang menantang.',
+  },
+  {
+    id: 6,
+    title: 'ORANG HILANG',
+    category: 'Mystery Horror',
+    image: '/maps/orang-hilang.jpg',
+    players: '150K+',
+    rating: '4.9',
     status: 'NEW',
-    description: 'Atmospheric horror experience with advanced lighting and sound design.',
+    description: 'Pecahkan misteri orang hilang dalam pengalaman horror yang menegangkan.',
   },
 ]
 
@@ -86,7 +106,7 @@ export function FeaturedMaps() {
         </motion.div>
 
         {/* Maps Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {featuredMaps.map((map, index) => (
             <motion.div
               key={map.id}

@@ -10,6 +10,7 @@ const navLinks = [
   { name: 'Projects', href: '#projects' },
   { name: 'Services', href: '#services' },
   { name: 'Portfolio', href: '#portfolio' },
+  { name: 'Top Up', href: '#topup' },
   { name: 'Pricing', href: '#pricing' },
   { name: 'Contact', href: '#contact' },
 ]
@@ -83,14 +84,14 @@ export function Navbar() {
             {/* CTA Button */}
             <div className="hidden lg:block">
               <motion.a
-                href="#contact"
+                href="#topup"
                 className="relative px-6 py-2.5 rounded-lg font-semibold text-sm overflow-hidden group"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-[#00AFFF] to-[#00E5FF] opacity-80 group-hover:opacity-100 transition-opacity" />
                 <div className="absolute inset-0 bg-gradient-to-r from-[#00E5FF] to-[#00AFFF] opacity-0 group-hover:opacity-100 transition-opacity" />
-                <span className="relative text-[#030303] font-bold">ORDER NOW</span>
+                <span className="relative text-[#030303] font-bold">TOP UP NOW</span>
               </motion.a>
             </div>
 
@@ -134,14 +135,14 @@ export function Navbar() {
                 </motion.a>
               ))}
               <motion.a
-                href="#contact"
+                href="#topup"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6 }}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="mt-4 px-8 py-3 rounded-lg bg-gradient-to-r from-[#00AFFF] to-[#00E5FF] text-[#030303] font-bold"
               >
-                ORDER NOW
+                TOP UP NOW
               </motion.a>
             </div>
           </motion.div>

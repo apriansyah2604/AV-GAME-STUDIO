@@ -4,6 +4,7 @@ import { FeaturedMaps } from '@/components/featured-maps'
 import { Services } from '@/components/services'
 import { Portfolio } from '@/components/portfolio'
 import { Community } from '@/components/community'
+import { TopUp } from '@/components/topup'
 import { Pricing } from '@/components/pricing'
 import { Contact } from '@/components/contact'
 import { Footer } from '@/components/footer'
@@ -24,6 +25,7 @@ export default function Home() {
       <Services />
       <Portfolio />
       <Community />
+      <TopUp />
       <Pricing />
       <Contact />
       <Footer />

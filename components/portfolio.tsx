@@ -4,61 +4,75 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Eye, ExternalLink, X } from 'lucide-react'
 import Image from 'next/image'
-
-const portfolioItems = [
-  {
-    id: 1,
-    title: 'Neon District',
-    category: 'Open World',
-    image: '/portfolio/neon-district.jpg',
-    description: 'A sprawling cyberpunk cityscape with dynamic day/night cycles and interactive NPCs.',
-  },
-  {
-    id: 2,
-    title: 'Galactic Warfare',
-    category: 'Shooter',
-    image: '/portfolio/galactic-warfare.jpg',
-    description: 'Space combat game featuring customizable ships and epic fleet battles.',
-  },
-  {
-    id: 3,
-    title: 'Shadow Realms',
-    category: 'RPG',
-    image: '/portfolio/shadow-realms.jpg',
-    description: 'Dark fantasy RPG with skill trees, quests, and procedural dungeons.',
-  },
-  {
-    id: 4,
-    title: 'Speed Legends',
-    category: 'Racing',
-    image: '/portfolio/speed-legends.jpg',
-    description: 'High-octane racing with drift mechanics and vehicle customization.',
-  },
-  {
-    id: 5,
-    title: 'Apocalypse Rising',
-    category: 'Survival',
-    image: '/portfolio/apocalypse-rising.jpg',
-    description: 'Post-apocalyptic survival with base building and PvP elements.',
-  },
-  {
-    id: 6,
-    title: 'Party Paradise',
-    category: 'Social',
-    image: '/portfolio/party-paradise.jpg',
-    description: 'Social hangout space with minigames and customizable avatars.',
-  },
-]
-
-const categories = ['All', 'Open World', 'Shooter', 'RPG', 'Racing', 'Survival', 'Social']
+import { useLanguage } from '@/context/LanguageContext'
 
 export function Portfolio() {
-  const [activeCategory, setActiveCategory] = useState('All')
+  const { t } = useLanguage()
+  const portfolioTranslations = t('portfolio.items')
+  
+  const portfolioItems = [
+    {
+      id: 1,
+      title: portfolioTranslations[0].title,
+      category: 'Open World',
+      image: '/portfolio/neon-district.jpg',
+      description: portfolioTranslations[0].desc,
+    },
+    {
+      id: 2,
+      title: portfolioTranslations[1].title,
+      category: 'Shooter',
+      image: '/portfolio/galactic-warfare.jpg',
+      description: portfolioTranslations[1].desc,
+    },
+    {
+      id: 3,
+      title: portfolioTranslations[2].title,
+      category: 'RPG',
+      image: '/portfolio/shadow-realms.jpg',
+      description: portfolioTranslations[2].desc,
+    },
+    {
+      id: 4,
+      title: portfolioTranslations[3].title,
+      category: 'Racing',
+      image: '/portfolio/speed-legends.jpg',
+      description: portfolioTranslations[3].desc,
+    },
+    {
+      id: 5,
+      title: portfolioTranslations[4].title,
+      category: 'Survival',
+      image: '/portfolio/apocalypse-rising.jpg',
+      description: portfolioTranslations[4].desc,
+    },
+    {
+      id: 6,
+      title: portfolioTranslations[5].title,
+      category: 'Social',
+      image: '/portfolio/party-paradise.jpg',
+      description: portfolioTranslations[5].desc,
+    },
+  ]
+
+  const categories = t('portfolio.categories')
+  const [activeCategory, setActiveCategory] = useState(categories[0])
   const [selectedItem, setSelectedItem] = useState<typeof portfolioItems[0] | null>(null)
 
-  const filteredItems = activeCategory === 'All' 
+  const filteredItems = activeCategory === categories[0]
     ? portfolioItems 
-    : portfolioItems.filter(item => item.category === activeCategory)
+    : portfolioItems.filter(item => {
+        // Map English category names to translated names for filtering
+        const catMap: {[key: string]: string} = {
+          'Open World': categories[1],
+          'Shooter': categories[2],
+          'RPG': categories[3],
+          'Racing': categories[4],
+          'Survival': categories[5],
+          'Social': categories[6]
+        }
+        return catMap[item.category] === activeCategory
+      })
 
   return (
     <section id="portfolio" className="relative py-32 overflow-hidden">
@@ -74,13 +88,13 @@ export function Portfolio() {
           className="text-center mb-12"
         >
           <span className="inline-block px-4 py-1 rounded-full text-xs tracking-widest text-[#00AFFF] border border-[#00AFFF]/30 mb-4">
-            OUR WORK
+            {t('portfolio.badge')}
           </span>
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black mb-4">
-            <span className="neon-text">PORTFOLIO</span>
+            <span className="neon-text">{t('portfolio.title')}</span>
           </h2>
           <p className="text-white/50 max-w-xl mx-auto">
-            Showcase of our premium Roblox experiences and game development projects
+            {t('portfolio.subtitle')}
           </p>
         </motion.div>
 
@@ -200,7 +214,7 @@ export function Portfolio() {
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[#00AFFF] to-[#00E5FF] text-[#030303] font-bold"
                 >
                   <ExternalLink className="w-4 h-4" />
-                  View Project
+                  {t('portfolio.view_project')}
                 </motion.a>
               </div>
             </motion.div>

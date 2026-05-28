@@ -3,30 +3,34 @@
 import { motion } from 'framer-motion'
 import { Heart } from 'lucide-react'
 import Image from 'next/image'
-
-const footerLinks = {
-  services: [
-    { name: 'Map Development', href: '#services' },
-    { name: 'Scripting', href: '#services' },
-    { name: 'UI/UX Design', href: '#services' },
-    { name: 'VFX & Lighting', href: '#services' },
-  ],
-  company: [
-    { name: 'About Us', href: '#' },
-    { name: 'Portfolio', href: '#portfolio' },
-    { name: 'Top Up', href: '#topup' },
-    { name: 'Pricing', href: '#pricing' },
-    { name: 'Contact', href: '#contact' },
-  ],
-  social: [
-    { name: 'Discord', href: '#' },
-    { name: 'YouTube', href: '#' },
-    { name: 'Twitter', href: '#' },
-    { name: 'Roblox', href: '#' },
-  ],
-}
+import { useLanguage } from '@/context/LanguageContext'
 
 export function Footer() {
+  const { t } = useLanguage()
+
+  const footerLinks = {
+    services: [
+      { name: t('services.list.0.title'), href: '#services' },
+      { name: t('services.list.1.title'), href: '#services' },
+      { name: t('services.list.3.title'), href: '#services' },
+      { name: t('services.list.4.title'), href: '#services' },
+    ],
+    company: [
+      { name: t('nav.home'), href: '#home' },
+      { name: t('nav.portfolio'), href: '#portfolio' },
+      { name: t('nav.topup'), href: '#topup' },
+      { name: t('nav.pricing'), href: '#pricing' },
+      { name: t('nav.contact'), href: '#contact' },
+    ],
+    social: [
+      { name: 'Discord', href: 'https://discord.gg/vNjDDVf' },
+      { name: 'Instagram', href: 'https://www.instagram.com/avgamestudio' },
+      { name: 'TikTok', href: 'https://www.tiktok.com/@avgamestudio' },
+      { name: 'YouTube', href: '#' },
+      { name: 'Twitter', href: '#' },
+      { name: 'Roblox', href: 'https://www.roblox.com/communities/390244299/AV-game-studio' },
+    ],
+  }
   return (
     <footer className="relative overflow-hidden">
       {/* Top Border */}
@@ -62,8 +66,7 @@ export function Footer() {
               </span>
             </a>
             <p className="text-sm text-white/50 leading-relaxed">
-              Building premium Roblox experiences with cutting-edge technology and 
-              unmatched creativity. Your vision, our expertise.
+              {t('footer.desc')}
             </p>
           </motion.div>
 
@@ -74,7 +77,7 @@ export function Footer() {
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
           >
-            <h4 className="text-sm font-bold tracking-widest text-[#00AFFF] mb-6">SERVICES</h4>
+            <h4 className="text-sm font-bold tracking-widest text-[#00AFFF] mb-6">{t('footer.services')}</h4>
             <ul className="space-y-3">
               {footerLinks.services.map((link) => (
                 <li key={link.name}>
@@ -96,7 +99,7 @@ export function Footer() {
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
           >
-            <h4 className="text-sm font-bold tracking-widest text-[#00AFFF] mb-6">COMPANY</h4>
+            <h4 className="text-sm font-bold tracking-widest text-[#00AFFF] mb-6">{t('footer.company')}</h4>
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
@@ -118,7 +121,7 @@ export function Footer() {
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
           >
-            <h4 className="text-sm font-bold tracking-widest text-[#00AFFF] mb-6">CONNECT</h4>
+            <h4 className="text-sm font-bold tracking-widest text-[#00AFFF] mb-6">{t('footer.connect')}</h4>
             <ul className="space-y-3">
               {footerLinks.social.map((link) => (
                 <li key={link.name}>
@@ -138,10 +141,10 @@ export function Footer() {
         <div className="pt-8 border-t border-[#1e293b]">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-sm text-white/40">
-              © 2024 AV Game Studio. All rights reserved.
+              © 2024 AV Game Studio. {t('footer.rights')}
             </p>
             <p className="text-sm text-white/40 flex items-center gap-1">
-              Made with <Heart className="w-4 h-4 text-red-500 fill-current" /> for gamers
+              {t('footer.made_with')} <Heart className="w-4 h-4 text-red-500 fill-current" /> {t('footer.for_gamers')}
             </p>
           </div>
         </div>

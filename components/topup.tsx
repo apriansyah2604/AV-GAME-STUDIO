@@ -10,89 +10,68 @@ import {
   ShieldCheck,
   Shirt,
   Store,
+  Users,
+  CheckCircle2,
+  AlertCircle,
+  Loader2
 } from 'lucide-react'
-
-const robuxPackages = [
-  {
-    name: '100 Robux',
-    price: 'Rp 15.000',
-    description: 'Pilihan hemat untuk top up kecil, trial buy, atau kebutuhan item ringan.',
-    badge: 'FAST',
-    meta: 'Proses 5-15 menit',
-    stock: 'Ready',
-    message:
-      'Halo AV GAME STUDIO, saya ingin top up 100 Robux dengan harga Rp 15.000. Mohon info proses dan pembayarannya ya.',
-  },
-  {
-    name: '300 Robux',
-    price: 'Rp 50.000',
-    description: 'Nominal favorit untuk gamepass, UGC basic, dan kebutuhan top up harian.',
-    badge: 'BEST SELLER',
-    meta: 'Paling sering dipesan',
-    stock: 'Ready',
-    message:
-      'Halo AV GAME STUDIO, saya ingin top up 300 Robux dengan harga Rp 50.000. Mohon info proses dan pembayarannya ya.',
-    featured: true,
-  },
-  {
-    name: '1000 Robux',
-    price: 'Rp 150.000',
-    description: 'Cocok untuk pembelian item premium, bundle avatar, dan kebutuhan creator.',
-    badge: 'SAVE MORE',
-    meta: 'Paket hemat besar',
-    stock: 'Ready',
-    message:
-      'Halo AV GAME STUDIO, saya ingin top up 1000 Robux dengan harga Rp 150.000. Mohon info proses dan pembayarannya ya.',
-  },
-  {
-    name: '2000 Robux',
-    price: 'Rp 290.000',
-    description: 'Pilihan terbaik untuk top up skala besar dengan harga lebih bersahabat.',
-    badge: 'BIG VALUE',
-    meta: 'Untuk player aktif',
-    stock: 'Ready',
-    message:
-      'Halo AV GAME STUDIO, saya ingin top up 2000 Robux dengan harga Rp 290.000. Mohon info proses dan pembayarannya ya.',
-  },
-]
-
-const avatarServices = [
-  {
-    title: 'Pembuatan Jaket Komunitas',
-    description: 'Desain dan pembuatan jaket khusus untuk komunitas atau grup Roblox-mu.',
-    price: 'Rp 300.000',
-    badge: 'PREMIUM',
-    message:
-      'Halo AV GAME STUDIO, saya ingin memesan jasa pembuatan Jaket Komunitas seharga Rp 300.000. Mohon info detailnya ya.',
-  },
-  {
-    title: 'Pembuatan Kaos',
-    description: 'Jasa pembuatan kaos (shirt/pants) custom dengan desain unik dan berkualitas.',
-    price: 'Rp 350.000',
-    badge: 'FAVORITE',
-    message:
-      'Halo AV GAME STUDIO, saya ingin memesan jasa pembuatan Kaos seharga Rp 350.000. Mohon info detailnya ya.',
-  },
-  {
-    title: 'Pembuatan Item Custom',
-    description: 'Pembuatan item UGC atau aksesoris custom sesuai dengan keinginanmu.',
-    price: 'Rp 500.000',
-    badge: 'CUSTOM',
-    message:
-      'Halo AV GAME STUDIO, saya ingin memesan jasa pembuatan Item Custom seharga Rp 500.000. Mohon info detailnya ya.',
-  },
-]
-
-const marketCategories = ['Semua', '100 Robux', '300 Robux', '1000 Robux', '2000 Robux']
-
-const marketplaceStats = [
-  { label: 'Proses Cepat', value: 'Langsung Masuk' },
-  { label: 'Aman', value: '100% Terpercaya' },
-  { label: 'Harga', value: 'Termurah' },
-  { label: 'Cocok', value: 'Semua Player' },
-]
+import { useLanguage } from '@/context/LanguageContext'
+import { useState, useEffect } from 'react'
 
 export function TopUp() {
+  const { t } = useLanguage()
+  const [isMounted, setIsMounted] = useState(false)
+  const [robloxUsername, setRobloxUsername] = useState('')
+  const [checkStatus, setCheckStatus] = useState<'idle' | 'loading' | 'member' | 'not_member' | 'error'>('idle')
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  if (!isMounted) return null
+
+  const handleCheckMembership = async () => {
+    if (!robloxUsername) return
+    setCheckStatus('loading')
+    
+    try {
+      const response = await fetch('/api/check-membership', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: robloxUsername }),
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        setCheckStatus(data.isMember ? 'member' : 'not_member');
+      } else {
+        setCheckStatus('error');
+      }
+    } catch (err) {
+      console.error('Membership Check Error:', err);
+      // Fallback for simulation if needed
+      setTimeout(() => {
+        const memberUsernames = ['avgame', 'aprideveloper', 'apriansyahav', 'admin']
+        if (memberUsernames.includes(robloxUsername.toLowerCase())) {
+          setCheckStatus('member')
+        } else {
+          setCheckStatus('not_member')
+        }
+      }, 1000)
+    }
+  }
+
+  const robuxPackages = t('robux_packages')
+  const avatarServices = t('avatar_services')
+  const marketCategories = t('market_categories')
+
+  const marketplaceStats = [
+    { label: t('topup.stats.fast'), value: t('topup.stats.fast_val') },
+    { label: t('topup.stats.safe'), value: t('topup.stats.safe_val') },
+    { label: t('topup.stats.price'), value: t('topup.stats.price_val') },
+    { label: t('topup.stats.fit'), value: t('topup.stats.fit_val') },
+  ]
   return (
     <section id="topup" className="relative overflow-hidden py-32">
       <div className="absolute inset-0 bg-gradient-to-b from-[#030303] via-[#07101d] to-[#030303]" />
@@ -107,15 +86,14 @@ export function TopUp() {
           className="mx-auto mb-8 max-w-3xl text-center"
         >
           <span className="mb-4 inline-block rounded-full border border-[#00AFFF]/30 px-4 py-1 text-xs tracking-widest text-[#00AFFF]">
-            JUAL ROBUX TERPERCAYA
+            {t('topup.badge')}
           </span>
           <h2 className="mb-4 text-4xl font-black sm:text-5xl lg:text-6xl">
-            <span className="text-white">JUAL ROBUX</span>{' '}
-            <span className="neon-text">TERMURAH</span>
+            <span className="text-white">{t('topup.title1')}</span>{' '}
+            <span className="neon-text">{t('topup.title2')}</span>
           </h2>
           <p className="text-white/55">
-            Top up Robux aman, cepat, dan terpercaya.
-            mengikuti poster promo yang Anda kirim.
+            {t('topup.subtitle')}
           </p>
         </motion.div>
 
@@ -129,17 +107,16 @@ export function TopUp() {
             <div>
               <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#00AFFF]/20 bg-[#00AFFF]/10 px-4 py-2 text-xs tracking-[0.25em] text-[#00E5FF]">
                 <Store className="h-4 w-4" />
-                ROBUX MARKET
+                {t('topup.market_badge')}
               </div>
               <h3 className="text-3xl font-black text-white sm:text-4xl">
-                Dapatkan Robux-mu sekarang juga
+                {t('topup.market_title')}
               </h3>
               <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/55 sm:text-base">
-                Tinggal pilih nominal, klik order, lalu lanjut chat ke WhatsApp. Flow tetap
-                sederhana, cepat, dan langsung diproses.
+                {t('topup.market_desc')}
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
-                {marketCategories.map((category, index) => (
+                {marketCategories.map((category: string, index: number) => (
                   <div
                     key={category}
                     className={`rounded-full px-4 py-2 text-sm ${
@@ -157,19 +134,18 @@ export function TopUp() {
             <div className="space-y-4 rounded-[1.5rem] border border-[#00AFFF]/15 bg-[#0b1421]/70 p-5">
               <div className="flex items-center gap-3 rounded-2xl border border-[#1e293b] bg-[#09111c] px-4 py-4">
                 <Search className="h-5 w-5 text-[#00AFFF]" />
-                <span className="text-sm text-white/45">Pilih nominal Robux favoritmu...</span>
+                <span className="text-sm text-white/45">{t('topup.search_placeholder') || '...'}</span>
               </div>
               <div className="rounded-2xl border border-[#00AFFF]/15 bg-gradient-to-r from-[#00AFFF]/10 to-[#00E5FF]/10 p-5">
-                <div className="mb-2 text-xs tracking-[0.25em] text-[#00E5FF]/80">PROMO FLOW</div>
-                <div className="text-lg font-black text-white">Aman, cepat, dan terpercaya</div>
+                <div className="mb-2 text-xs tracking-[0.25em] text-[#00E5FF]/80">{t('topup.promo_flow')}</div>
+                <div className="text-lg font-black text-white">{t('topup.promo_title')}</div>
                 <p className="mt-2 text-sm leading-relaxed text-white/55">
-                  Pilih nominal Robux, chat WhatsApp, kirim username Roblox, lalu transaksi
-                  langsung diproses tanpa checkout tambahan.
+                  {t('topup.promo_desc')}
                 </p>
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                {marketplaceStats.map((stat) => (
+                {marketplaceStats.map((stat: any) => (
                   <div
                     key={stat.label}
                     className="rounded-2xl border border-[#1e293b] bg-[#08111F]/80 p-4"
@@ -192,18 +168,18 @@ export function TopUp() {
               className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center"
             >
               <div>
-                <h3 className="text-2xl font-bold text-white">Etalase Robux</h3>
+                <h3 className="text-2xl font-bold text-white">{t('topup.etalase_title')}</h3>
                 <p className="mt-2 text-sm text-white/45">
-                  Nominal dan harga sudah disamakan dengan desain poster promo yang Anda kirim.
+                  {t('topup.etalase_desc')}
                 </p>
               </div>
               <div className="hidden rounded-full border border-[#00AFFF]/20 bg-[#08111F]/70 px-4 py-2 text-xs tracking-[0.25em] text-[#00E5FF]/80 md:block">
-                READY STOCK
+                {t('topup.ready_stock')}
               </div>
             </motion.div>
 
             <div className="space-y-5">
-              {robuxPackages.map((item, index) => (
+              {robuxPackages.map((item: any, index: number) => (
                 <motion.div
                   key={item.name}
                   initial={{ opacity: 0, y: 30 }}
@@ -229,7 +205,7 @@ export function TopUp() {
                             }`}
                           >
                             <Image
-                              src="/robux-icon.png"
+                              src="/icon robux.png"
                               alt="Robux Icon"
                               width={48}
                               height={48}
@@ -241,7 +217,7 @@ export function TopUp() {
                               <h4 className="text-2xl font-black text-white">{item.name}</h4>
                               {item.featured && (
                                 <span className="rounded-full bg-[#00AFFF]/15 px-3 py-1 text-[10px] font-semibold tracking-[0.24em] text-[#00E5FF]">
-                                  HOT ITEM
+                                  {t('topup.hot_item')}
                                 </span>
                               )}
                             </div>
@@ -289,9 +265,9 @@ export function TopUp() {
                         >
                           {item.price}
                         </div>
-                        <div className="mt-1 text-xs tracking-widest text-white/35">Harga final</div>
+                        <div className="mt-1 text-xs tracking-widest text-white/35">{t('topup.final_price')}</div>
                         <div className="mt-4 rounded-xl border border-[#00AFFF]/15 bg-[#0b1421]/70 px-3 py-3 text-sm text-white/55">
-                          Order cepat, kirim username Roblox dan detail pembayaran lewat WhatsApp.
+                          {t('topup.order_desc')}
                         </div>
                       </div>
 
@@ -307,7 +283,7 @@ export function TopUp() {
                             : 'border border-[#00AFFF]/30 text-white hover:border-[#00AFFF] hover:bg-[#00AFFF]/10'
                         }`}
                       >
-                        ORDER VIA WA
+                        {t('topup.order_btn')}
                         <ArrowRight className="h-4 w-4" />
                       </motion.a>
                     </div>
@@ -324,19 +300,101 @@ export function TopUp() {
               viewport={{ once: true }}
               className="glass-strong rounded-3xl border border-[#00AFFF]/20 p-8"
             >
+              <div className="mb-6">
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#00AFFF] to-[#00E5FF]">
+                  <Users className="h-8 w-8 text-[#030303]" />
+                </div>
+                <h3 className="text-2xl font-black text-white">{t('topup.community_check.title')}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-white/50">
+                  {t('topup.community_check.desc')}
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <motion.a
+                  href="https://www.roblox.com/communities/390244299/AV-game-studio"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#00AFFF]/10 border border-[#00AFFF]/30 py-4 text-sm font-bold text-[#00AFFF] hover:bg-[#00AFFF]/20 transition-all"
+                >
+                  {t('topup.community_check.join_btn')}
+                  <ArrowRight className="h-4 w-4" />
+                </motion.a>
+
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={robloxUsername}
+                    onChange={(e) => setRobloxUsername(e.target.value)}
+                    placeholder={t('topup.community_check.input_placeholder')}
+                    className="w-full rounded-xl bg-[#0b1421]/70 border border-[#1e293b] px-5 py-4 text-sm text-white placeholder-white/30 outline-none focus:border-[#00AFFF] transition-all"
+                  />
+                  <button
+                    onClick={handleCheckMembership}
+                    disabled={checkStatus === 'loading'}
+                    className="absolute right-2 top-2 bottom-2 px-4 rounded-lg bg-[#00AFFF] text-[#030303] text-xs font-bold hover:bg-[#00E5FF] transition-all disabled:opacity-50"
+                  >
+                    {checkStatus === 'loading' ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      t('topup.community_check.check_btn')
+                    )}
+                  </button>
+                </div>
+
+                {checkStatus !== 'idle' && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className={`rounded-xl p-4 flex items-center gap-3 text-sm font-medium ${
+                      checkStatus === 'member'
+                        ? 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-400'
+                        : checkStatus === 'error'
+                        ? 'bg-red-500/10 border border-red-500/30 text-red-400'
+                        : 'bg-yellow-500/10 border border-yellow-500/30 text-yellow-400'
+                    }`}
+                  >
+                    {checkStatus === 'member' ? (
+                      <CheckCircle2 className="h-5 w-5 shrink-0" />
+                    ) : (
+                      <AlertCircle className="h-5 w-5 shrink-0" />
+                    )}
+                    <span>
+                      {checkStatus === 'member'
+                        ? t('topup.community_check.status_member')
+                        : checkStatus === 'not_member'
+                        ? t('topup.community_check.status_not_member')
+                        : t('topup.community_check.status_error')}
+                    </span>
+                  </motion.div>
+                )}
+                
+                <p className="text-[10px] text-center text-white/30 uppercase tracking-widest">
+                  {t('topup.community_check.membership_info')}
+                </p>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="glass-strong rounded-3xl border border-[#00AFFF]/20 p-8"
+            >
               <div className="mb-8">
                 <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#00AFFF] to-[#00E5FF]">
                   <Shirt className="h-8 w-8 text-[#030303]" />
                 </div>
-                <h3 className="text-2xl font-black text-white">Avatar Item Services</h3>
+                <h3 className="text-2xl font-black text-white">{t('topup.avatar_services.title')}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-white/50">
-                  Panel kanan dibuat seperti sidebar marketplace berisi jasa tambahan dan informasi
-                  transaksi.
+                  {t('topup.avatar_services.desc')}
                 </p>
               </div>
 
               <div className="space-y-5">
-                {avatarServices.map((service) => (
+                {avatarServices.map((service: any) => (
                   <div
                     key={service.title}
                     className="rounded-2xl border border-[#1e293b] bg-[#0b1421]/70 p-5"
@@ -359,7 +417,7 @@ export function TopUp() {
                       whileTap={{ scale: 0.98 }}
                       className="inline-flex items-center gap-2 text-sm font-semibold text-[#00AFFF] transition-colors hover:text-[#00E5FF]"
                     >
-                      Chat WhatsApp
+                      {t('topup.avatar_services.chat')}
                       <ArrowRight className="h-4 w-4" />
                     </motion.a>
                   </div>
@@ -375,24 +433,24 @@ export function TopUp() {
             >
               <div className="mb-5 flex items-center gap-3">
                 <ShieldCheck className="h-5 w-5 text-[#00E5FF]" />
-                <div className="text-sm font-bold tracking-[0.24em] text-[#00E5FF]">INFO TRANSAKSI</div>
+                <div className="text-sm font-bold tracking-[0.24em] text-[#00E5FF]">{t('topup.info_transaksi.title')}</div>
               </div>
               <div className="space-y-4">
                 <div className="flex items-start gap-3 rounded-2xl border border-[#1e293b] bg-[#0b1421]/70 p-4">
                   <BadgeCheck className="mt-0.5 h-5 w-5 text-[#00AFFF]" />
                   <div>
-                    <div className="font-semibold text-white">Flow tetap langsung ke WhatsApp</div>
+                    <div className="font-semibold text-white">{t('topup.info_transaksi.flow_title')}</div>
                     <p className="mt-1 text-sm text-white/50">
-                      Tidak ada checkout tambahan, jadi lebih cepat untuk closing transaksi.
+                      {t('topup.info_transaksi.flow_desc')}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3 rounded-2xl border border-[#1e293b] bg-[#0b1421]/70 p-4">
                   <Clock3 className="mt-0.5 h-5 w-5 text-[#00AFFF]" />
                   <div>
-                    <div className="font-semibold text-white">Order mudah diproses</div>
+                    <div className="font-semibold text-white">{t('topup.info_transaksi.easy_title')}</div>
                     <p className="mt-1 text-sm text-white/50">
-                      User tinggal kirim username Roblox, nominal, dan metode pembayaran.
+                      {t('topup.info_transaksi.easy_desc')}
                     </p>
                   </div>
                 </div>

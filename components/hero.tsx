@@ -2,8 +2,11 @@
 
 import { motion } from 'framer-motion'
 import { ChevronDown, Rocket, ShoppingCart, Users } from 'lucide-react'
+import { useLanguage } from '@/context/LanguageContext'
 
 export function Hero() {
+  const { t } = useLanguage()
+
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Effects */}
@@ -79,7 +82,7 @@ export function Hero() {
           >
             <span className="w-2 h-2 rounded-full bg-[#00E5FF] animate-pulse" />
             <span className="text-xs font-medium tracking-wider text-white/80">
-              SYSTEM ONLINE • AAA DEVELOPMENT ACTIVE
+              {t('hero.status')}
             </span>
           </motion.div>
 
@@ -90,9 +93,9 @@ export function Hero() {
             transition={{ delay: 0.3 }}
             className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tight mb-6"
           >
-            <span className="block neon-text">AV GAME</span>
+            <span className="block neon-text">{t('hero.title1')}</span>
             <span className="block bg-gradient-to-r from-[#00AFFF] via-white to-[#00E5FF] bg-clip-text text-transparent">
-              STUDIO
+              {t('hero.title2')}
             </span>
           </motion.h1>
 
@@ -103,9 +106,9 @@ export function Hero() {
             transition={{ delay: 0.4 }}
             className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto mb-12 font-light tracking-wide"
           >
-            Building Premium Roblox Experiences
+            {t('hero.subtitle')}
             <span className="block mt-2 text-sm text-[#00AFFF]/80">
-              Next-Generation Game Development • Professional Scripting • Immersive Worlds
+              {t('hero.subtitle2')}
             </span>
           </motion.p>
         </motion.div>
@@ -127,7 +130,7 @@ export function Hero() {
             <div className="absolute inset-[1px] rounded-lg bg-[#030303] group-hover:bg-transparent transition-colors duration-300" />
             <span className="relative flex items-center gap-2 font-bold tracking-wider text-white group-hover:text-[#030303] transition-colors">
               <Rocket className="w-5 h-5" />
-              EXPLORE PROJECTS
+              {t('hero.explore')}
             </span>
           </motion.a>
 
@@ -139,7 +142,7 @@ export function Hero() {
           >
             <span className="relative flex items-center gap-2 font-bold tracking-wider text-[#030303]">
               <ShoppingCart className="w-5 h-5" />
-              ORDER YOUR MAP
+              {t('hero.order')}
             </span>
           </motion.a>
 
@@ -151,7 +154,7 @@ export function Hero() {
           >
             <span className="relative flex items-center gap-2 font-bold tracking-wider text-white/80 group-hover:text-white transition-colors">
               <Users className="w-5 h-5" />
-              JOIN COMMUNITY
+              {t('hero.community')}
             </span>
           </motion.a>
         </motion.div>
@@ -164,9 +167,9 @@ export function Hero() {
           className="mt-16 grid grid-cols-3 gap-8 max-w-2xl mx-auto"
         >
           {[
-            { value: '50+', label: 'Projects' },
-            { value: '1M+', label: 'Players' },
-            { value: '99%', label: 'Satisfaction' },
+            { value: '50+', label: t('hero.stats.projects') },
+            { value: '1M+', label: t('hero.stats.players') },
+            { value: '99%', label: t('hero.stats.satisfaction') },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
               <div className="text-3xl sm:text-4xl font-black neon-text">{stat.value}</div>

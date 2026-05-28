@@ -2,9 +2,11 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Send, User, Mail, MessageSquare, Gamepad2, CheckCircle } from 'lucide-react'
+import { Send, User, Mail, MessageSquare, Gamepad2, CheckCircle, Instagram, Music2 } from 'lucide-react'
+import { useLanguage } from '@/context/LanguageContext'
 
 export function Contact() {
+  const { t, language } = useLanguage()
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
@@ -16,7 +18,8 @@ export function Contact() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
-    const message = `Halo AV GAME STUDIO!
+    const message = language === 'id' 
+      ? `Halo AV GAME STUDIO!
     
 Saya ingin memesan jasa/berkonsultasi:
 Nama: ${formData.name}
@@ -25,6 +28,15 @@ Tipe Proyek: ${formData.projectType}
 Detail Proyek: ${formData.details}
 
 Terima kasih!`
+      : `Hello AV GAME STUDIO!
+    
+I would like to order a service/consult:
+Name: ${formData.name}
+Email: ${formData.email}
+Project Type: ${formData.projectType}
+Project Details: ${formData.details}
+
+Thank you!`
 
     const waUrl = `https://wa.me/62895327025015?text=${encodeURIComponent(message)}`
     
@@ -67,16 +79,15 @@ Terima kasih!`
             viewport={{ once: true }}
           >
             <span className="inline-block px-4 py-1 rounded-full text-xs tracking-widest text-[#00AFFF] border border-[#00AFFF]/30 mb-4">
-              GET IN TOUCH
+              {t('contact.badge')}
             </span>
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black mb-6">
-              <span className="text-white">START YOUR</span>
+              <span className="text-white">{t('contact.title1')}</span>
               <br />
-              <span className="neon-text">PROJECT</span>
+              <span className="neon-text">{t('contact.title2')}</span>
             </h2>
             <p className="text-white/50 text-lg mb-8 leading-relaxed">
-              Ready to bring your vision to life? Contact us and let&apos;s create 
-              something extraordinary together. Our team is ready to help.
+              {t('contact.subtitle')}
             </p>
 
             {/* Contact Info */}
@@ -137,6 +148,36 @@ Terima kasih!`
                   <div className="text-white font-medium">@AVGameStudio</div>
                 </div>
               </div>
+
+              <a 
+                href="https://www.instagram.com/avgamestudio"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-4 hover:opacity-80 transition-opacity"
+              >
+                <div className="w-12 h-12 rounded-xl glass border border-[#00AFFF]/20 flex items-center justify-center">
+                  <Instagram className="w-5 h-5 text-[#00AFFF]" />
+                </div>
+                <div>
+                  <div className="text-sm text-white/50">Instagram</div>
+                  <div className="text-white font-medium">@avgamestudio</div>
+                </div>
+              </a>
+
+              <a 
+                href="https://www.tiktok.com/@avgamestudio"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-4 hover:opacity-80 transition-opacity"
+              >
+                <div className="w-12 h-12 rounded-xl glass border border-[#00AFFF]/20 flex items-center justify-center">
+                  <Music2 className="w-5 h-5 text-[#00AFFF]" />
+                </div>
+                <div>
+                  <div className="text-sm text-white/50">TikTok</div>
+                  <div className="text-white font-medium">@avgamestudio</div>
+                </div>
+              </a>
             </div>
           </motion.div>
 
@@ -157,7 +198,7 @@ Terima kasih!`
                 <div className="space-y-6">
                   {/* Name Field */}
                   <div>
-                    <label className="block text-sm text-white/60 mb-2">Your Name</label>
+                    <label className="block text-sm text-white/60 mb-2">{t('contact.form.name')}</label>
                     <div className="relative">
                       <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#00AFFF]/50" />
                       <input
@@ -165,7 +206,7 @@ Terima kasih!`
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        placeholder="Enter your name"
+                        placeholder={t('contact.form.name_placeholder')}
                         className="w-full pl-12 pr-4 py-4 rounded-xl bg-[#111827]/50 border border-[#1e293b] focus:border-[#00AFFF] text-white placeholder-white/30 outline-none transition-colors"
                         required
                       />
@@ -174,7 +215,7 @@ Terima kasih!`
 
                   {/* Email Field */}
                   <div>
-                    <label className="block text-sm text-white/60 mb-2">Email Address</label>
+                    <label className="block text-sm text-white/60 mb-2">{t('contact.form.email')}</label>
                     <div className="relative">
                       <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#00AFFF]/50" />
                       <input
@@ -182,7 +223,7 @@ Terima kasih!`
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        placeholder="your@email.com"
+                        placeholder={t('contact.form.email_placeholder')}
                         className="w-full pl-12 pr-4 py-4 rounded-xl bg-[#111827]/50 border border-[#1e293b] focus:border-[#00AFFF] text-white placeholder-white/30 outline-none transition-colors"
                         required
                       />
@@ -191,33 +232,35 @@ Terima kasih!`
 
                   {/* Project Type */}
                   <div>
-                    <label className="block text-sm text-white/60 mb-2">Project Type</label>
-                    <select
-                      name="projectType"
-                      value={formData.projectType}
-                      onChange={handleChange}
-                      className="w-full px-4 py-4 rounded-xl bg-[#111827]/50 border border-[#1e293b] focus:border-[#00AFFF] text-white outline-none transition-colors appearance-none cursor-pointer"
-                      required
-                    >
-                      <option value="" className="bg-[#111827]">Select project type</option>
-                      <option value="Map Development" className="bg-[#111827]">Map Development</option>
-                      <option value="Scripting" className="bg-[#111827]">Scripting</option>
-                      <option value="UI/UX Design" className="bg-[#111827]">UI/UX Design</option>
-                      <option value="VFX & Lighting" className="bg-[#111827]">VFX & Lighting</option>
-                      <option value="Full Package" className="bg-[#111827]">Full Package</option>
-                    </select>
+                    <label className="block text-sm text-white/60 mb-2">{t('contact.form.project_type')}</label>
+                    <div className="relative">
+                      <Gamepad2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#00AFFF]/50" />
+                      <select
+                        name="projectType"
+                        value={formData.projectType}
+                        onChange={handleChange}
+                        className="w-full pl-12 pr-10 py-4 rounded-xl bg-[#111827]/50 border border-[#1e293b] focus:border-[#00AFFF] text-white outline-none transition-colors appearance-none cursor-pointer"
+                        required
+                      >
+                        <option value="" disabled className="bg-[#030303]">{t('contact.form.project_placeholder')}</option>
+                        {t('contact.types').map((type: string) => (
+                          <option key={type} value={type} className="bg-[#030303]">{type}</option>
+                        ))}
+                      </select>
+                      <MessageSquare className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#00AFFF]/50 pointer-events-none" />
+                    </div>
                   </div>
 
-                  {/* Message Field */}
+                  {/* Details Field */}
                   <div>
-                    <label className="block text-sm text-white/60 mb-2">Project Details</label>
+                    <label className="block text-sm text-white/60 mb-2">{t('contact.form.details')}</label>
                     <div className="relative">
                       <MessageSquare className="absolute left-4 top-4 w-5 h-5 text-[#00AFFF]/50" />
                       <textarea
                         name="details"
                         value={formData.details}
                         onChange={handleChange}
-                        placeholder="Describe your project..."
+                        placeholder={t('contact.form.details_placeholder')}
                         rows={4}
                         className="w-full pl-12 pr-4 py-4 rounded-xl bg-[#111827]/50 border border-[#1e293b] focus:border-[#00AFFF] text-white placeholder-white/30 outline-none transition-colors resize-none"
                         required
@@ -230,18 +273,21 @@ Terima kasih!`
                     type="submit"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    disabled={isSubmitted}
-                    className="w-full py-4 rounded-xl bg-gradient-to-r from-[#00AFFF] to-[#00E5FF] text-[#030303] font-bold tracking-wider flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-[#00AFFF]/30 transition-all disabled:opacity-50"
+                    className={`w-full py-4 rounded-xl font-bold tracking-wider flex items-center justify-center gap-2 transition-all ${
+                      isSubmitted 
+                        ? 'bg-green-500 text-white' 
+                        : 'bg-gradient-to-r from-[#00AFFF] to-[#00E5FF] text-[#030303] shadow-lg shadow-[#00AFFF]/20'
+                    }`}
                   >
                     {isSubmitted ? (
                       <>
                         <CheckCircle className="w-5 h-5" />
-                        MESSAGE SENT!
+                        {t('contact.form.success')}
                       </>
                     ) : (
                       <>
                         <Send className="w-5 h-5" />
-                        SEND MESSAGE
+                        {t('contact.form.submit')}
                       </>
                     )}
                   </motion.button>

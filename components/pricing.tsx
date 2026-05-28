@@ -3,72 +3,35 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check, Zap, Crown, Rocket } from 'lucide-react'
 import { useState } from 'react'
-
-const pricingPlans = [
-  {
-    name: 'Starter',
-    icon: Rocket,
-    price: {
-      USD: '$35',
-      IDR: 'Rp 500rb'
-    },
-    description: 'Perfect for small assets and mini-map projects',
-    popular: false,
-    features: [
-      'Basic Map Design',
-      'Simple Scripting',
-      'Standard UI Kit',
-      '3 Revisions',
-      '5 Day Delivery',
-      'Basic Support',
-    ],
-  },
-  {
-    name: 'Premium',
-    icon: Zap,
-    price: {
-      USD: '$99',
-      IDR: 'Rp 1.5Jt'
-    },
-    description: 'The sweet spot for full game map development',
-    popular: true,
-    features: [
-      'Advanced Map Design',
-      'Complex Scripting',
-      'Custom UI/UX',
-      'VFX & Lighting',
-      '10 Revisions',
-      '10 Day Delivery',
-      'Priority Support',
-      'Source Files',
-    ],
-  },
-  {
-    name: 'Ultimate Studio',
-    icon: Crown,
-    price: {
-      USD: '$650',
-      IDR: 'Rp 10Jt'
-    },
-    description: 'Professional AAA quality for major projects',
-    popular: false,
-    features: [
-      'AAA Map Development',
-      'Advanced AI Systems',
-      'Premium UI/UX Design',
-      'Cinematic VFX',
-      'Full Optimization',
-      'Unlimited Revisions',
-      '21 Day Delivery',
-      '24/7 Support',
-      'Full Source Code',
-      'Marketing Assets',
-    ],
-  },
-]
+import { useLanguage } from '@/context/LanguageContext'
 
 export function Pricing() {
+  const { t } = useLanguage()
   const [currency, setCurrency] = useState<'USD' | 'IDR'>('IDR')
+
+  const plansData = t('pricing.plans')
+  const icons = [Rocket, Zap, Crown]
+
+  const pricingPlans = [
+    {
+      ...plansData[0],
+      icon: icons[0],
+      price: { USD: '$35', IDR: 'Rp 500rb' },
+      popular: false,
+    },
+    {
+      ...plansData[1],
+      icon: icons[1],
+      price: { USD: '$99', IDR: 'Rp 1.5Jt' },
+      popular: true,
+    },
+    {
+      ...plansData[2],
+      icon: icons[2],
+      price: { USD: '$650', IDR: 'Rp 10Jt' },
+      popular: false,
+    },
+  ]
 
   return (
     <section id="pricing" className="relative py-32 overflow-hidden">
@@ -87,14 +50,14 @@ export function Pricing() {
             viewport={{ once: true }}
           >
             <span className="inline-block px-4 py-1 rounded-full text-xs tracking-widest text-[#00AFFF] border border-[#00AFFF]/30 mb-4">
-              PRICING
+              {t('pricing.badge')}
             </span>
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black mb-4">
-              <span className="text-white">CHOOSE YOUR</span>{' '}
-              <span className="neon-text">PLAN</span>
+              <span className="text-white">{t('pricing.title1')}</span>{' '}
+              <span className="neon-text">{t('pricing.title2')}</span>
             </h2>
             <p className="text-white/50 max-w-xl mx-auto mb-10">
-              Flexible pricing options for every project size and budget
+              {t('pricing.subtitle')}
             </p>
           </motion.div>
 
@@ -147,7 +110,7 @@ export function Pricing() {
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
                   <span className="px-4 py-1.5 rounded-full bg-gradient-to-r from-[#00AFFF] to-[#00E5FF] text-[#030303] text-xs font-bold tracking-wider">
-                    MOST POPULAR
+                    {t('pricing.most_popular')}
                   </span>
                 </div>
               )}
@@ -184,7 +147,7 @@ export function Pricing() {
                       {plan.price[currency]}
                     </motion.span>
                   </AnimatePresence>
-                  <span className="text-white/40 ml-2">/ project</span>
+                  <span className="text-white/40 ml-2">{t('pricing.per_project')}</span>
                 </div>
 
                 {/* Features */}

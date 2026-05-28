@@ -2,53 +2,18 @@
 
 import { motion } from 'framer-motion'
 import { Map, Code2, Music, Palette, Sparkles, Gauge, Users2 } from 'lucide-react'
-
-const services = [
-  {
-    icon: Map,
-    title: 'Roblox Map Development',
-    description: 'Custom world building with immersive environments, detailed terrain, and optimized assets for seamless gameplay.',
-    features: ['World Design', 'Asset Creation', 'Environment Art'],
-  },
-  {
-    icon: Code2,
-    title: 'Advanced Scripting',
-    description: 'Professional Lua scripting for complex game mechanics, AI systems, and multiplayer functionality.',
-    features: ['Game Logic', 'AI Systems', 'Networking'],
-  },
-  {
-    icon: Music,
-    title: 'DJ Music Systems',
-    description: 'Interactive audio systems with custom soundtracks, dynamic music, and immersive sound design.',
-    features: ['Sound Design', 'Music Integration', 'Audio FX'],
-  },
-  {
-    icon: Palette,
-    title: 'UI/UX Design',
-    description: 'Modern, intuitive interfaces with smooth animations and responsive layouts for all devices.',
-    features: ['Interface Design', 'Animation', 'Mobile Ready'],
-  },
-  {
-    icon: Sparkles,
-    title: 'VFX & Lighting',
-    description: 'Cinematic visual effects and dynamic lighting systems that bring your world to life.',
-    features: ['Particle FX', 'Dynamic Lights', 'Atmosphere'],
-  },
-  {
-    icon: Gauge,
-    title: 'Optimization',
-    description: 'Performance tuning for smooth gameplay on all devices, from mobile to high-end PCs.',
-    features: ['FPS Boost', 'Memory Opt', 'Load Times'],
-  },
-  {
-    icon: Users2,
-    title: 'Community Systems',
-    description: 'Leaderboards, achievements, social features, and engagement tools to grow your player base.',
-    features: ['Leaderboards', 'Achievements', 'Social'],
-  },
-]
+import { useLanguage } from '@/context/LanguageContext'
 
 export function Services() {
+  const { t } = useLanguage()
+
+  const servicesList = t('services.list')
+  const icons = [Map, Code2, Music, Palette, Sparkles, Gauge, Users2]
+
+  const services = servicesList.map((service: any, index: number) => ({
+    ...service,
+    icon: icons[index]
+  }))
   return (
     <section id="services" className="relative py-32 overflow-hidden">
       {/* Background */}
@@ -67,14 +32,14 @@ export function Services() {
           className="text-center mb-16"
         >
           <span className="inline-block px-4 py-1 rounded-full text-xs tracking-widest text-[#00AFFF] border border-[#00AFFF]/30 mb-4">
-            WHAT WE DO
+            {t('services.badge')}
           </span>
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black mb-4">
-            <span className="text-white">OUR</span>{' '}
-            <span className="neon-text">SERVICES</span>
+            <span className="text-white">{t('services.title1')}</span>{' '}
+            <span className="neon-text">{t('services.title2')}</span>
           </h2>
           <p className="text-white/50 max-w-xl mx-auto">
-            Comprehensive game development solutions powered by cutting-edge technology
+            {t('services.subtitle')}
           </p>
         </motion.div>
 

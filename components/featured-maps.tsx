@@ -3,99 +3,101 @@
 import { motion } from 'framer-motion'
 import { Play, Users, Star, Clock, ExternalLink } from 'lucide-react'
 import Image from 'next/image'
-
-const featuredMaps = [
-  {
-    id: 1,
-    title: 'MOUNT BANDA NEIRA',
-    category: 'Adventure Exploration',
-    image: '/maps/mount-banda-neira.jpg',
-    players: '180K+',
-    rating: '4.9',
-    status: 'FEATURED',
-    description: 'Jelajahi keindahan gunung Banda Neira dengan pemandangan alam yang memukau.',
-    robloxUrl: 'https://www.roblox.com/join/56wvk',
-  },
-  {
-    id: 2,
-    title: 'MT BANDA NEIRA JALUR EXTREAM',
-    category: 'Extreme Adventure',
-    image: '/maps/mount-banda-neira-extreme.jpg',
-    players: '120K+',
-    rating: '4.8',
-    status: 'NEW',
-    description: 'Tantangan jalur ekstrem di Banda Neira untuk para petualang sejati.',
-    robloxUrl: 'https://www.roblox.com/join/sflbo',
-  },
-  {
-    id: 3,
-    title: 'AV NIGHT VIBES',
-    category: 'Social Hangout',
-    image: '/maps/av-night-vibes.jpg',
-    players: '250K+',
-    rating: '4.8',
-    status: 'POPULAR',
-    description: 'Rasakan suasana malam yang aesthetic dengan musik dan lighting keren.',
-    robloxUrl: 'https://www.roblox.com/join/b5nby',
-  },
-  {
-    id: 4,
-    title: 'AV ARENA',
-    category: 'Fighting Arena',
-    image: '/maps/av-arena.jpg',
-    players: '320K+',
-    rating: '4.9',
-    status: 'LIVE',
-    description: 'Arena pertarungan yang intens dengan sistem combat epic.',
-    robloxUrl: 'https://www.roblox.com/join/s1104',
-  },
-  {
-    id: 5,
-    title: 'TEMPAT NONGKRONG',
-    category: 'Social Hangout',
-    image: '/maps/tempat-nongkrong.jpg',
-    players: '200K+',
-    rating: '4.7',
-    status: 'POPULAR',
-    description: 'Tempat nongkrong santai bareng temen-temen dengan vibes yang asik.',
-    robloxUrl: 'https://www.roblox.com/join/mh9vd',
-  },
-  {
-    id: 6,
-    title: 'MENJADI PETANI',
-    category: 'Farming Simulator',
-    image: '/maps/menjadi-petani.jpg',
-    players: '200K+',
-    rating: '4.7',
-    status: 'POPULAR',
-    description: 'Kelola pertanian impianmu, tanam, panen, dan bangun kerajaan pertanian.',
-    robloxUrl: 'https://www.roblox.com/join/2umn7',
-  },
-  {
-    id: 7,
-    title: 'PARKOUR CITY BLUE',
-    category: 'Parkour Challenge',
-    image: '/maps/parkour-city-blue.jpg',
-    players: '280K+',
-    rating: '4.8',
-    status: 'FEATURED',
-    description: 'Tantangan parkour di kota futuristik dengan obstacle yang menantang.',
-    robloxUrl: 'https://www.roblox.com/join/wuofb',
-  },
-  {
-    id: 8,
-    title: 'ORANG HILANG',
-    category: 'Mystery Horror',
-    image: '/maps/orang-hilang.jpg',
-    players: '150K+',
-    rating: '4.9',
-    status: 'NEW',
-    description: 'Pecahkan misteri orang hilang dalam pengalaman horror yang menegangkan.',
-    robloxUrl: 'https://www.roblox.com/join/fs97x',
-  },
-]
+import { useLanguage } from '@/context/LanguageContext'
 
 export function FeaturedMaps() {
+  const { t } = useLanguage()
+
+  const featuredMaps = [
+    {
+      id: 1,
+      title: t('featured_maps.maps.0.title'),
+      category: t('featured_maps.categories.adventure'),
+      image: '/maps/mount-banda-neira.jpg',
+      players: '180K+',
+      rating: '4.9',
+      status: t('featured_maps.status.featured'),
+      description: t('featured_maps.maps.0.desc'),
+      robloxUrl: 'https://www.roblox.com/join/56wvk',
+    },
+    {
+      id: 2,
+      title: t('featured_maps.maps.1.title'),
+      category: t('featured_maps.categories.extreme'),
+      image: '/maps/mount-banda-neira-extreme.jpg',
+      players: '120K+',
+      rating: '4.8',
+      status: t('featured_maps.status.new'),
+      description: t('featured_maps.maps.1.desc'),
+      robloxUrl: 'https://www.roblox.com/join/sflbo',
+    },
+    {
+      id: 3,
+      title: t('featured_maps.maps.2.title'),
+      category: t('featured_maps.categories.social'),
+      image: '/maps/thumbnail av night vibes web.png',
+      players: '250K+',
+      rating: '4.8',
+      status: t('featured_maps.status.popular'),
+      description: t('featured_maps.maps.2.desc'),
+      robloxUrl: 'https://www.roblox.com/join/b5nby',
+    },
+    {
+      id: 4,
+      title: t('featured_maps.maps.3.title'),
+      category: t('featured_maps.categories.fighting'),
+      image: '/maps/av-arena.jpg',
+      players: '320K+',
+      rating: '4.9',
+      status: t('featured_maps.status.live'),
+      description: t('featured_maps.maps.3.desc'),
+      robloxUrl: 'https://www.roblox.com/join/s1104',
+    },
+    {
+      id: 5,
+      title: t('featured_maps.maps.4.title'),
+      category: t('featured_maps.categories.social'),
+      image: '/maps/tempat-nongkrong.jpg',
+      players: '200K+',
+      rating: '4.7',
+      status: t('featured_maps.status.popular'),
+      description: t('featured_maps.maps.4.desc'),
+      robloxUrl: 'https://www.roblox.com/join/mh9vd',
+    },
+    {
+      id: 6,
+      title: t('featured_maps.maps.5.title'),
+      category: t('featured_maps.categories.farming'),
+      image: '/maps/menjadi-petani.jpg',
+      players: '200K+',
+      rating: '4.7',
+      status: t('featured_maps.status.popular'),
+      description: t('featured_maps.maps.5.desc'),
+      robloxUrl: 'https://www.roblox.com/join/2umn7',
+    },
+    {
+      id: 7,
+      title: t('featured_maps.maps.6.title'),
+      category: t('featured_maps.categories.parkour'),
+      image: '/maps/parkour-city-blue.jpg',
+      players: '280K+',
+      rating: '4.8',
+      status: t('featured_maps.status.featured'),
+      description: t('featured_maps.maps.6.desc'),
+      robloxUrl: 'https://www.roblox.com/join/wuofb',
+    },
+    {
+      id: 8,
+      title: t('featured_maps.maps.7.title'),
+      category: t('featured_maps.categories.mystery'),
+      image: '/maps/orang-hilang.jpg',
+      players: '150K+',
+      rating: '4.9',
+      status: t('featured_maps.status.new'),
+      description: t('featured_maps.maps.7.desc'),
+      robloxUrl: 'https://www.roblox.com/join/fs97x',
+    },
+  ]
   return (
     <section id="projects" className="relative py-32 overflow-hidden">
       {/* Background */}
@@ -122,14 +124,14 @@ export function FeaturedMaps() {
           className="text-center mb-16"
         >
           <span className="inline-block px-4 py-1 rounded-full text-xs tracking-widest text-[#00AFFF] border border-[#00AFFF]/30 mb-4">
-            FEATURED PROJECTS
+            {t('featured_maps.badge')}
           </span>
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black mb-4">
-            <span className="neon-text">PREMIUM</span>{' '}
-            <span className="text-white">MAPS</span>
+            <span className="neon-text">{t('featured_maps.title1')}</span>{' '}
+            <span className="text-white">{t('featured_maps.title2')}</span>
           </h2>
           <p className="text-white/50 max-w-xl mx-auto">
-            Explore our collection of AAA-quality Roblox experiences built with cutting-edge technology
+            {t('featured_maps.subtitle')}
           </p>
         </motion.div>
 
@@ -169,47 +171,50 @@ export function FeaturedMaps() {
                   </span>
                 </div>
 
-                {/* Play Button */}
-                <motion.button
+                {/* Play Button Icon Overlay */}
+                <motion.div
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-[#00AFFF]/20 backdrop-blur-sm border border-[#00AFFF]/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   <Play className="w-8 h-8 text-white ml-1" fill="white" />
-                </motion.button>
+                </motion.div>
               </div>
 
               {/* Content */}
-              <div className="p-6">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <span className="text-xs text-[#00AFFF] tracking-wider">{map.category}</span>
-                    <h3 className="text-xl font-bold text-white mt-1">{map.title}</h3>
+              <div className="p-4 sm:p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold tracking-[0.2em] text-[#00AFFF] uppercase">
+                    {map.category}
+                  </span>
+                  <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-yellow-400/10 border border-yellow-400/20">
+                    <Star className="w-3 h-3 text-yellow-400 fill-current" />
+                    <span className="text-[10px] font-bold text-yellow-400">{map.rating}</span>
                   </div>
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    className="p-2 rounded-lg glass border border-[#00AFFF]/20 hover:border-[#00AFFF] transition-colors"
-                  >
-                    <ExternalLink className="w-4 h-4 text-[#00AFFF]" />
-                  </motion.button>
                 </div>
 
-                <p className="text-sm text-white/50 mb-4">{map.description}</p>
+                <h3 className="text-xl font-bold text-white group-hover:text-[#00AFFF] transition-colors line-clamp-1">
+                  {map.title}
+                </h3>
 
-                {/* Stats */}
-                <div className="flex items-center gap-6 text-sm">
-                  <div className="flex items-center gap-1.5 text-white/60">
-                    <Users className="w-4 h-4 text-[#00AFFF]" />
-                    <span>{map.players}</span>
+                <p className="text-sm text-white/50 line-clamp-2 min-h-[2.5rem]">
+                  {map.description}
+                </p>
+
+                <div className="flex items-center justify-between pt-4 border-t border-white/5">
+                  <div className="flex items-center gap-1.5">
+                    <Users className="w-4 h-4 text-white/30" />
+                    <span className="text-sm font-bold text-white/70">{map.players}</span>
+                    <span className="text-[10px] text-white/30 uppercase tracking-tighter">{t('featured_maps.stats.players')}</span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-white/60">
-                    <Star className="w-4 h-4 text-yellow-400" fill="currentColor" />
-                    <span>{map.rating}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-white/60">
-                    <Clock className="w-4 h-4 text-[#00E5FF]" />
-                    <span>Updated</span>
-                  </div>
+
+                  <motion.div
+                     whileHover={{ x: 5 }}
+                     className="flex items-center gap-2 text-sm font-bold text-[#00AFFF] group/btn"
+                   >
+                     {t('featured_maps.play_now')}
+                     <Play className="w-3 h-3 fill-current" />
+                   </motion.div>
                 </div>
               </div>
 

@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, Gamepad2 } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
+import Image from 'next/image'
 
 const navLinks = [
   { name: 'Home', href: '#home' },
@@ -46,7 +47,13 @@ export function Navbar() {
               whileHover={{ scale: 1.02 }}
             >
               <div className="relative">
-                <Gamepad2 className="w-10 h-10 text-[#00AFFF]" />
+                <Image
+                  src="/logo.png"
+                  alt="AV Game Studio"
+                  width={48}
+                  height={48}
+                  className="w-12 h-12 object-contain"
+                />
                 <div className="absolute inset-0 blur-lg bg-[#00AFFF]/30 group-hover:bg-[#00AFFF]/50 transition-colors" />
               </div>
               <span className="text-xl font-bold tracking-wider neon-text">

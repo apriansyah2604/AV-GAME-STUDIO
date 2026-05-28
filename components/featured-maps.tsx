@@ -7,43 +7,91 @@ import Image from 'next/image'
 const featuredMaps = [
   {
     id: 1,
-    title: 'CYBER CITY 2077',
-    category: 'Open World RPG',
-    image: '/maps/cyber-city.jpg',
-    players: '250K+',
+    title: 'MOUNT BANDA NEIRA',
+    category: 'Adventure Exploration',
+    image: '/maps/mount-banda-neira.jpg',
+    players: '180K+',
     rating: '4.9',
-    status: 'LIVE',
-    description: 'A massive cyberpunk metropolis with dynamic weather and NPC systems.',
+    status: 'FEATURED',
+    description: 'Jelajahi keindahan gunung Banda Neira dengan pemandangan alam yang memukau.',
+    robloxUrl: 'https://www.roblox.com/join/56wvk',
   },
   {
     id: 2,
-    title: 'BATTLE ARENA',
-    category: 'Competitive FPS',
-    image: '/maps/battle-arena.jpg',
-    players: '180K+',
+    title: 'MT BANDA NEIRA JALUR EXTREAM',
+    category: 'Extreme Adventure',
+    image: '/maps/mount-banda-neira-extreme.jpg',
+    players: '120K+',
     rating: '4.8',
-    status: 'POPULAR',
-    description: 'Fast-paced competitive shooter with ranked matchmaking.',
+    status: 'NEW',
+    description: 'Tantangan jalur ekstrem di Banda Neira untuk para petualang sejati.',
+    robloxUrl: 'https://www.roblox.com/join/sflbo',
   },
   {
     id: 3,
-    title: 'SKYLINE RACING',
-    category: 'Racing Simulator',
-    image: '/maps/skyline-racing.jpg',
-    players: '320K+',
-    rating: '4.9',
-    status: 'FEATURED',
-    description: 'High-speed racing through futuristic cityscapes with custom vehicles.',
+    title: 'AV NIGHT VIBES',
+    category: 'Social Hangout',
+    image: '/maps/av-night-vibes.jpg',
+    players: '250K+',
+    rating: '4.8',
+    status: 'POPULAR',
+    description: 'Rasakan suasana malam yang aesthetic dengan musik dan lighting keren.',
+    robloxUrl: 'https://www.roblox.com/join/b5nby',
   },
   {
     id: 4,
-    title: 'HORROR MANSION',
-    category: 'Survival Horror',
-    image: '/maps/horror-mansion.jpg',
-    players: '150K+',
+    title: 'AV ARENA',
+    category: 'Fighting Arena',
+    image: '/maps/av-arena.jpg',
+    players: '320K+',
+    rating: '4.9',
+    status: 'LIVE',
+    description: 'Arena pertarungan yang intens dengan sistem combat epic.',
+    robloxUrl: 'https://www.roblox.com/join/s1104',
+  },
+  {
+    id: 5,
+    title: 'TEMPAT NONGKRONG',
+    category: 'Social Hangout',
+    image: '/maps/tempat-nongkrong.jpg',
+    players: '200K+',
     rating: '4.7',
+    status: 'POPULAR',
+    description: 'Tempat nongkrong santai bareng temen-temen dengan vibes yang asik.',
+    robloxUrl: 'https://www.roblox.com/join/mh9vd',
+  },
+  {
+    id: 6,
+    title: 'MENJADI PETANI',
+    category: 'Farming Simulator',
+    image: '/maps/menjadi-petani.jpg',
+    players: '200K+',
+    rating: '4.7',
+    status: 'POPULAR',
+    description: 'Kelola pertanian impianmu, tanam, panen, dan bangun kerajaan pertanian.',
+    robloxUrl: 'https://www.roblox.com/join/2umn7',
+  },
+  {
+    id: 7,
+    title: 'PARKOUR CITY BLUE',
+    category: 'Parkour Challenge',
+    image: '/maps/parkour-city-blue.jpg',
+    players: '280K+',
+    rating: '4.8',
+    status: 'FEATURED',
+    description: 'Tantangan parkour di kota futuristik dengan obstacle yang menantang.',
+    robloxUrl: 'https://www.roblox.com/join/wuofb',
+  },
+  {
+    id: 8,
+    title: 'ORANG HILANG',
+    category: 'Mystery Horror',
+    image: '/maps/orang-hilang.jpg',
+    players: '150K+',
+    rating: '4.9',
     status: 'NEW',
-    description: 'Atmospheric horror experience with advanced lighting and sound design.',
+    description: 'Pecahkan misteri orang hilang dalam pengalaman horror yang menegangkan.',
+    robloxUrl: 'https://www.roblox.com/join/fs97x',
   },
 ]
 
@@ -86,15 +134,18 @@ export function FeaturedMaps() {
         </motion.div>
 
         {/* Maps Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {featuredMaps.map((map, index) => (
-            <motion.div
+            <motion.a
               key={map.id}
+              href={map.robloxUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="group relative rounded-xl overflow-hidden glass border border-[#00AFFF]/10 hover:border-[#00AFFF]/50 transition-all duration-500"
+              className="group relative rounded-xl overflow-hidden glass border border-[#00AFFF]/10 hover:border-[#00AFFF]/50 transition-all duration-500 cursor-pointer block"
             >
               {/* Image Container */}
               <div className="relative h-64 overflow-hidden">
@@ -166,7 +217,7 @@ export function FeaturedMaps() {
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                 <div className="absolute inset-0 bg-gradient-to-t from-[#00AFFF]/10 to-transparent" />
               </div>
-            </motion.div>
+            </motion.a>
           ))}
         </div>
 

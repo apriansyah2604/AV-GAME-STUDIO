@@ -1,7 +1,8 @@
 "use client"
 
 import { motion } from 'framer-motion'
-import { Gamepad2, Heart } from 'lucide-react'
+import { Heart } from 'lucide-react'
+import Image from 'next/image'
 
 const footerLinks = {
   services: [
@@ -46,7 +47,13 @@ export function Footer() {
           >
             <a href="#home" className="flex items-center gap-3 mb-6 group">
               <div className="relative">
-                <Gamepad2 className="w-10 h-10 text-[#00AFFF]" />
+                <Image
+                  src="/logo.png"
+                  alt="AV Game Studio"
+                  width={48}
+                  height={48}
+                  className="w-12 h-12 object-contain"
+                />
                 <div className="absolute inset-0 blur-lg bg-[#00AFFF]/30 group-hover:bg-[#00AFFF]/50 transition-colors" />
               </div>
               <span className="text-xl font-bold tracking-wider neon-text">

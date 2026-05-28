@@ -1,29 +1,36 @@
 "use client"
 
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Check, Zap, Crown, Rocket } from 'lucide-react'
+import { useState } from 'react'
 
 const pricingPlans = [
   {
     name: 'Starter',
     icon: Rocket,
-    price: '$299',
-    description: 'Perfect for small projects and indie developers',
+    price: {
+      USD: '$35',
+      IDR: 'Rp 500rb'
+    },
+    description: 'Perfect for small assets and mini-map projects',
     popular: false,
     features: [
       'Basic Map Design',
       'Simple Scripting',
       'Standard UI Kit',
       '3 Revisions',
-      '7 Day Delivery',
+      '5 Day Delivery',
       'Basic Support',
     ],
   },
   {
     name: 'Premium',
     icon: Zap,
-    price: '$799',
-    description: 'For serious projects requiring advanced features',
+    price: {
+      USD: '$99',
+      IDR: 'Rp 1.5Jt'
+    },
+    description: 'The sweet spot for full game map development',
     popular: true,
     features: [
       'Advanced Map Design',
@@ -31,7 +38,7 @@ const pricingPlans = [
       'Custom UI/UX',
       'VFX & Lighting',
       '10 Revisions',
-      '14 Day Delivery',
+      '10 Day Delivery',
       'Priority Support',
       'Source Files',
     ],
@@ -39,8 +46,11 @@ const pricingPlans = [
   {
     name: 'Ultimate Studio',
     icon: Crown,
-    price: '$1,999',
-    description: 'Full-scale AAA development for maximum impact',
+    price: {
+      USD: '$650',
+      IDR: 'Rp 10Jt'
+    },
+    description: 'Professional AAA quality for major projects',
     popular: false,
     features: [
       'AAA Map Development',
@@ -49,7 +59,7 @@ const pricingPlans = [
       'Cinematic VFX',
       'Full Optimization',
       'Unlimited Revisions',
-      '30 Day Delivery',
+      '21 Day Delivery',
       '24/7 Support',
       'Full Source Code',
       'Marketing Assets',
@@ -58,6 +68,8 @@ const pricingPlans = [
 ]
 
 export function Pricing() {
+  const [currency, setCurrency] = useState<'USD' | 'IDR'>('IDR')
+
   return (
     <section id="pricing" className="relative py-32 overflow-hidden">
       {/* Background */}
@@ -68,23 +80,53 @@ export function Pricing() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <span className="inline-block px-4 py-1 rounded-full text-xs tracking-widest text-[#00AFFF] border border-[#00AFFF]/30 mb-4">
-            PRICING
-          </span>
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black mb-4">
-            <span className="text-white">CHOOSE YOUR</span>{' '}
-            <span className="neon-text">PLAN</span>
-          </h2>
-          <p className="text-white/50 max-w-xl mx-auto">
-            Flexible pricing options for every project size and budget
-          </p>
-        </motion.div>
+        <div className="text-center mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <span className="inline-block px-4 py-1 rounded-full text-xs tracking-widest text-[#00AFFF] border border-[#00AFFF]/30 mb-4">
+              PRICING
+            </span>
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black mb-4">
+              <span className="text-white">CHOOSE YOUR</span>{' '}
+              <span className="neon-text">PLAN</span>
+            </h2>
+            <p className="text-white/50 max-w-xl mx-auto mb-10">
+              Flexible pricing options for every project size and budget
+            </p>
+          </motion.div>
+
+          {/* Currency Toggle */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center p-1 rounded-xl bg-[#111827] border border-[#1e293b]"
+          >
+            <button
+              onClick={() => setCurrency('IDR')}
+              className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${
+                currency === 'IDR'
+                  ? 'bg-gradient-to-r from-[#00AFFF] to-[#00E5FF] text-[#030303]'
+                  : 'text-white/50 hover:text-white'
+              }`}
+            >
+              IDR
+            </button>
+            <button
+              onClick={() => setCurrency('USD')}
+              className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${
+                currency === 'USD'
+                  ? 'bg-gradient-to-r from-[#00AFFF] to-[#00E5FF] text-[#030303]'
+                  : 'text-white/50 hover:text-white'
+              }`}
+            >
+              USD
+            </button>
+          </motion.div>
+        </div>
 
         {/* Pricing Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -130,10 +172,18 @@ export function Pricing() {
                 <p className="text-sm text-white/50 mb-6">{plan.description}</p>
 
                 {/* Price */}
-                <div className="mb-8">
-                  <span className={`text-5xl font-black ${plan.popular ? 'neon-text' : 'text-white'}`}>
-                    {plan.price}
-                  </span>
+                <div className="mb-8 h-16 flex items-baseline">
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={currency}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className={`text-5xl font-black ${plan.popular ? 'neon-text' : 'text-white'}`}
+                    >
+                      {plan.price[currency]}
+                    </motion.span>
+                  </AnimatePresence>
                   <span className="text-white/40 ml-2">/ project</span>
                 </div>
 
@@ -154,17 +204,22 @@ export function Pricing() {
                 </ul>
 
                 {/* CTA Button */}
-                <motion.button
+                <motion.a
+                  href={`https://wa.me/62895327025015?text=${encodeURIComponent(
+                    `Halo AV GAME STUDIO, saya tertarik dengan paket ${plan.name} (${plan.price[currency]}). Bisakah kita mendiskusikan proyek saya?`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className={`w-full py-4 rounded-xl font-bold tracking-wider transition-all ${
+                  className={`w-full py-4 rounded-xl font-bold tracking-wider transition-all flex items-center justify-center ${
                     plan.popular
                       ? 'bg-gradient-to-r from-[#00AFFF] to-[#00E5FF] text-[#030303] hover:shadow-lg hover:shadow-[#00AFFF]/30'
                       : 'border border-[#00AFFF]/30 text-white hover:bg-[#00AFFF]/10 hover:border-[#00AFFF]'
                   }`}
                 >
                   GET STARTED
-                </motion.button>
+                </motion.a>
               </div>
             </motion.div>
           ))}
@@ -181,7 +236,11 @@ export function Pricing() {
             Need a custom solution? Let&apos;s discuss your project requirements.
           </p>
           <motion.a
-            href="#contact"
+            href={`https://wa.me/62895327025015?text=${encodeURIComponent(
+              'Halo AV GAME STUDIO, saya ingin berkonsultasi mengenai proyek kustom saya.'
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
             whileHover={{ scale: 1.02 }}
             className="inline-flex items-center gap-2 text-[#00AFFF] font-semibold hover:text-[#00E5FF] transition-colors"
           >

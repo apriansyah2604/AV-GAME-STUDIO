@@ -3,9 +3,21 @@
 import { motion } from 'framer-motion'
 import { ChevronDown, Rocket, ShoppingCart, Users } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
+import { useTransition } from '@/context/TransitionContext'
 
 export function Hero() {
   const { t } = useLanguage()
+  const { triggerTransition } = useTransition()
+
+  const handleCtaClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    triggerTransition(() => {
+      const element = document.querySelector(href);
+      if (element) {
+        element.scrollIntoView({ behavior: 'auto' });
+      }
+    });
+  };
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -91,10 +103,10 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tight mb-6"
+            className="text-3xl sm:text-7xl lg:text-8xl font-black tracking-tight mb-6 leading-[1.1] px-2"
           >
             <span className="block neon-text">{t('hero.title1')}</span>
-            <span className="block bg-gradient-to-r from-[#00AFFF] via-white to-[#00E5FF] bg-clip-text text-transparent">
+            <span className="block bg-gradient-to-r from-[#00AFFF] via-white to-[#00E5FF] bg-clip-text text-transparent pb-2">
               {t('hero.title2')}
             </span>
           </motion.h1>
@@ -104,10 +116,10 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto mb-12 font-light tracking-wide"
+            className="text-sm sm:text-xl text-white/60 max-w-2xl mx-auto mb-10 font-light tracking-wide px-4"
           >
             {t('hero.subtitle')}
-            <span className="block mt-2 text-sm text-[#00AFFF]/80">
+            <span className="block mt-2 text-xs sm:text-sm text-[#00AFFF]/80">
               {t('hero.subtitle2')}
             </span>
           </motion.p>
@@ -118,42 +130,45 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 px-4 sm:px-0"
         >
           <motion.a
             href="#projects"
-            className="group relative px-8 py-4 rounded-lg overflow-hidden"
+            onClick={(e) => handleCtaClick(e, '#projects')}
+            className="group relative px-6 py-4 rounded-xl overflow-hidden text-center sm:px-8"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
             <div className="absolute inset-0 bg-gradient-to-r from-[#00AFFF] to-[#00E5FF] animate-pulse-glow" />
-            <div className="absolute inset-[1px] rounded-lg bg-[#030303] group-hover:bg-transparent transition-colors duration-300" />
-            <span className="relative flex items-center gap-2 font-bold tracking-wider text-white group-hover:text-[#030303] transition-colors">
-              <Rocket className="w-5 h-5" />
+            <div className="absolute inset-[1px] rounded-xl bg-[#030303] group-hover:bg-transparent transition-colors duration-300" />
+            <span className="relative flex items-center justify-center gap-2 font-bold tracking-wider text-white group-hover:text-[#030303] transition-colors text-xs sm:text-base">
+              <Rocket className="w-4 h-4 sm:w-5 sm:h-5" />
               {t('hero.explore')}
             </span>
           </motion.a>
 
           <motion.a
             href="#pricing"
-            className="group relative px-8 py-4 rounded-lg overflow-hidden bg-gradient-to-r from-[#00AFFF] to-[#00E5FF]"
+            onClick={(e) => handleCtaClick(e, '#pricing')}
+            className="group relative px-6 py-4 rounded-xl overflow-hidden bg-gradient-to-r from-[#00AFFF] to-[#00E5FF] text-center shadow-[0_0_20px_rgba(0,175,255,0.3)] sm:px-8"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            <span className="relative flex items-center gap-2 font-bold tracking-wider text-[#030303]">
-              <ShoppingCart className="w-5 h-5" />
+            <span className="relative flex items-center justify-center gap-2 font-bold tracking-wider text-[#030303] text-xs sm:text-base">
+              <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
               {t('hero.order')}
             </span>
           </motion.a>
 
           <motion.a
             href="#community"
-            className="group relative px-8 py-4 rounded-lg glass border border-[#00AFFF]/30 hover:border-[#00AFFF] transition-colors"
+            onClick={(e) => handleCtaClick(e, '#community')}
+            className="group relative px-6 py-4 rounded-xl glass border border-[#00AFFF]/30 hover:border-[#00AFFF] transition-colors text-center sm:px-8"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            <span className="relative flex items-center gap-2 font-bold tracking-wider text-white/80 group-hover:text-white transition-colors">
-              <Users className="w-5 h-5" />
+            <span className="relative flex items-center justify-center gap-2 font-bold tracking-wider text-white/80 group-hover:text-white transition-colors text-xs sm:text-base">
+              <Users className="w-4 h-4 sm:w-5 sm:h-5" />
               {t('hero.community')}
             </span>
           </motion.a>
@@ -164,7 +179,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="mt-16 grid grid-cols-3 gap-8 max-w-2xl mx-auto"
+          className="mt-12 sm:mt-16 grid grid-cols-3 gap-4 sm:gap-8 max-w-2xl mx-auto px-2"
         >
           {[
             { value: '50+', label: t('hero.stats.projects') },
@@ -172,8 +187,8 @@ export function Hero() {
             { value: '99%', label: t('hero.stats.satisfaction') },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
-              <div className="text-3xl sm:text-4xl font-black neon-text">{stat.value}</div>
-              <div className="text-xs text-white/50 tracking-widest mt-1">{stat.label}</div>
+              <div className="text-2xl sm:text-4xl font-black neon-text">{stat.value}</div>
+              <div className="text-[10px] sm:text-xs text-white/50 tracking-widest mt-1 uppercase">{stat.label}</div>
             </div>
           ))}
         </motion.div>

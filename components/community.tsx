@@ -23,7 +23,7 @@ export function Community() {
     { name: 'Twitter', icon: '/icons/twitter.svg', url: '#', members: '8.2K' },
   ]
   return (
-    <section id="community" className="relative py-32 overflow-hidden">
+    <section id="community" className="relative py-20 lg:py-32 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-[#030303]" />
       
@@ -54,7 +54,7 @@ export function Community() {
             <span className="inline-block px-4 py-1 rounded-full text-xs tracking-widest text-[#00AFFF] border border-[#00AFFF]/30 mb-4">
               {t('community.badge')}
             </span>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black mb-6">
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black mb-6 px-2">
               <span className="text-white">{t('community.title1')}</span>
               <br />
               <span className="neon-text">{t('community.title2')}</span>

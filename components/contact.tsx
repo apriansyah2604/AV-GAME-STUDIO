@@ -51,7 +51,7 @@ Thank you!`
   }
 
   return (
-    <section id="contact" className="relative py-32 overflow-hidden">
+    <section id="contact" className="relative py-20 lg:py-32 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-[#030303]" />
       
@@ -81,7 +81,7 @@ Thank you!`
             <span className="inline-block px-4 py-1 rounded-full text-xs tracking-widest text-[#00AFFF] border border-[#00AFFF]/30 mb-4">
               {t('contact.badge')}
             </span>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black mb-6">
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black mb-6 px-2">
               <span className="text-white">{t('contact.title1')}</span>
               <br />
               <span className="neon-text">{t('contact.title2')}</span>

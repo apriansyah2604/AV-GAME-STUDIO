@@ -73,7 +73,7 @@ export function TopUp() {
     { label: t('topup.stats.fit'), value: t('topup.stats.fit_val') },
   ]
   return (
-    <section id="topup" className="relative overflow-hidden py-32">
+    <section id="topup" className="relative overflow-hidden py-20 lg:py-32">
       <div className="absolute inset-0 bg-gradient-to-b from-[#030303] via-[#07101d] to-[#030303]" />
       <div className="absolute left-1/2 top-24 h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-[#00AFFF]/10 blur-3xl" />
       <div className="absolute right-10 top-20 h-48 w-48 rounded-full bg-[#00E5FF]/10 blur-3xl" />
@@ -88,7 +88,7 @@ export function TopUp() {
           <span className="mb-4 inline-block rounded-full border border-[#00AFFF]/30 px-4 py-1 text-xs tracking-widest text-[#00AFFF]">
             {t('topup.badge')}
           </span>
-          <h2 className="mb-4 text-4xl font-black sm:text-5xl lg:text-6xl">
+          <h2 className="mb-4 text-3xl font-black sm:text-5xl lg:text-6xl">
             <span className="text-white">{t('topup.title1')}</span>{' '}
             <span className="neon-text">{t('topup.title2')}</span>
           </h2>
@@ -103,9 +103,9 @@ export function TopUp() {
           viewport={{ once: true }}
           className="mb-8 overflow-hidden rounded-[2rem] border border-[#00AFFF]/15 bg-[#08111F]/75 backdrop-blur-xl"
         >
-          <div className="grid gap-6 p-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:p-8">
+          <div className="grid gap-6 p-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:p-8">
             <div>
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#00AFFF]/20 bg-[#00AFFF]/10 px-4 py-2 text-xs tracking-[0.25em] text-[#00E5FF]">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#00AFFF]/20 bg-[#00AFFF]/10 px-4 py-2 text-[10px] tracking-[0.25em] text-[#00E5FF] sm:text-xs">
                 <Store className="h-4 w-4" />
                 {t('topup.market_badge')}
               </div>
@@ -115,11 +115,11 @@ export function TopUp() {
               <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/55 sm:text-base">
                 {t('topup.market_desc')}
               </p>
-              <div className="mt-6 flex flex-wrap gap-3">
+              <div className="mt-6 flex flex-wrap gap-2 sm:gap-3">
                 {marketCategories.map((category: string, index: number) => (
                   <div
                     key={category}
-                    className={`rounded-full px-4 py-2 text-sm ${
+                    className={`rounded-full px-4 py-2 text-xs sm:text-sm ${
                       index === 0
                         ? 'bg-gradient-to-r from-[#00AFFF] to-[#00E5FF] font-semibold text-[#030303]'
                         : 'border border-[#00AFFF]/20 bg-[#0b1421]/80 text-white/65'
@@ -131,27 +131,27 @@ export function TopUp() {
               </div>
             </div>
 
-            <div className="space-y-4 rounded-[1.5rem] border border-[#00AFFF]/15 bg-[#0b1421]/70 p-5">
+            <div className="space-y-4 rounded-[1.5rem] border border-[#00AFFF]/15 bg-[#0b1421]/70 p-4 sm:p-5">
               <div className="flex items-center gap-3 rounded-2xl border border-[#1e293b] bg-[#09111c] px-4 py-4">
                 <Search className="h-5 w-5 text-[#00AFFF]" />
                 <span className="text-sm text-white/45">{t('topup.search_placeholder') || '...'}</span>
               </div>
-              <div className="rounded-2xl border border-[#00AFFF]/15 bg-gradient-to-r from-[#00AFFF]/10 to-[#00E5FF]/10 p-5">
-                <div className="mb-2 text-xs tracking-[0.25em] text-[#00E5FF]/80">{t('topup.promo_flow')}</div>
+              <div className="rounded-2xl border border-[#00AFFF]/15 bg-gradient-to-r from-[#00AFFF]/10 to-[#00E5FF]/10 p-4 sm:p-5">
+                <div className="mb-2 text-[10px] tracking-[0.25em] text-[#00E5FF]/80 sm:text-xs">{t('topup.promo_flow')}</div>
                 <div className="text-lg font-black text-white">{t('topup.promo_title')}</div>
                 <p className="mt-2 text-sm leading-relaxed text-white/55">
                   {t('topup.promo_desc')}
                 </p>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              <div className="grid gap-2 grid-cols-2 sm:grid-cols-2 xl:grid-cols-4">
                 {marketplaceStats.map((stat: any) => (
                   <div
                     key={stat.label}
-                    className="rounded-2xl border border-[#1e293b] bg-[#08111F]/80 p-4"
+                    className="rounded-2xl border border-[#1e293b] bg-[#08111F]/80 p-3 sm:p-4"
                   >
-                    <div className="text-xs tracking-widest text-white/35">{stat.label}</div>
-                    <div className="mt-2 text-sm font-bold text-white">{stat.value}</div>
+                    <div className="text-[10px] tracking-widest text-white/35 uppercase">{stat.label}</div>
+                    <div className="mt-1 text-xs sm:text-sm font-bold text-white line-clamp-1">{stat.value}</div>
                   </div>
                 ))}
               </div>

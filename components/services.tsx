@@ -15,7 +15,7 @@ export function Services() {
     icon: icons[index]
   }))
   return (
-    <section id="services" className="relative py-32 overflow-hidden">
+    <section id="services" className="relative py-20 lg:py-32 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-[#030303]" />
       
@@ -34,7 +34,7 @@ export function Services() {
           <span className="inline-block px-4 py-1 rounded-full text-xs tracking-widest text-[#00AFFF] border border-[#00AFFF]/30 mb-4">
             {t('services.badge')}
           </span>
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black mb-4">
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black mb-4 px-2">
             <span className="text-white">{t('services.title1')}</span>{' '}
             <span className="neon-text">{t('services.title2')}</span>
           </h2>

@@ -34,14 +34,14 @@ export function Pricing() {
   ]
 
   return (
-    <section id="pricing" className="relative py-32 overflow-hidden">
+    <section id="pricing" className="relative py-20 lg:py-32 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#08111F] via-[#030303] to-[#030303]" />
       
       {/* Ambient Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#00AFFF]/3 rounded-full blur-3xl" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
           <motion.div
@@ -52,7 +52,7 @@ export function Pricing() {
             <span className="inline-block px-4 py-1 rounded-full text-xs tracking-widest text-[#00AFFF] border border-[#00AFFF]/30 mb-4">
               {t('pricing.badge')}
             </span>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black mb-4">
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black mb-4 px-2">
               <span className="text-white">{t('pricing.title1')}</span>{' '}
               <span className="neon-text">{t('pricing.title2')}</span>
             </h2>

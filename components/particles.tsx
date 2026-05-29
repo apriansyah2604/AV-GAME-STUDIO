@@ -15,8 +15,10 @@ export function Particles() {
   const [particles, setParticles] = useState<Particle[]>([])
 
   useEffect(() => {
+    const isMobile = window.innerWidth < 768
+    const count = isMobile ? 20 : 50
     const newParticles: Particle[] = []
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < count; i++) {
       newParticles.push({
         id: i,
         x: Math.random() * 100,

@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from 'next'
 import { Orbitron, Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { LanguageProvider } from '@/context/LanguageContext'
+import { TransitionProvider } from '@/context/TransitionContext'
+import { SceneTransition } from '@/components/scene-transition'
 import './globals.css'
 
 const orbitron = Orbitron({ 
@@ -38,8 +40,11 @@ export default function RootLayout({
     <html lang="en" className={`${orbitron.variable} ${inter.variable} bg-[#030303]`} suppressHydrationWarning>
       <body className="font-sans antialiased bg-[#030303] text-white overflow-x-hidden" suppressHydrationWarning>
         <LanguageProvider>
-          {children}
-          {process.env.NODE_ENV === 'production' && <Analytics />}
+          <TransitionProvider>
+            <SceneTransition />
+            {children}
+            {process.env.NODE_ENV === 'production' && <Analytics />}
+          </TransitionProvider>
         </LanguageProvider>
       </body>
     </html>

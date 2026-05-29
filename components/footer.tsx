@@ -4,9 +4,23 @@ import { motion } from 'framer-motion'
 import { Heart } from 'lucide-react'
 import Image from 'next/image'
 import { useLanguage } from '@/context/LanguageContext'
+import { useTransition } from '@/context/TransitionContext'
 
 export function Footer() {
   const { t } = useLanguage()
+  const { triggerTransition } = useTransition()
+
+  const handleFooterLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith('#')) {
+      e.preventDefault();
+      triggerTransition(() => {
+        const element = document.querySelector(href);
+        if (element) {
+          element.scrollIntoView({ behavior: 'auto' });
+        }
+      });
+    }
+  };
 
   const footerLinks = {
     services: [
@@ -50,7 +64,11 @@ export function Footer() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <a href="#home" className="flex items-center gap-3 mb-6 group">
+            <a 
+              href="#home" 
+              onClick={(e) => handleFooterLinkClick(e, '#home')}
+              className="flex items-center gap-3 mb-6 group"
+            >
               <div className="relative">
                 <Image
                   src="/logo.png"
@@ -83,6 +101,7 @@ export function Footer() {
                 <li key={link.name}>
                   <a 
                     href={link.href}
+                    onClick={(e) => handleFooterLinkClick(e, link.href)}
                     className="text-sm text-white/50 hover:text-white transition-colors"
                   >
                     {link.name}
@@ -105,6 +124,7 @@ export function Footer() {
                 <li key={link.name}>
                   <a 
                     href={link.href}
+                    onClick={(e) => handleFooterLinkClick(e, link.href)}
                     className="text-sm text-white/50 hover:text-white transition-colors"
                   >
                     {link.name}

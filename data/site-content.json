@@ -1,0 +1,234 @@
+{
+  "robux_packages": [
+    {
+      "id": 1,
+      "name": "100 Robux",
+      "price": "Rp 15.000",
+      "description": "Pilihan hemat untuk top up kecil, trial buy, atau kebutuhan item ringan.",
+      "badge": "FAST",
+      "meta": "Proses 5-15 menit",
+      "stock": "Ready",
+      "message": "Halo AV GAME STUDIO, saya ingin top up 100 Robux dengan harga Rp 15.000. Mohon info proses dan pembayarannya ya."
+    },
+    {
+      "id": 2,
+      "name": "300 Robux",
+      "price": "Rp 50.000",
+      "description": "Nominal favorit untuk gamepass, UGC basic, dan kebutuhan top up harian.",
+      "badge": "BEST SELLER",
+      "meta": "Paling sering dipesan",
+      "stock": "Ready",
+      "message": "Halo AV GAME STUDIO, saya ingin top up 300 Robux dengan harga Rp 50.000. Mohon info proses dan pembayarannya ya.",
+      "featured": true
+    },
+    {
+      "id": 3,
+      "name": "1000 Robux",
+      "price": "Rp 150.000",
+      "description": "Cocok untuk pembelian item premium, bundle avatar, dan kebutuhan creator.",
+      "badge": "SAVE MORE",
+      "meta": "Paket hemat besar",
+      "stock": "Ready",
+      "message": "Halo AV GAME STUDIO, saya ingin top up 1000 Robux dengan harga Rp 150.000. Mohon info proses dan pembayarannya ya."
+    },
+    {
+      "id": 4,
+      "name": "2000 Robux",
+      "price": "Rp 290.000",
+      "description": "Pilihan terbaik untuk top up skala besar dengan harga lebih bersahabat.",
+      "badge": "BIG VALUE",
+      "meta": "Untuk player aktif",
+      "stock": "Ready",
+      "message": "Halo AV GAME STUDIO, saya ingin top up 2000 Robux dengan harga Rp 290.000. Mohon info proses dan pembayarannya ya."
+    }
+  ],
+  "avatar_services": [
+    {
+      "id": 1,
+      "title": "Pembuatan Jaket Komunitas",
+      "description": "Desain dan pembuatan jaket khusus untuk komunitas atau grup Roblox-mu.",
+      "price": "Rp 300.000",
+      "badge": "PREMIUM",
+      "message": "Halo AV GAME STUDIO, saya ingin memesan jasa pembuatan Jaket Komunitas seharga Rp 300.000. Mohon info detailnya ya."
+    },
+    {
+      "id": 2,
+      "title": "Pembuatan Kaos",
+      "description": "Jasa pembuatan kaos (shirt/pants) custom dengan desain unik dan berkualitas.",
+      "price": "Rp 350.000",
+      "badge": "FAVORITE",
+      "message": "Halo AV GAME STUDIO, saya ingin memesan jasa pembuatan Kaos seharga Rp 350.000. Mohon info detailnya ya."
+    },
+    {
+      "id": 3,
+      "title": "Pembuatan Item Custom",
+      "description": "Pembuatan item UGC atau aksesoris custom sesuai dengan keinginanmu.",
+      "price": "Rp 500.000",
+      "badge": "CUSTOM",
+      "message": "Halo AV GAME STUDIO, saya ingin memesan jasa pembuatan Item Custom seharga Rp 500.000. Mohon info detailnya ya."
+    }
+  ],
+  "featured_maps": [
+    {
+      "id": 1,
+      "title": "MOUNT BANDA NEIRA",
+      "category": "Eksplorasi Petualangan",
+      "image": "/maps/mount-banda-neira.jpg",
+      "players": "180K+",
+      "rating": "4.9",
+      "status": "FEATURED",
+      "description": "Jelajahi keindahan gunung Banda Neira dengan pemandangan alam yang memukau.",
+      "robloxUrl": "https://www.roblox.com/join/56wvk"
+    },
+    {
+      "id": 2,
+      "title": "MT BANDA NEIRA JALUR EXTREAM",
+      "category": "Petualangan Ekstrem",
+      "image": "/maps/mount-banda-neira-extreme.jpg",
+      "players": "120K+",
+      "rating": "4.8",
+      "status": "NEW",
+      "description": "Tantangan jalur ekstrem di Banda Neira untuk para petualang sejati.",
+      "robloxUrl": "https://www.roblox.com/join/sflbo"
+    },
+    {
+      "id": 3,
+      "title": "AV NIGHT VIBES",
+      "category": "Nongkrong Sosial",
+      "image": "/maps/thumbnail av night vibes web.png",
+      "players": "250K+",
+      "rating": "4.8",
+      "status": "POPULER",
+      "description": "Rasakan suasana malam yang aesthetic dengan musik dan lighting keren.",
+      "robloxUrl": "https://www.roblox.com/join/b5nby"
+    },
+    {
+      "id": 4,
+      "title": "AV ARENA",
+      "category": "Arena Pertarungan",
+      "image": "/maps/av-arena.jpg",
+      "players": "320K+",
+      "rating": "4.9",
+      "status": "LANGSUNG",
+      "description": "Arena pertarungan yang intens dengan sistem combat epic.",
+      "robloxUrl": "https://www.roblox.com/join/s1104"
+    },
+    {
+      "id": 5,
+      "title": "TEMPAT NONGKRONG",
+      "category": "Nongkrong Sosial",
+      "image": "/maps/tempat-nongkrong.jpg",
+      "players": "200K+",
+      "rating": "4.7",
+      "status": "POPULER",
+      "description": "Tempat nongkrong santai bareng temen-temen dengan vibes yang asik.",
+      "robloxUrl": "https://www.roblox.com/join/mh9vd"
+    },
+    {
+      "id": 6,
+      "title": "MENJADI PETANI",
+      "category": "Simulator Pertanian",
+      "image": "/maps/menjadi-petani.jpg",
+      "players": "200K+",
+      "rating": "4.7",
+      "status": "POPULER",
+      "description": "Kelola pertanian impianmu, tanam, panen, dan bangun kerajaan pertanian.",
+      "robloxUrl": "https://www.roblox.com/join/2umn7"
+    },
+    {
+      "id": 7,
+      "title": "PARKOUR CITY BLUE",
+      "category": "Tantangan Parkour",
+      "image": "/maps/parkour-city-blue.jpg",
+      "players": "280K+",
+      "rating": "4.8",
+      "status": "UNGGULAN",
+      "description": "Tantangan parkour di kota futuristik dengan obstacle yang menantang.",
+      "robloxUrl": "https://www.roblox.com/join/wuofb"
+    },
+    {
+      "id": 8,
+      "title": "ORANG HILANG",
+      "category": "Horor Misteri",
+      "image": "/maps/orang-hilang.jpg",
+      "players": "150K+",
+      "rating": "4.9",
+      "status": "BARU",
+      "description": "Pecahkan misteri orang hilang dalam pengalaman horror yang menegangkan.",
+      "robloxUrl": "https://www.roblox.com/join/fs97x"
+    }
+  ],
+  "services": [
+    {
+      "id": 1,
+      "title": "Pengembangan Map Roblox",
+      "description": "Pembangunan dunia kustom dengan lingkungan imersif, medan mendetail, and aset yang dioptimalkan untuk gameplay yang lancar.",
+      "features": ["Desain Dunia", "Pembuatan Aset", "Seni Lingkungan"]
+    },
+    {
+      "id": 2,
+      "title": "Scripting Lanjutan",
+      "description": "Scripting Lua profesional untuk mekanik game yang kompleks, sistem AI, and fungsionalitas multipemain.",
+      "features": ["Logika Game", "Sistem AI", "Networking"]
+    },
+    {
+      "id": 3,
+      "title": "Sistem Musik DJ",
+      "description": "Sistem audio interaktif dengan soundtrack kustom, musik dinamis, and desain suara imersif.",
+      "features": ["Desain Suara", "Integrasi Musik", "Efek Audio"]
+    },
+    {
+      "id": 4,
+      "title": "Desain UI/UX",
+      "description": "Antarmuka modern and intuitif dengan animasi halus and tata letak responsif untuk semua perangkat.",
+      "features": ["Desain Antarmuka", "Animasi", "Siap Mobile"]
+    },
+    {
+      "id": 5,
+      "title": "VFX & Pencahayaan",
+      "description": "Efek visual sinematik and sistem pencahayaan dinamis yang menghidupkan dunia Anda.",
+      "features": ["Efek Partikel", "Lampu Dinamis", "Atmosfer"]
+    },
+    {
+      "id": 6,
+      "title": "Optimalisasi",
+      "description": "Penyetelan performa untuk gameplay yang lancar di semua perangkat, dari seluler hingga PC kelas atas.",
+      "features": ["Boost FPS", "Opt Memori", "Waktu Muat"]
+    },
+    {
+      "id": 7,
+      "title": "Sistem Komunitas",
+      "description": "Papan peringkat, pencapaian, fitur sosial, and alat keterlibatan untuk menumbuhkan basis pemain Anda.",
+      "features": ["Papan Peringkat", "Pencapaian", "Sosial"]
+    }
+  ],
+  "pricing_plans": [
+    {
+      "id": 1,
+      "name": "Starter",
+      "description": "Sangat cocok untuk aset kecil and proyek mini-map",
+      "price_idr": "Rp 500rb",
+      "price_usd": "$35",
+      "features": ["Desain Map Dasar", "Scripting Sederhana", "UI Kit Standar", "3 Revisi", "Pengiriman 5 Hari", "Dukungan Dasar"],
+      "popular": false
+    },
+    {
+      "id": 2,
+      "name": "Premium",
+      "description": "Pilihan terbaik untuk pengembangan map game lengkap",
+      "price_idr": "Rp 1.5Jt",
+      "price_usd": "$99",
+      "features": ["Desain Map Lanjutan", "Scripting Kompleks", "Custom UI/UX", "VFX & Pencahayaan", "10 Revisi", "10 Hari Delivery", "Dukungan Prioritas", "File Sumber"],
+      "popular": true
+    },
+    {
+      "id": 3,
+      "name": "Ultimate Studio",
+      "description": "Kualitas AAA profesional untuk proyek besar",
+      "price_idr": "Rp 10Jt",
+      "price_usd": "$650",
+      "features": ["AAA Map Development", "Advanced AI Systems", "Premium UI/UX Design", "Cinematic VFX", "Full Optimization", "Unlimited Revisions", "21 Day Delivery", "24/7 Support", "Full Source Code", "Marketing Assets"],
+      "popular": false
+    }
+  ]
+}

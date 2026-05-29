@@ -32,11 +32,11 @@ export function Particles() {
   }, [])
 
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" suppressHydrationWarning>
       {particles.map((particle) => (
         <div
           key={particle.id}
-          className="absolute rounded-full bg-[#00AFFF]/30 animate-particle"
+          className="absolute rounded-full bg-[#ff4655]/30 animate-particle"
           style={{
             left: `${particle.x}%`,
             top: `${particle.y}%`,
@@ -44,7 +44,7 @@ export function Particles() {
             height: `${particle.size}px`,
             animationDelay: `${particle.delay}s`,
             animationDuration: `${particle.duration}s`,
-            boxShadow: '0 0 10px rgba(0, 175, 255, 0.5)',
+            boxShadow: '0 0 10px rgba(255, 70, 85, 0.5)',
           }}
         />
       ))}

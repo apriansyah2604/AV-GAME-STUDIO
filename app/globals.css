@@ -7,35 +7,33 @@
   /* AAA Gaming Dark Theme */
   --background: #030303;
   --foreground: #ffffff;
-  --card: #08111F;
+  --card: #0c0506;
   --card-foreground: #ffffff;
-  --popover: #08111F;
+  --popover: #0c0506;
   --popover-foreground: #ffffff;
-  --primary: #00AFFF;
-  --primary-foreground: #030303;
+  --primary: #ff4655;
+  --primary-foreground: #ffffff;
   --secondary: #111827;
   --secondary-foreground: #ffffff;
   --muted: #111827;
   --muted-foreground: #8892a4;
-  --accent: #00E5FF;
-  --accent-foreground: #030303;
+  --accent: #ff4655;
+  --accent-foreground: #ffffff;
   --destructive: #ff4444;
   --destructive-foreground: #ffffff;
   --border: #1e293b;
   --input: #111827;
-  --ring: #00AFFF;
-  --radius: 0.5rem;
+  --ring: #ff4655;
+  --radius: 0px;
   
   /* Custom Gaming Colors */
-  --neon-blue: #00AFFF;
-  --neon-cyan: #00E5FF;
-  --deep-navy: #08111F;
-  --gunmetal: #111827;
+  --neon-red: #ff4655;
   --pure-black: #030303;
 }
 
 @theme inline {
-  --font-sans: 'Orbitron', 'Inter', system-ui, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', var(--font-jakarta), system-ui, sans-serif;
+  --font-display: 'Plus Jakarta Sans', var(--font-jakarta), sans-serif;
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -67,11 +65,14 @@
     @apply border-border outline-ring/50;
   }
   html, body {
-    @apply overflow-x-hidden;
+    @apply overflow-x-hidden text-[16px] sm:text-[18px] antialiased tracking-normal leading-relaxed;
     max-width: 100vw;
   }
   body {
     @apply bg-background text-foreground;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-black tracking-tight leading-tight;
   }
 }
 
@@ -82,11 +83,13 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% { 
-    box-shadow: 0 0 20px rgba(0, 175, 255, 0.3), 0 0 40px rgba(0, 175, 255, 0.1);
+  0%, 100% {
+    opacity: 1;
+    filter: brightness(1) drop-shadow(0 0 5px rgba(255, 70, 85, 0.5));
   }
-  50% { 
-    box-shadow: 0 0 30px rgba(0, 175, 255, 0.5), 0 0 60px rgba(0, 175, 255, 0.2);
+  50% {
+    opacity: 0.8;
+    filter: brightness(1.2) drop-shadow(0 0 15px rgba(255, 70, 85, 0.8));
   }
 }
 
@@ -129,8 +132,10 @@
   animation: float 6s ease-in-out infinite;
 }
 
-.animate-pulse-glow {
-  animation: pulse-glow 3s ease-in-out infinite;
+@layer utilities {
+  .animate-pulse-glow {
+    animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
 }
 
 .animate-neon-border {
@@ -158,11 +163,8 @@
 
 /* Neon Text Glow */
 .neon-text {
-  text-shadow: 
-    0 0 10px rgba(0, 175, 255, 0.8),
-    0 0 20px rgba(0, 175, 255, 0.6),
-    0 0 30px rgba(0, 175, 255, 0.4),
-    0 0 40px rgba(0, 175, 255, 0.2);
+  @apply text-white;
+  text-shadow: 0 0 10px rgba(255, 70, 85, 0.5), 0 0 20px rgba(255, 70, 85, 0.3);
 }
 
 .neon-text-cyan {

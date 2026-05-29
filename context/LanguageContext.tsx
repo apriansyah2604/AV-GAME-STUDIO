@@ -17,6 +17,7 @@ const translations = {
       projects: 'Proyek',
       services: 'Layanan',
       portfolio: 'Portofolio',
+      gallery: 'Galeri',
       topup: 'Top Up',
       pricing: 'Harga',
       contact: 'Kontak',
@@ -223,6 +224,12 @@ const translations = {
         messages: 'Pesan'
       }
     },
+    gallery: {
+      badge: 'DOKUMENTASI KOMUNITAS',
+      title1: 'MOMEN',
+      title2: 'SERU KAMI',
+      subtitle: 'Kumpulan foto dokumentasi kegiatan dan keseruan komunitas AV GAME STUDIO.'
+    },
     contact: {
       badge: 'HUBUNGI KAMI',
       title1: 'MULAI',
@@ -321,6 +328,7 @@ const translations = {
       projects: 'Projects',
       services: 'Services',
       portfolio: 'Portfolio',
+      gallery: 'Gallery',
       topup: 'Top Up',
       pricing: 'Pricing',
       contact: 'Contact',
@@ -526,6 +534,12 @@ const translations = {
         active: 'Active',
         messages: 'Messages'
       }
+    },
+    gallery: {
+      badge: 'COMMUNITY DOCUMENTATION',
+      title1: 'OUR COOL',
+      title2: 'MOMENTS',
+      subtitle: 'A collection of documentation photos of activities and fun from the AV GAME STUDIO community.'
     },
     contact: {
       badge: 'GET IN TOUCH',

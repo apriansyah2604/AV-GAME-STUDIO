@@ -23,9 +23,13 @@ export function TopUp() {
   const [isMounted, setIsMounted] = useState(false)
   const [robloxUsername, setRobloxUsername] = useState('')
   const [checkStatus, setCheckStatus] = useState<'idle' | 'loading' | 'member' | 'not_member' | 'error'>('idle')
+  const [content, setContent] = useState<any>(null)
 
   useEffect(() => {
     setIsMounted(true)
+    fetch('/api/content')
+      .then(res => res.json())
+      .then(data => setContent(data))
   }, [])
 
   if (!isMounted) return null
@@ -62,8 +66,8 @@ export function TopUp() {
     }
   }
 
-  const robuxPackages = t('robux_packages')
-  const avatarServices = t('avatar_services')
+  const robuxPackages = content?.robux_packages || t('robux_packages')
+  const avatarServices = content?.avatar_services || t('avatar_services')
   const marketCategories = t('market_categories')
 
   const marketplaceStats = [
@@ -74,9 +78,9 @@ export function TopUp() {
   ]
   return (
     <section id="topup" className="relative overflow-hidden py-20 lg:py-32">
-      <div className="absolute inset-0 bg-gradient-to-b from-[#030303] via-[#07101d] to-[#030303]" />
-      <div className="absolute left-1/2 top-24 h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-[#00AFFF]/10 blur-3xl" />
-      <div className="absolute right-10 top-20 h-48 w-48 rounded-full bg-[#00E5FF]/10 blur-3xl" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#030303] via-[#1a0a0c] to-[#030303]" />
+      <div className="absolute left-1/2 top-24 h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-[#ff4655]/10 blur-3xl" />
+      <div className="absolute right-10 top-20 h-48 w-48 rounded-full bg-[#ff4655]/10 blur-3xl" />
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
@@ -85,14 +89,14 @@ export function TopUp() {
           viewport={{ once: true }}
           className="mx-auto mb-8 max-w-3xl text-center"
         >
-          <span className="mb-4 inline-block rounded-full border border-[#00AFFF]/30 px-4 py-1 text-xs tracking-widest text-[#00AFFF]">
+          <span className="mb-4 inline-block rounded-none border border-[#ff4655]/30 px-4 py-1 text-xs tracking-normal text-[#ff4655] font-black uppercase italic">
             {t('topup.badge')}
           </span>
-          <h2 className="mb-4 text-3xl font-black sm:text-5xl lg:text-6xl">
+          <h2 className="mb-4 text-3xl font-black sm:text-5xl lg:text-6xl uppercase">
             <span className="text-white">{t('topup.title1')}</span>{' '}
             <span className="neon-text">{t('topup.title2')}</span>
           </h2>
-          <p className="text-white/55">
+          <p className="text-white/55 font-medium">
             {t('topup.subtitle')}
           </p>
         </motion.div>
@@ -101,45 +105,45 @@ export function TopUp() {
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mb-8 overflow-hidden rounded-[2rem] border border-[#00AFFF]/15 bg-[#08111F]/75 backdrop-blur-xl"
+          className="mb-8 overflow-hidden rounded-none border border-[#ff4655]/20 bg-[#0c0506]/80 backdrop-blur-xl"
         >
           <div className="grid gap-6 p-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:p-8">
             <div>
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#00AFFF]/20 bg-[#00AFFF]/10 px-4 py-2 text-[10px] tracking-[0.25em] text-[#00E5FF] sm:text-xs">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-none border border-[#ff4655]/20 bg-[#ff4655]/10 px-4 py-2 text-xs tracking-normal text-[#ff4655] font-black uppercase">
                 <Store className="h-4 w-4" />
                 {t('topup.market_badge')}
               </div>
-              <h3 className="text-3xl font-black text-white sm:text-4xl">
+              <h3 className="text-3xl font-black text-white sm:text-4xl uppercase">
                 {t('topup.market_title')}
               </h3>
-              <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/55 sm:text-base">
+              <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/70 font-medium">
                 {t('topup.market_desc')}
               </p>
               <div className="mt-6 flex flex-wrap gap-2 sm:gap-3">
                 {marketCategories.map((category: string, index: number) => (
                   <div
                     key={category}
-                    className={`rounded-full px-4 py-2 text-xs sm:text-sm ${
+                    className={`rounded-none px-4 py-2 text-xs sm:text-sm font-black uppercase tracking-tight ${
                       index === 0
-                        ? 'bg-gradient-to-r from-[#00AFFF] to-[#00E5FF] font-semibold text-[#030303]'
-                        : 'border border-[#00AFFF]/20 bg-[#0b1421]/80 text-white/65'
+                        ? 'bg-[#ff4655] text-white skew-x-[-12deg]'
+                        : 'border border-white/10 bg-white/5 text-white/60'
                     }`}
                   >
-                    {category}
+                    <span className={index === 0 ? '-skew-x-[-12deg] inline-block' : ''}>{category}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="space-y-4 rounded-[1.5rem] border border-[#00AFFF]/15 bg-[#0b1421]/70 p-4 sm:p-5">
-              <div className="flex items-center gap-3 rounded-2xl border border-[#1e293b] bg-[#09111c] px-4 py-4">
-                <Search className="h-5 w-5 text-[#00AFFF]" />
-                <span className="text-sm text-white/45">{t('topup.search_placeholder') || '...'}</span>
+            <div className="space-y-4 rounded-none border border-white/5 bg-white/5 p-4 sm:p-5">
+              <div className="flex items-center gap-3 rounded-none border border-white/10 bg-black/40 px-4 py-4">
+                <Search className="h-5 w-5 text-[#ff4655]" />
+                <span className="text-sm text-white/45 font-bold uppercase">{t('topup.search_placeholder') || '...'}</span>
               </div>
-              <div className="rounded-2xl border border-[#00AFFF]/15 bg-gradient-to-r from-[#00AFFF]/10 to-[#00E5FF]/10 p-4 sm:p-5">
-                <div className="mb-2 text-[10px] tracking-[0.25em] text-[#00E5FF]/80 sm:text-xs">{t('topup.promo_flow')}</div>
-                <div className="text-lg font-black text-white">{t('topup.promo_title')}</div>
-                <p className="mt-2 text-sm leading-relaxed text-white/55">
+              <div className="rounded-none border border-[#ff4655]/20 bg-[#ff4655]/5 p-4 sm:p-5">
+                <div className="mb-2 text-xs tracking-normal text-[#ff4655] font-black uppercase">{t('topup.promo_flow')}</div>
+                <div className="text-xl font-black text-white uppercase italic">{t('topup.promo_title')}</div>
+                <p className="mt-2 text-sm leading-relaxed text-white/70 font-medium">
                   {t('topup.promo_desc')}
                 </p>
               </div>
@@ -148,10 +152,10 @@ export function TopUp() {
                 {marketplaceStats.map((stat: any) => (
                   <div
                     key={stat.label}
-                    className="rounded-2xl border border-[#1e293b] bg-[#08111F]/80 p-3 sm:p-4"
+                    className="rounded-none border border-white/5 bg-white/5 p-3 sm:p-4"
                   >
-                    <div className="text-[10px] tracking-widest text-white/35 uppercase">{stat.label}</div>
-                    <div className="mt-1 text-xs sm:text-sm font-bold text-white line-clamp-1">{stat.value}</div>
+                    <div className="text-[11px] font-black tracking-normal text-white/40 uppercase">{stat.label}</div>
+                    <div className="mt-1 text-sm font-black text-white line-clamp-1 uppercase">{stat.value}</div>
                   </div>
                 ))}
               </div>
@@ -168,12 +172,12 @@ export function TopUp() {
               className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center"
             >
               <div>
-                <h3 className="text-2xl font-bold text-white">{t('topup.etalase_title')}</h3>
-                <p className="mt-2 text-sm text-white/45">
+                <h3 className="text-2xl font-black text-white uppercase">{t('topup.etalase_title')}</h3>
+                <p className="mt-2 text-sm text-white/45 font-medium">
                   {t('topup.etalase_desc')}
                 </p>
               </div>
-              <div className="hidden rounded-full border border-[#00AFFF]/20 bg-[#08111F]/70 px-4 py-2 text-xs tracking-[0.25em] text-[#00E5FF]/80 md:block">
+              <div className="hidden rounded-none border border-[#ff4655]/30 bg-[#ff4655]/5 px-4 py-2 text-xs tracking-normal text-[#ff4655] font-black uppercase md:block">
                 {t('topup.ready_stock')}
               </div>
             </motion.div>
@@ -186,22 +190,22 @@ export function TopUp() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.08 }}
-                  className={`relative overflow-hidden rounded-3xl border ${
+                  className={`relative overflow-hidden rounded-none border ${
                     item.featured
-                      ? 'border-[#00AFFF]/35 bg-[#08111F]/92'
-                      : 'border-[#1e293b] bg-[#09111c]/88'
+                      ? 'border-[#ff4655]/40 bg-[#120809]'
+                      : 'border-white/5 bg-white/5'
                   }`}
                 >
-                  <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#00AFFF]/12 to-transparent" />
+                  <div className={`absolute inset-x-0 top-0 h-24 bg-gradient-to-b ${item.featured ? 'from-[#ff4655]/10' : 'from-white/5'} to-transparent`} />
                   <div className="relative grid gap-6 p-5 sm:p-6 lg:grid-cols-[minmax(0,1fr)_220px]">
                     <div>
                       <div className="mb-4 flex flex-wrap items-start justify-between gap-4">
                         <div className="flex items-start gap-4">
                           <div
-                            className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl ${
+                            className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-none skew-x-[-12deg] ${
                               item.featured
-                                ? 'bg-gradient-to-br from-[#00AFFF] to-[#00E5FF]'
-                                : 'border border-[#1e293b] bg-[#111827]'
+                                ? 'bg-[#ff4655]'
+                                : 'border border-white/10 bg-white/5'
                             }`}
                           >
                             <Image
@@ -209,64 +213,64 @@ export function TopUp() {
                               alt="Robux Icon"
                               width={48}
                               height={48}
-                              className="h-10 w-10 object-contain brightness-110 drop-shadow-[0_0_8px_rgba(0,175,255,0.5)]"
+                              className={`h-10 w-10 object-contain -skew-x-[-12deg] ${item.featured ? 'brightness-0 invert' : 'brightness-110'}`}
                             />
                           </div>
                           <div>
                             <div className="flex flex-wrap items-center gap-2">
-                              <h4 className="text-2xl font-black text-white">{item.name}</h4>
+                              <h4 className="text-2xl font-black text-white uppercase">{item.name}</h4>
                               {item.featured && (
-                                <span className="rounded-full bg-[#00AFFF]/15 px-3 py-1 text-[10px] font-semibold tracking-[0.24em] text-[#00E5FF]">
+                                <span className="rounded-none bg-[#ff4655]/20 px-3 py-1 text-[10px] font-black tracking-normal text-[#ff4655] uppercase italic">
                                   {t('topup.hot_item')}
                                 </span>
                               )}
                             </div>
-                            <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/55">
+                            <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/60 font-medium">
                               {item.description}
                             </p>
                           </div>
                         </div>
 
                         <div className="flex flex-wrap gap-2">
-                          <span className="rounded-full border border-[#00AFFF]/20 px-3 py-1 text-[10px] font-bold tracking-[0.24em] text-[#00E5FF]">
+                          <span className="rounded-none border border-[#ff4655]/30 px-3 py-1 text-[10px] font-black tracking-normal text-[#ff4655] uppercase">
                             {item.badge}
                           </span>
-                          <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-[10px] font-semibold tracking-[0.24em] text-emerald-300">
+                          <span className="rounded-none border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-[10px] font-black tracking-normal text-emerald-400 uppercase">
                             {item.stock}
                           </span>
                         </div>
                       </div>
 
                       <div className="grid gap-3 sm:grid-cols-3">
-                        <div className="rounded-2xl border border-[#1e293b] bg-[#08111F]/80 p-4">
-                          <div className="text-xs tracking-widest text-white/35">Nominal</div>
-                          <div className="mt-2 text-lg font-bold text-white">{item.name}</div>
+                        <div className="rounded-none border border-white/5 bg-white/5 p-4">
+                          <div className="text-[10px] font-black text-white/30 uppercase tracking-normal">Nominal</div>
+                          <div className="mt-2 text-lg font-black text-white uppercase">{item.name}</div>
                         </div>
-                        <div className="rounded-2xl border border-[#1e293b] bg-[#08111F]/80 p-4">
-                          <div className="text-xs tracking-widest text-white/35">Status</div>
-                          <div className="mt-2 text-sm font-semibold text-[#00E5FF]">{item.meta}</div>
+                        <div className="rounded-none border border-white/5 bg-white/5 p-4">
+                          <div className="text-[10px] font-black text-white/30 uppercase tracking-normal">Status</div>
+                          <div className="mt-2 text-sm font-black text-[#ff4655] uppercase">{item.meta}</div>
                         </div>
-                        <div className="rounded-2xl border border-[#1e293b] bg-[#08111F]/80 p-4">
-                          <div className="text-xs tracking-widest text-white/35">Flow</div>
-                          <div className="mt-2 flex items-center gap-2 text-sm text-white/70">
-                            <Clock3 className="h-4 w-4 text-[#00AFFF]" />
-                            Direct WhatsApp
+                        <div className="rounded-none border border-white/5 bg-white/5 p-4">
+                          <div className="text-[10px] font-black text-white/30 uppercase tracking-normal">Flow</div>
+                          <div className="mt-2 flex items-center gap-2 text-sm text-white/70 font-black uppercase">
+                            <Clock3 className="h-4 w-4 text-[#ff4655]" />
+                            WhatsApp
                           </div>
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex h-full flex-col justify-between rounded-2xl border border-[#1e293b] bg-[#08111F]/85 p-5">
+                    <div className="flex h-full flex-col justify-between rounded-none border border-white/5 bg-black/40 p-5">
                       <div>
                         <div
-                          className={`text-3xl font-black ${
-                            item.featured ? 'neon-text' : 'text-white'
+                          className={`text-3xl font-black uppercase ${
+                            item.featured ? 'text-[#ff4655]' : 'text-white'
                           }`}
                         >
                           {item.price}
                         </div>
-                        <div className="mt-1 text-xs tracking-widest text-white/35">{t('topup.final_price')}</div>
-                        <div className="mt-4 rounded-xl border border-[#00AFFF]/15 bg-[#0b1421]/70 px-3 py-3 text-sm text-white/55">
+                        <div className="mt-1 text-[10px] font-black text-white/30 uppercase tracking-normal">{t('topup.final_price')}</div>
+                        <div className="mt-4 rounded-none border border-white/5 bg-white/5 px-3 py-3 text-sm text-white/60 font-medium">
                           {t('topup.order_desc')}
                         </div>
                       </div>
@@ -277,14 +281,16 @@ export function TopUp() {
                         rel="noopener noreferrer"
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        className={`mt-5 flex w-full items-center justify-center gap-2 rounded-xl py-4 text-sm font-bold tracking-wider transition-all ${
+                        className={`mt-5 flex w-full items-center justify-center gap-2 rounded-none py-4 text-sm font-black uppercase tracking-normal transition-all ${
                           item.featured
-                            ? 'bg-gradient-to-r from-[#00AFFF] to-[#00E5FF] text-[#030303] hover:shadow-lg hover:shadow-[#00AFFF]/30'
-                            : 'border border-[#00AFFF]/30 text-white hover:border-[#00AFFF] hover:bg-[#00AFFF]/10'
+                            ? 'bg-[#ff4655] text-white skew-x-[-12deg]'
+                            : 'border-2 border-white/20 text-white hover:border-[#ff4655] hover:bg-[#ff4655]/5'
                         }`}
                       >
-                        {t('topup.order_btn')}
-                        <ArrowRight className="h-4 w-4" />
+                        <span className={item.featured ? '-skew-x-[-12deg] inline-block flex items-center gap-2' : 'flex items-center gap-2'}>
+                          {t('topup.order_btn')}
+                          <ArrowRight className="h-4 w-4" />
+                        </span>
                       </motion.a>
                     </div>
                   </div>
@@ -298,14 +304,14 @@ export function TopUp() {
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="glass-strong rounded-3xl border border-[#00AFFF]/20 p-8"
+              className="glass-strong rounded-none border border-white/10 p-8"
             >
               <div className="mb-6">
-                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#00AFFF] to-[#00E5FF]">
-                  <Users className="h-8 w-8 text-[#030303]" />
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-none bg-[#ff4655] skew-x-[-12deg]">
+                  <Users className="h-8 w-8 text-white -skew-x-[-12deg]" />
                 </div>
-                <h3 className="text-2xl font-black text-white">{t('topup.community_check.title')}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-white/50">
+                <h3 className="text-2xl font-black text-white uppercase">{t('topup.community_check.title')}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-white/50 font-medium">
                   {t('topup.community_check.desc')}
                 </p>
               </div>
@@ -317,7 +323,7 @@ export function TopUp() {
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#00AFFF]/10 border border-[#00AFFF]/30 py-4 text-sm font-bold text-[#00AFFF] hover:bg-[#00AFFF]/20 transition-all"
+                  className="flex w-full items-center justify-center gap-2 rounded-none border-2 border-white/20 bg-white/5 py-4 text-sm font-black text-white uppercase hover:border-[#ff4655] transition-all"
                 >
                   {t('topup.community_check.join_btn')}
                   <ArrowRight className="h-4 w-4" />
@@ -329,12 +335,12 @@ export function TopUp() {
                     value={robloxUsername}
                     onChange={(e) => setRobloxUsername(e.target.value)}
                     placeholder={t('topup.community_check.input_placeholder')}
-                    className="w-full rounded-xl bg-[#0b1421]/70 border border-[#1e293b] px-5 py-4 text-sm text-white placeholder-white/30 outline-none focus:border-[#00AFFF] transition-all"
+                    className="w-full rounded-none bg-black/40 border border-white/10 px-5 py-4 text-sm text-white placeholder-white/30 outline-none focus:border-[#ff4655] transition-all font-bold uppercase"
                   />
                   <button
                     onClick={handleCheckMembership}
                     disabled={checkStatus === 'loading'}
-                    className="absolute right-2 top-2 bottom-2 px-4 rounded-lg bg-[#00AFFF] text-[#030303] text-xs font-bold hover:bg-[#00E5FF] transition-all disabled:opacity-50"
+                    className="absolute right-2 top-2 bottom-2 px-4 rounded-none bg-[#ff4655] text-white text-xs font-black uppercase hover:brightness-110 transition-all disabled:opacity-50"
                   >
                     {checkStatus === 'loading' ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -348,7 +354,7 @@ export function TopUp() {
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
-                    className={`rounded-xl p-4 flex items-center gap-3 text-sm font-medium ${
+                    className={`rounded-none p-4 flex items-center gap-3 text-sm font-black uppercase ${
                       checkStatus === 'member'
                         ? 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-400'
                         : checkStatus === 'error'
@@ -371,7 +377,7 @@ export function TopUp() {
                   </motion.div>
                 )}
                 
-                <p className="text-[10px] text-center text-white/30 uppercase tracking-widest">
+                <p className="text-[10px] text-center text-white/30 uppercase tracking-normal font-black">
                   {t('topup.community_check.membership_info')}
                 </p>
               </div>
@@ -381,14 +387,14 @@ export function TopUp() {
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="glass-strong rounded-3xl border border-[#00AFFF]/20 p-8"
+              className="glass-strong rounded-none border border-white/10 p-8"
             >
               <div className="mb-8">
-                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#00AFFF] to-[#00E5FF]">
-                  <Shirt className="h-8 w-8 text-[#030303]" />
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-none bg-white/5 border border-[#ff4655]/30">
+                  <Shirt className="h-8 w-8 text-[#ff4655]" />
                 </div>
-                <h3 className="text-2xl font-black text-white">{t('topup.avatar_services.title')}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-white/50">
+                <h3 className="text-2xl font-black text-white uppercase">{t('topup.avatar_services.title')}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-white/50 font-medium">
                   {t('topup.avatar_services.desc')}
                 </p>
               </div>
@@ -397,25 +403,25 @@ export function TopUp() {
                 {avatarServices.map((service: any) => (
                   <div
                     key={service.title}
-                    className="rounded-2xl border border-[#1e293b] bg-[#0b1421]/70 p-5"
+                    className="rounded-none border border-white/5 bg-white/5 p-5"
                   >
                     <div className="mb-2 flex items-center justify-between gap-4">
                       <div>
-                        <h4 className="text-lg font-bold text-white">{service.title}</h4>
-                        <span className="mt-1 inline-block rounded-full border border-[#00AFFF]/20 px-2.5 py-1 text-[10px] font-semibold tracking-[0.2em] text-[#00E5FF]">
+                        <h4 className="text-lg font-black text-white uppercase">{service.title}</h4>
+                        <span className="mt-1 inline-block rounded-none border border-[#ff4655]/30 px-2.5 py-1 text-[10px] font-black tracking-normal text-[#ff4655] uppercase">
                           {service.badge}
                         </span>
                       </div>
-                      <span className="text-sm font-semibold text-[#00E5FF]">{service.price}</span>
+                      <span className="text-sm font-black text-[#ff4655] uppercase">{service.price}</span>
                     </div>
-                    <p className="mb-4 text-sm leading-relaxed text-white/50">{service.description}</p>
+                    <p className="mb-4 text-sm leading-relaxed text-white/50 font-medium">{service.description}</p>
                     <motion.a
                       href={`https://wa.me/62895327025015?text=${encodeURIComponent(service.message)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       whileHover={{ scale: 1.01 }}
                       whileTap={{ scale: 0.98 }}
-                      className="inline-flex items-center gap-2 text-sm font-semibold text-[#00AFFF] transition-colors hover:text-[#00E5FF]"
+                      className="inline-flex items-center gap-2 text-sm font-black text-[#ff4655] uppercase transition-colors hover:text-white"
                     >
                       {t('topup.avatar_services.chat')}
                       <ArrowRight className="h-4 w-4" />
@@ -429,27 +435,27 @@ export function TopUp() {
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="rounded-3xl border border-[#00AFFF]/15 bg-[#08111F]/85 p-6"
+              className="rounded-none border border-white/5 bg-white/5 p-6"
             >
               <div className="mb-5 flex items-center gap-3">
-                <ShieldCheck className="h-5 w-5 text-[#00E5FF]" />
-                <div className="text-sm font-bold tracking-[0.24em] text-[#00E5FF]">{t('topup.info_transaksi.title')}</div>
+                <ShieldCheck className="h-5 w-5 text-[#ff4655]" />
+                <div className="text-sm font-black tracking-normal text-[#ff4655] uppercase">{t('topup.info_transaksi.title')}</div>
               </div>
               <div className="space-y-4">
-                <div className="flex items-start gap-3 rounded-2xl border border-[#1e293b] bg-[#0b1421]/70 p-4">
-                  <BadgeCheck className="mt-0.5 h-5 w-5 text-[#00AFFF]" />
+                <div className="flex items-start gap-3 rounded-none border border-white/5 bg-black/40 p-4">
+                  <BadgeCheck className="mt-0.5 h-5 w-5 text-[#ff4655]" />
                   <div>
-                    <div className="font-semibold text-white">{t('topup.info_transaksi.flow_title')}</div>
-                    <p className="mt-1 text-sm text-white/50">
+                    <div className="font-black text-white uppercase">{t('topup.info_transaksi.flow_title')}</div>
+                    <p className="mt-1 text-sm text-white/50 font-medium">
                       {t('topup.info_transaksi.flow_desc')}
                     </p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3 rounded-2xl border border-[#1e293b] bg-[#0b1421]/70 p-4">
-                  <Clock3 className="mt-0.5 h-5 w-5 text-[#00AFFF]" />
+                <div className="flex items-start gap-3 rounded-none border border-white/5 bg-black/40 p-4">
+                  <Clock3 className="mt-0.5 h-5 w-5 text-[#ff4655]" />
                   <div>
-                    <div className="font-semibold text-white">{t('topup.info_transaksi.easy_title')}</div>
-                    <p className="mt-1 text-sm text-white/50">
+                    <div className="font-black text-white uppercase">{t('topup.info_transaksi.easy_title')}</div>
+                    <p className="mt-1 text-sm text-white/50 font-medium">
                       {t('topup.info_transaksi.easy_desc')}
                     </p>
                   </div>

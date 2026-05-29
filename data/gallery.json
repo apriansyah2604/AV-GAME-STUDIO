@@ -1,0 +1,32 @@
+[
+  {
+    "src": "https://drive.google.com/file/d/1RAAx28v312eWLFd6UJ5UMPyM2UC69qi3/view?usp=sharing",
+    "title": "MT BANDA NEIRA BARENG PACAR",
+    "category": "Community",
+    "id": 1780045994469
+  },
+  {
+    "src": "https://drive.google.com/file/d/1WL8O4h-lKCzbUxpQ37P0aXNBYIfW_dK-/view?usp=drive_link",
+    "title": "OWNER AV GAME STUDIO",
+    "category": "Social",
+    "id": 1780041855751
+  },
+  {
+    "id": 1,
+    "src": "/maps/av-arena.jpg",
+    "title": "Tournament Arena",
+    "category": "Event"
+  },
+  {
+    "id": 2,
+    "src": "/maps/av-night-vibes.jpg",
+    "title": "Night Vibes Hangout",
+    "category": "Community"
+  },
+  {
+    "id": 3,
+    "src": "/maps/mount-banda-neira.jpg",
+    "title": "Exploration Trip",
+    "category": "Exploration"
+  }
+]

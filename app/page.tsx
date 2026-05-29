@@ -4,6 +4,7 @@ import { FeaturedMaps } from '@/components/featured-maps'
 import { Services } from '@/components/services'
 import { Portfolio } from '@/components/portfolio'
 import { Community } from '@/components/community'
+import { Gallery } from '@/components/gallery'
 import { TopUp } from '@/components/topup'
 import { Pricing } from '@/components/pricing'
 import { Contact } from '@/components/contact'
@@ -12,7 +13,7 @@ import { Particles } from '@/components/particles'
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen bg-[#030303]">
+    <main className="relative min-h-screen bg-[#030303]" suppressHydrationWarning>
       {/* Global Particles */}
       <Particles />
       
@@ -25,6 +26,7 @@ export default function Home() {
       <Services />
       <Portfolio />
       <Community />
+      <Gallery />
       <TopUp />
       <Pricing />
       <Contact />

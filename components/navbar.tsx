@@ -31,6 +31,7 @@ export function Navbar() {
     { name: t('nav.projects'), href: '#projects' },
     { name: t('nav.services'), href: '#services' },
     { name: t('nav.portfolio'), href: '#portfolio' },
+    { name: t('nav.gallery'), href: '#gallery' },
     { name: t('nav.topup'), href: '#topup' },
     { name: t('nav.pricing'), href: '#pricing' },
     { name: t('nav.contact'), href: '#contact' },
@@ -63,7 +64,7 @@ export function Navbar() {
         transition={{ duration: 0.5 }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           isScrolled
-            ? 'glass-strong shadow-lg shadow-[#00AFFF]/10'
+            ? 'glass-strong shadow-lg shadow-[#ff4655]/10'
             : 'bg-transparent'
         }`}
       >
@@ -71,25 +72,25 @@ export function Navbar() {
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <motion.a
-              href="#home"
-              onClick={(e) => handleNavLinkClick(e, '#home')}
-              className="flex items-center gap-3 group"
-              whileHover={{ scale: 1.02 }}
-            >
-              <div className="relative">
-                <Image
-                  src="/logo.png"
-                  alt="AV Game Studio"
-                  width={48}
-                  height={48}
-                  className="w-12 h-12 object-contain"
-                />
-                <div className="absolute inset-0 blur-lg bg-[#00AFFF]/30 group-hover:bg-[#00AFFF]/50 transition-colors" />
-              </div>
-              <span className="text-xl font-bold tracking-wider neon-text">
-                AV GAME STUDIO
-              </span>
-            </motion.a>
+               href="#home"
+               onClick={(e) => handleNavLinkClick(e, '#home')}
+               className="flex items-center gap-3 group"
+               whileHover={{ scale: 1.02 }}
+             >
+               <div className="relative">
+                 <Image
+                   src="/logo.png"
+                   alt="AV Game Studio"
+                   width={48}
+                   height={48}
+                   className="w-12 h-12 object-contain"
+                 />
+                 <div className="absolute inset-0 blur-lg bg-[#ff4655]/20 group-hover:bg-[#ff4655]/40 transition-colors" />
+               </div>
+               <span className="text-xl font-black uppercase hidden sm:block tracking-tight">
+                  AV GAME <span className="text-[#ff4655]">STUDIO</span>
+                </span>
+             </motion.a>
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-1">
@@ -97,29 +98,40 @@ export function Navbar() {
                 <motion.a
                   key={link.name}
                   href={link.href}
-                  onClick={(e) => handleNavLinkClick(e, link.href)}
-                  className="relative px-4 py-2 text-sm font-medium text-white/70 hover:text-white transition-colors group"
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <span className="relative z-10">{link.name}</span>
+                    onClick={(e) => handleNavLinkClick(e, link.href)}
+                    className="relative px-2 py-1 text-sm font-black uppercase text-white/70 hover:text-[#ff4655] transition-colors group tracking-normal"
+                  >
+                    {link.name}
                   <motion.div
-                    className="absolute inset-0 rounded-lg bg-[#00AFFF]/10 opacity-0 group-hover:opacity-100 transition-opacity"
-                    layoutId="navbar-hover"
+                    className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#ff4655]"
+                    whileHover={{ width: '100%' }}
                   />
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-[#00AFFF] to-[#00E5FF] group-hover:w-full transition-all duration-300" />
                 </motion.a>
               ))}
             </div>
 
             {/* Language Switcher */}
             <div className="hidden lg:flex items-center gap-4">
+              <motion.a
+                href="#topup"
+                onClick={(e) => handleNavLinkClick(e, '#topup')}
+                className="hidden md:flex relative px-6 py-2 rounded-none overflow-hidden group items-center"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <div className="absolute inset-0 bg-[#ff4655] skew-x-[-12deg]" />
+                <span className="relative font-black tracking-normal text-white uppercase text-sm skew-x-[12deg]">
+                  {t('nav.topup_btn')}
+                </span>
+              </motion.a>
+
               {/* Language Selector */}
               <div className="relative">
                 <button
                   onClick={() => setIsLangOpen(!isLangOpen)}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[#00AFFF]/20 bg-[#00AFFF]/5 hover:bg-[#00AFFF]/10 transition-colors text-xs font-bold tracking-wider text-white/80"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-none border border-white/20 bg-white/5 hover:border-[#ff4655] transition-colors text-xs font-black tracking-normal text-white/80"
                 >
-                  <Globe className="w-4 h-4 text-[#00AFFF]" />
+                  <Globe className="w-4 h-4 text-[#ff4655]" />
                   <span>{language.toUpperCase()}</span>
                   <ChevronDown className={`w-3 h-3 transition-transform ${isLangOpen ? 'rotate-180' : ''}`} />
                 </button>
@@ -130,14 +142,14 @@ export function Navbar() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
-                      className="absolute right-0 mt-2 w-32 rounded-xl glass-strong border border-[#00AFFF]/20 overflow-hidden"
+                      className="absolute right-0 mt-2 w-32 rounded-none glass-strong border border-[#ff4655]/20 overflow-hidden"
                     >
                       <button
                         onClick={() => {
                           setLanguage('id')
                           setIsLangOpen(false)
                         }}
-                        className={`w-full px-4 py-2.5 text-xs font-bold text-left hover:bg-[#00AFFF]/10 transition-colors ${language === 'id' ? 'text-[#00AFFF]' : 'text-white/60'}`}
+                        className={`w-full px-4 py-2.5 text-xs font-black text-left hover:bg-[#ff4655]/10 transition-colors uppercase ${language === 'id' ? 'text-[#ff4655]' : 'text-white/60'}`}
                       >
                         INDONESIA
                       </button>
@@ -146,7 +158,7 @@ export function Navbar() {
                           setLanguage('en')
                           setIsLangOpen(false)
                         }}
-                        className={`w-full px-4 py-2.5 text-xs font-bold text-left hover:bg-[#00AFFF]/10 transition-colors ${language === 'en' ? 'text-[#00AFFF]' : 'text-white/60'}`}
+                        className={`w-full px-4 py-2.5 text-xs font-black text-left hover:bg-[#ff4655]/10 transition-colors uppercase ${language === 'en' ? 'text-[#ff4655]' : 'text-white/60'}`}
                       >
                         ENGLISH
                       </button>
@@ -159,12 +171,12 @@ export function Navbar() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 rounded-lg glass"
+              className="lg:hidden p-2 rounded-none glass"
             >
               {isMobileMenuOpen ? (
-                <X className="w-6 h-6 text-[#00AFFF]" />
+                <X className="w-6 h-6 text-[#ff4655]" />
               ) : (
-                <Menu className="w-6 h-6 text-[#00AFFF]" />
+                <Menu className="w-6 h-6 text-[#ff4655]" />
               )}
             </button>
           </div>
@@ -184,7 +196,7 @@ export function Navbar() {
             
             {/* Animated Grid Background for Mobile Menu */}
             <div className="absolute inset-0 opacity-10 pointer-events-none">
-              <div className="absolute inset-0 bg-[linear-gradient(rgba(0,175,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,175,255,0.1)_1px,transparent_1px)] bg-[size:40px_40px]" />
+              <div className="absolute inset-0 bg-[linear-gradient(rgba(255,70,85,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,70,85,0.1)_1px,transparent_1px)] bg-[size:40px_40px]" />
             </div>
 
             <div className="relative h-full flex flex-col px-6 pt-24 pb-10">
@@ -192,9 +204,9 @@ export function Navbar() {
               <div className="absolute top-6 right-6">
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="p-3 rounded-2xl glass-strong border border-[#00AFFF]/20"
+                  className="p-3 rounded-none glass-strong border border-[#ff4655]/20"
                 >
-                  <X className="w-6 h-6 text-[#00AFFF]" />
+                  <X className="w-6 h-6 text-[#ff4655]" />
                 </button>
               </div>
 
@@ -208,30 +220,30 @@ export function Navbar() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="block px-4 py-4 text-xl font-black tracking-tight text-white/80 hover:text-[#00AFFF] transition-colors"
+                    className="block px-4 py-4 text-2xl font-black tracking-tight text-white/80 hover:text-[#ff4655] transition-colors uppercase"
                   >
                     <span className="flex items-center justify-between">
                       {link.name}
-                      <ArrowRight className="w-4 h-4 text-[#00AFFF]/30" />
+                      <ArrowRight className="w-5 h-5 text-[#ff4655]/30" />
                     </span>
                   </motion.a>
                 ))}
               </div>
 
               {/* Mobile Footer Area */}
-              <div className="mt-auto space-y-8 pt-8 border-t border-[#00AFFF]/10">
+              <div className="mt-auto space-y-8 pt-8 border-t border-[#ff4655]/10">
                 {/* Language Switcher */}
                 <div>
-                  <p className="text-[10px] font-black tracking-[0.3em] text-[#00AFFF] mb-4 uppercase opacity-50">Select Region</p>
+                  <p className="text-[10px] font-black tracking-normal text-[#ff4655] mb-4 uppercase opacity-50">Select Region</p>
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       onClick={() => {
                         setLanguage('id')
                         setIsMobileMenuOpen(false)
                       }}
-                      className={`px-4 py-3 rounded-2xl border text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+                      className={`px-4 py-3 rounded-none border text-xs font-black transition-all flex items-center justify-center gap-2 ${
                         language === 'id'
-                          ? 'bg-[#00AFFF]/10 border-[#00AFFF] text-[#00AFFF] shadow-[0_0_15px_rgba(0,175,255,0.2)]'
+                          ? 'bg-[#ff4655]/10 border-[#ff4655] text-[#ff4655]'
                           : 'bg-white/5 border-white/10 text-white/40'
                       }`}
                     >
@@ -243,9 +255,9 @@ export function Navbar() {
                         setLanguage('en')
                         setIsMobileMenuOpen(false)
                       }}
-                      className={`px-4 py-3 rounded-2xl border text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+                      className={`px-4 py-3 rounded-none border text-xs font-black transition-all flex items-center justify-center gap-2 ${
                         language === 'en'
-                          ? 'bg-[#00AFFF]/10 border-[#00AFFF] text-[#00AFFF] shadow-[0_0_15px_rgba(0,175,255,0.2)]'
+                          ? 'bg-[#ff4655]/10 border-[#ff4655] text-[#ff4655]'
                           : 'bg-white/5 border-white/10 text-white/40'
                       }`}
                     >
@@ -261,25 +273,25 @@ export function Navbar() {
                     href="https://www.instagram.com/avgamestudio"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 rounded-full glass border border-white/10 flex items-center justify-center text-white/40 hover:text-[#00AFFF] transition-colors"
+                    className="w-12 h-12 rounded-none glass border border-white/10 flex items-center justify-center text-white/40 hover:text-[#ff4655] transition-colors skew-x-[-12deg]"
                   >
-                    <Instagram className="w-5 h-5" />
+                    <Instagram className="w-5 h-5 -skew-x-[-12deg]" />
                   </a>
                   <a 
                     href="https://www.tiktok.com/@avgamestudio"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 rounded-full glass border border-white/10 flex items-center justify-center text-white/40 hover:text-[#00AFFF] transition-colors"
+                    className="w-12 h-12 rounded-none glass border border-white/10 flex items-center justify-center text-white/40 hover:text-[#ff4655] transition-colors skew-x-[-12deg]"
                   >
-                    <Music2 className="w-5 h-5" />
+                    <Music2 className="w-5 h-5 -skew-x-[-12deg]" />
                   </a>
                   <a 
                     href="https://discord.gg/vNjDDVf"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 rounded-full glass border border-white/10 flex items-center justify-center text-white/40 hover:text-[#00AFFF] transition-colors"
+                    className="w-12 h-12 rounded-none glass border border-white/10 flex items-center justify-center text-white/40 hover:text-[#ff4655] transition-colors skew-x-[-12deg]"
                   >
-                    <Globe className="w-5 h-5" />
+                    <Globe className="w-5 h-5 -skew-x-[-12deg]" />
                   </a>
                 </div>
               </div>

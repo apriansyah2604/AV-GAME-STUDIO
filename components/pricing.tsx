@@ -1,45 +1,38 @@
 "use client"
 
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check, Zap, Crown, Rocket } from 'lucide-react'
-import { useState } from 'react'
 import { useLanguage } from '@/context/LanguageContext'
 
 export function Pricing() {
   const { t } = useLanguage()
   const [currency, setCurrency] = useState<'USD' | 'IDR'>('IDR')
+  const [content, setContent] = useState<any>(null)
 
-  const plansData = t('pricing.plans')
+  useEffect(() => {
+    fetch('/api/content')
+      .then(res => res.json())
+      .then(data => setContent(data))
+  }, [])
+
+  const plansData = content?.pricing_plans || t('pricing.plans')
   const icons = [Rocket, Zap, Crown]
 
-  const pricingPlans = [
-    {
-      ...plansData[0],
-      icon: icons[0],
-      price: { USD: '$35', IDR: 'Rp 500rb' },
-      popular: false,
-    },
-    {
-      ...plansData[1],
-      icon: icons[1],
-      price: { USD: '$99', IDR: 'Rp 1.5Jt' },
-      popular: true,
-    },
-    {
-      ...plansData[2],
-      icon: icons[2],
-      price: { USD: '$650', IDR: 'Rp 10Jt' },
-      popular: false,
-    },
-  ]
+  const pricingPlans = plansData.map((plan: any, index: number) => ({
+    ...plan,
+    icon: icons[index] || Rocket,
+    price: plan.price || { USD: plan.price_usd, IDR: plan.price_idr },
+    popular: plan.popular || false,
+  }))
 
   return (
     <section id="pricing" className="relative py-20 lg:py-32 overflow-hidden">
       {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#08111F] via-[#030303] to-[#030303]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#1a0a0c] via-[#030303] to-[#030303]" />
       
       {/* Ambient Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#00AFFF]/3 rounded-full blur-3xl" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#ff4655]/3 rounded-full blur-3xl" />
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
@@ -49,14 +42,14 @@ export function Pricing() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <span className="inline-block px-4 py-1 rounded-full text-xs tracking-widest text-[#00AFFF] border border-[#00AFFF]/30 mb-4">
+            <span className="inline-block px-4 py-1 rounded-none border border-[#ff4655]/30 px-4 py-1 text-xs tracking-normal text-[#ff4655] font-black uppercase italic mb-4">
               {t('pricing.badge')}
             </span>
-            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black mb-4 px-2">
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black mb-4 px-2 tracking-normal uppercase">
               <span className="text-white">{t('pricing.title1')}</span>{' '}
               <span className="neon-text">{t('pricing.title2')}</span>
             </h2>
-            <p className="text-white/50 max-w-xl mx-auto mb-10">
+            <p className="text-white/50 max-w-xl mx-auto mb-10 font-medium">
               {t('pricing.subtitle')}
             </p>
           </motion.div>
@@ -66,73 +59,68 @@ export function Pricing() {
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="inline-flex items-center p-1 rounded-xl bg-[#111827] border border-[#1e293b]"
+            className="inline-flex items-center p-1 rounded-none bg-[#111827] border border-white/10"
           >
             <button
               onClick={() => setCurrency('IDR')}
-              className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${
+              className={`px-6 py-2 rounded-none text-sm font-black transition-all ${
                 currency === 'IDR'
-                  ? 'bg-gradient-to-r from-[#00AFFF] to-[#00E5FF] text-[#030303]'
+                  ? 'bg-[#ff4655] text-white skew-x-[-12deg]'
                   : 'text-white/50 hover:text-white'
               }`}
             >
-              IDR
+              <span className={currency === 'IDR' ? '-skew-x-[12deg] inline-block' : ''}>IDR</span>
             </button>
             <button
               onClick={() => setCurrency('USD')}
-              className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${
+              className={`px-6 py-2 rounded-none text-sm font-black transition-all ${
                 currency === 'USD'
-                  ? 'bg-gradient-to-r from-[#00AFFF] to-[#00E5FF] text-[#030303]'
+                  ? 'bg-[#ff4655] text-white skew-x-[-12deg]'
                   : 'text-white/50 hover:text-white'
               }`}
             >
-              USD
+              <span className={currency === 'USD' ? '-skew-x-[12deg] inline-block' : ''}>USD</span>
             </button>
           </motion.div>
         </div>
 
         {/* Pricing Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {pricingPlans.map((plan, index) => (
+          {pricingPlans.map((plan: any, index: number) => (
             <motion.div
               key={plan.name}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className={`relative rounded-2xl ${
+              className={`relative rounded-none ${
                 plan.popular
-                  ? 'glass-strong border-2 border-[#00AFFF]'
-                  : 'glass border border-[#00AFFF]/10'
+                  ? 'bg-[#120809] border-2 border-[#ff4655]'
+                  : 'bg-white/5 border border-white/5'
               }`}
             >
               {/* Popular Badge */}
               {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                  <span className="px-4 py-1.5 rounded-full bg-gradient-to-r from-[#00AFFF] to-[#00E5FF] text-[#030303] text-xs font-bold tracking-wider">
-                    {t('pricing.most_popular')}
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
+                  <span className="px-4 py-1.5 rounded-none bg-[#ff4655] text-white text-[10px] font-black tracking-normal uppercase italic skew-x-[-12deg]">
+                    <span className="skew-x-[12deg] inline-block">{t('pricing.most_popular')}</span>
                   </span>
                 </div>
               )}
 
-              {/* Animated Border for Popular */}
-              {plan.popular && (
-                <div className="absolute inset-0 rounded-2xl animate-pulse-glow" />
-              )}
-
               <div className="relative p-8">
                 {/* Icon */}
-                <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-6 ${
+                <div className={`w-14 h-14 rounded-none skew-x-[-12deg] flex items-center justify-center mb-6 ${
                   plan.popular
-                    ? 'bg-gradient-to-br from-[#00AFFF] to-[#00E5FF]'
-                    : 'bg-[#111827] border border-[#1e293b]'
+                    ? 'bg-[#ff4655]'
+                    : 'bg-[#111827] border border-white/10'
                 }`}>
-                  <plan.icon className={`w-7 h-7 ${plan.popular ? 'text-[#030303]' : 'text-[#00AFFF]'}`} />
+                  <plan.icon className={`w-7 h-7 -skew-x-[-12deg] ${plan.popular ? 'text-white' : 'text-[#ff4655]'}`} />
                 </div>
 
                 {/* Plan Name */}
-                <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
-                <p className="text-sm text-white/50 mb-6">{plan.description}</p>
+                <h3 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">{plan.name}</h3>
+                <p className="text-sm text-white/50 mb-6 font-medium leading-relaxed">{plan.description}</p>
 
                 {/* Price */}
                 <div className="mb-8 h-16 flex items-baseline">
@@ -142,26 +130,26 @@ export function Pricing() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className={`text-5xl font-black ${plan.popular ? 'neon-text' : 'text-white'}`}
+                      className={`text-5xl font-black uppercase tracking-tighter ${plan.popular ? 'text-[#ff4655]' : 'text-white'}`}
                     >
                       {plan.price[currency]}
                     </motion.span>
                   </AnimatePresence>
-                  <span className="text-white/40 ml-2">{t('pricing.per_project')}</span>
+                  <span className="text-white/40 ml-2 font-black uppercase text-[10px] tracking-normal">{t('pricing.per_project')}</span>
                 </div>
 
                 {/* Features */}
                 <ul className="space-y-4 mb-8">
-                  {plan.features.map((feature) => (
+                  {plan.features.map((feature: string) => (
                     <li key={feature} className="flex items-center gap-3">
-                      <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
+                      <div className={`w-5 h-5 rounded-none flex items-center justify-center ${
                         plan.popular
-                          ? 'bg-[#00AFFF]/20 text-[#00AFFF]'
-                          : 'bg-[#111827] text-[#00AFFF]'
+                          ? 'bg-[#ff4655]/20 text-[#ff4655]'
+                          : 'bg-white/5 text-[#ff4655]'
                       }`}>
                         <Check className="w-3 h-3" />
                       </div>
-                      <span className="text-sm text-white/70">{feature}</span>
+                      <span className="text-xs text-white/70 font-black uppercase tracking-normal">{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -175,13 +163,13 @@ export function Pricing() {
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className={`w-full py-4 rounded-xl font-bold tracking-wider transition-all flex items-center justify-center ${
+                  className={`w-full py-4 rounded-none font-black tracking-normal transition-all flex items-center justify-center uppercase skew-x-[-12deg] ${
                     plan.popular
-                      ? 'bg-gradient-to-r from-[#00AFFF] to-[#00E5FF] text-[#030303] hover:shadow-lg hover:shadow-[#00AFFF]/30'
-                      : 'border border-[#00AFFF]/30 text-white hover:bg-[#00AFFF]/10 hover:border-[#00AFFF]'
+                      ? 'bg-[#ff4655] text-white'
+                      : 'border-2 border-white/20 text-white hover:border-[#ff4655] hover:bg-[#ff4655]/5'
                   }`}
                 >
-                  GET STARTED
+                  <span className="skew-x-[12deg] inline-block">GET STARTED</span>
                 </motion.a>
               </div>
             </motion.div>
@@ -195,7 +183,7 @@ export function Pricing() {
           viewport={{ once: true }}
           className="mt-16 text-center"
         >
-          <p className="text-white/50 mb-4">
+          <p className="text-white/50 mb-4 font-medium uppercase">
             Need a custom solution? Let&apos;s discuss your project requirements.
           </p>
           <motion.a
@@ -205,7 +193,7 @@ export function Pricing() {
             target="_blank"
             rel="noopener noreferrer"
             whileHover={{ scale: 1.02 }}
-            className="inline-flex items-center gap-2 text-[#00AFFF] font-semibold hover:text-[#00E5FF] transition-colors"
+            className="inline-flex items-center gap-2 text-[#ff4655] font-black hover:text-white transition-colors uppercase"
           >
             Contact for Custom Quote
             <span className="text-lg">→</span>

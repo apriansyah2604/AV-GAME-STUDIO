@@ -20,15 +20,15 @@ export function SceneTransition() {
             initial={{ y: "-100%" }}
             animate={{ y: ["-100%", "0%", "100%"] }}
             transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
-            className="absolute inset-0 bg-[#00AFFF]/5 backdrop-blur-md border-y border-[#00AFFF]/20"
+            className="absolute inset-0 bg-[#ff4655]/5 backdrop-blur-md border-y border-[#ff4655]/20"
           >
             {/* Subtle Scanning Light Line */}
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00AFFF]/10 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#ff4655]/10 to-transparent" />
             <motion.div 
               initial={{ top: "0%" }}
               animate={{ top: "100%" }}
               transition={{ duration: 0.8, ease: "linear" }}
-              className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#00E5FF] to-transparent opacity-50 shadow-[0_0_15px_#00AFFF]"
+              className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-white to-transparent opacity-50 shadow-[0_0_15px_#ff4655]"
             />
           </motion.div>
 
@@ -36,7 +36,7 @@ export function SceneTransition() {
           <div 
             className="absolute inset-0 opacity-[0.03]"
             style={{
-              backgroundImage: `radial-gradient(#00AFFF 1px, transparent 1px)`,
+              backgroundImage: `radial-gradient(#ff4655 1px, transparent 1px)`,
               backgroundSize: '30px 30px',
             }}
           />

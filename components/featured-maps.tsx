@@ -108,7 +108,7 @@ export function FeaturedMaps() {
   ]
 
   return (
-    <section id="projects" className="relative py-20 lg:py-32 overflow-hidden">
+    <section id="projects" className="relative py-20 lg:py-32 overflow-hidden" suppressHydrationWarning>
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#030303] via-[#0c0506] to-[#030303]" />
       
@@ -159,7 +159,7 @@ export function FeaturedMaps() {
               className="group relative rounded-none overflow-hidden glass border border-white/5 hover:border-[#ff4655]/50 transition-all duration-500 cursor-pointer block"
             >
               {/* Image Container */}
-              <div className="relative h-64 overflow-hidden">
+              <div className="relative h-64 overflow-hidden" suppressHydrationWarning>
                 <Image
                   src={map.image}
                   alt={map.title}

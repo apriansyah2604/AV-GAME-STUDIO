@@ -18,17 +18,18 @@ const translations = {
       services: 'Layanan',
       portfolio: 'Portofolio',
       gallery: 'Galeri',
+      assets: 'Aset',
       topup: 'Top Up',
       pricing: 'Harga',
       contact: 'Kontak',
       topup_btn: 'TOP UP SEKARANG'
     },
     hero: {
-      status: 'SISTEM ONLINE • AAA DEVELOPMENT AKTIF',
+      status: 'AV STUDIO • SIAP MEMBANGUN PROYEK IMPIANMU',
       title1: 'AV GAME',
       title2: 'STUDIO',
       subtitle: 'Membangun Pengalaman Roblox Premium',
-      subtitle2: 'Pengembangan Game Generasi Berikutnya • Scripting Profesional • Dunia Imersif',
+      subtitle2: 'Wujudkan Ide Game Anda Bersama Ahli Pengembangan Roblox',
       explore: 'JELAJAHI PROYEK',
       order: 'PESAN MAP KAMU',
       community: 'GABUNG KOMUNITAS',
@@ -39,224 +40,241 @@ const translations = {
       }
     },
     topup: {
-      badge: 'JUAL ROBUX TERPERCAYA',
-      title1: 'JUAL ROBUX',
-      title2: 'TERMURAH',
-      subtitle: 'Top up Robux aman, cepat, dan terpercaya. Harga di bawah ini sudah disesuaikan mengikuti poster promo yang Anda kirim.',
+      badge: 'LAYANAN TOP UP TERPERCAYA',
+      title1: 'TOP UP',
+      title2: 'ROBUX',
+      subtitle: 'Layanan pengisian Robux aman dan efisien. Harga kompetitif sesuai dengan penawaran eksklusif kami.',
       market_badge: 'ROBUX MARKET',
-      market_title: 'Dapatkan Robux-mu sekarang juga',
-      market_desc: 'Tinggal pilih nominal, klik order, lalu lanjut chat ke WhatsApp. Flow tetap sederhana, cepat, dan langsung diproses.',
-      promo_flow: 'PROMO FLOW',
-      promo_title: 'Aman, cepat, dan terpercaya',
-      promo_desc: 'Pilih nominal Robux, chat WhatsApp, kirim username Roblox, lalu transaksi langsung diproses tanpa checkout tambahan.',
+      market_title: 'Dapatkan Robux Secara Instan',
+      market_desc: 'Pilih nominal yang Anda butuhkan dan selesaikan transaksi dengan mudah melalui layanan WhatsApp kami.',
+      search_placeholder: 'Cari nominal atau paket...',
+      promo_flow: 'ALUR TRANSAKSI',
+      promo_title: 'Aman, Cepat, & Transparan',
+      promo_desc: 'Proses pemesanan yang disederhanakan untuk kenyamanan Anda. Konfirmasi, bayar, dan terima Robux Anda.',
       stats: {
-        fast: 'Proses Cepat',
-        fast_val: 'Langsung Masuk',
-        safe: 'Aman',
-        safe_val: '100% Terpercaya',
-        price: 'Harga',
-        price_val: 'Termurah',
-        fit: 'Cocok',
-        fit_val: 'Semua Player'
+        fast: 'Layanan Kilat',
+        fast_val: 'Proses Instan',
+        safe: 'Terjamin',
+        safe_val: '100% Keamanan',
+        price: 'Efisiensi',
+        price_val: 'Harga Terbaik',
+        fit: 'Fleksibel',
+        fit_val: 'Semua Kebutuhan'
       },
-      etalase_title: 'Etalase Robux',
-      etalase_desc: 'Nominal dan harga sudah disamakan dengan desain poster promo yang Anda kirim.',
-      ready_stock: 'READY STOCK',
-      hot_item: 'HOT ITEM',
-      final_price: 'Harga final',
-      order_desc: 'Order cepat, kirim username Roblox dan detail pembayaran lewat WhatsApp.',
-      order_btn: 'ORDER VIA WA',
+      etalase_title: 'Katalog Robux',
+      etalase_desc: 'Pilihan paket Robux yang dikurasi khusus untuk memenuhi kebutuhan gaming Anda.',
+      ready_stock: 'STOK TERSEDIA',
+      hot_item: 'PILIHAN UTAMA',
+      final_price: 'Harga Final',
+      order_desc: 'Selesaikan pesanan Anda dengan mengirimkan detail akun dan bukti pembayaran.',
+      order_btn: 'HUBUNGI ADMIN WA',
       avatar_services: {
-        title: 'Avatar Item Services',
-        desc: 'Panel kanan dibuat seperti sidebar marketplace berisi jasa tambahan dan informasi transaksi.',
-        chat: 'Chat WhatsApp'
+        title: 'Layanan Item Avatar',
+        desc: 'Tingkatkan identitas visual karakter Anda dengan aset kustom berkualitas tinggi.',
+        chat: 'Konsultasi Sekarang'
       },
       info_transaksi: {
-        title: 'INFO TRANSAKSI',
-        flow_title: 'Flow tetap langsung ke WhatsApp',
-        flow_desc: 'Tidak ada checkout tambahan, jadi lebih cepat untuk closing transaksi.',
-        easy_title: 'Order mudah diproses',
-        easy_desc: 'User tinggal kirim username Roblox, nominal, dan metode pembayaran.'
+        title: 'PANDUAN TRANSAKSI',
+        flow_title: 'Komunikasi Langsung via WhatsApp',
+        flow_desc: 'Interaksi langsung dengan tim kami untuk memastikan setiap pesanan diproses dengan akurat.',
+        easy_title: 'Kemudahan Pemesanan',
+        easy_desc: 'Cukup berikan detail dasar, dan tim kami akan menangani sisanya untuk Anda.'
       },
       community_check: {
-        title: 'Cek Membership Komunitas',
-        desc: 'Top up via komunitas mewajibkan Anda sudah bergabung di grup Roblox kami selama minimal 15 hari.',
+        title: 'Verifikasi Anggota Komunitas',
+        desc: 'Layanan khusus anggota komunitas. Pastikan Anda telah bergabung dalam grup resmi kami.',
         join_btn: 'GABUNG GRUP ROBLOX',
-        input_placeholder: 'Masukkan Username Roblox...',
-        check_btn: 'CEK STATUS',
-        checking: 'Mengecek...',
-        status_member: 'TERDAFTAR: Anda sudah bisa top up!',
-        status_not_member: 'BELUM TERDAFTAR: Silakan gabung grup dulu.',
-        status_error: 'Username tidak ditemukan.',
-        membership_info: 'Pastikan username benar sesuai di Roblox.'
+        input_placeholder: 'Masukkan Username Roblox Anda...',
+        check_btn: 'VERIFIKASI STATUS',
+        checking: 'Memproses...',
+        status_member: 'TERVERIFIKASI: Layanan dapat diakses.',
+        status_not_member: 'BELUM TERDAFTAR: Silakan bergabung dengan grup terlebih dahulu.',
+        status_error: 'Identitas tidak ditemukan.',
+        membership_info: 'Pastikan username sesuai dengan data profil Roblox Anda.'
       }
     },
     featured_maps: {
       badge: 'PROYEK UNGGULAN',
-      title1: 'DAFTAR MAP',
-      title2: 'AV GAME STUDIO',
-      subtitle: 'Jelajahi koleksi pengalaman Roblox kualitas AAA yang dibangun dengan teknologi mutakhir',
-      play_now: 'Main Sekarang',
+      title1: 'PORTOFOLIO',
+      title2: 'PENGALAMAN',
+      subtitle: 'Koleksi dunia virtual premium yang dikembangkan dengan standar kualitas industri',
+      play_now: 'Mainkan Sekarang',
       categories: {
-        adventure: 'Eksplorasi Petualangan',
-        extreme: 'Petualangan Ekstrem',
-        social: 'Nongkrong Sosial',
-        fighting: 'Arena Pertarungan',
-        farming: 'Simulator Pertanian',
-        parkour: 'Tantangan Parkour',
-        mystery: 'Horor Misteri'
+        adventure: 'Eksplorasi Dunia',
+        extreme: 'Tantangan Ekstrem',
+        social: 'Interaksi Sosial',
+        fighting: 'Arena Kompetitif',
+        farming: 'Simulator Ekonomi',
+        parkour: 'Ketangkasan Fisik',
+        mystery: 'Narasi & Misteri'
       },
       status: {
         featured: 'UNGGULAN',
         new: 'BARU',
         popular: 'POPULER',
-        live: 'LANGSUNG'
+        live: 'AKTIF'
       },
       stats: {
-        players: 'Pemain',
-        rating: 'Rating'
+        players: 'Pemain Aktif',
+        rating: 'Rating Komunitas'
       },
       maps: [
-        { title: 'MOUNT BANDA NEIRA', desc: 'Jelajahi keindahan gunung Banda Neira dengan pemandangan alam yang memukau.' },
-        { title: 'MT BANDA NEIRA JALUR EXTREAM', desc: 'Tantangan jalur ekstrem di Banda Neira untuk para petualang sejati.' },
-        { title: 'AV NIGHT VIBES', desc: 'Rasakan suasana malam yang aesthetic dengan musik dan lighting keren.' },
-        { title: 'AV ARENA', desc: 'Arena pertarungan yang intens dengan sistem combat epic.' },
-        { title: 'TEMPAT NONGKRONG', desc: 'Tempat nongkrong santai bareng temen-temen dengan vibes yang asik.' },
-        { title: 'MENJADI PETANI', desc: 'Kelola pertanian impianmu, tanam, panen, dan bangun kerajaan pertanian.' },
-        { title: 'PARKOUR CITY BLUE', desc: 'Tantangan parkour di kota futuristik dengan obstacle yang menantang.' },
-        { title: 'ORANG HILANG', desc: 'Pecahkan misteri orang hilang dalam pengalaman horror yang menegangkan.' }
+        { title: 'MOUNT BANDA NEIRA', desc: 'Eksplorasi keindahan alam yang megah dengan visual yang memukau.' },
+        { title: 'MT BANDA NEIRA JALUR EXTREAM', desc: 'Uji batas kemampuan Anda dalam medan paling menantang.' },
+        { title: 'AV NIGHT VIBES', desc: 'Suasana malam imersif dengan tata cahaya dan audio yang artistik.' },
+        { title: 'AV ARENA', desc: 'Kompetisi pertempuran dengan mekanik yang responsif dan seimbang.' },
+        { title: 'TEMPAT NONGKRONG', desc: 'Ruang kolaborasi sosial untuk berinteraksi dalam lingkungan yang asri.' },
+        { title: 'MENJADI PETANI', desc: 'Simulasi manajemen sumber daya dan pembangunan ekonomi yang mendalam.' },
+        { title: 'PARKOUR CITY BLUE', desc: 'Navigasi urban futuristik yang mengandalkan presisi dan kecepatan.' },
+        { title: 'ORANG HILANG', desc: 'Pengalaman horor psikologis dengan alur cerita yang mencekam.' }
       ]
     },
     services: {
-      badge: 'APA YANG KAMI LAKUKAN',
+      badge: 'KEAHLIAN KAMI',
       title1: 'LAYANAN',
-      title2: 'KAMI',
-      subtitle: 'Solusi pengembangan game komprehensif yang didukung oleh teknologi mutakhir',
+      title2: 'PROFESIONAL',
+      subtitle: 'Solusi pengembangan game end-to-end yang disesuaikan dengan kebutuhan Anda',
       list: [
         {
-          title: 'Pengembangan Map Roblox',
-          desc: 'Pembangunan dunia kustom dengan lingkungan imersif, medan mendetail, dan aset yang dioptimalkan untuk gameplay yang lancar.',
-          features: ['Desain Dunia', 'Pembuatan Aset', 'Seni Lingkungan']
+          title: 'Arsitektur Dunia Roblox',
+          desc: 'Penciptaan lingkungan virtual yang kompleks dengan perhatian mendalam pada estetika dan performa.',
+          features: ['Level Design', '3D Modeling', 'Lighting Art']
         },
         {
-          title: 'Scripting Lanjutan',
-          desc: 'Scripting Lua profesional untuk mekanik game yang kompleks, sistem AI, dan fungsionalitas multipemain.',
-          features: ['Logika Game', 'Sistem AI', 'Networking']
+          title: 'Logika & Scripting Sistem',
+          desc: 'Implementasi kode Lua yang efisien untuk sistem game yang skalabel dan mekanik yang inovatif.',
+          features: ['Sistem Backend', 'Mekanik Kustom', 'Integrasi Data']
         },
         {
-          title: 'Sistem Musik DJ',
-          desc: 'Sistem audio interaktif dengan soundtrack kustom, musik dinamis, dan desain suara imersif.',
-          features: ['Desain Suara', 'Integrasi Musik', 'Efek Audio']
+          title: 'Integrasi Audio Dinamis',
+          desc: 'Desain suara yang meningkatkan imersi pemain melalui audio responsif dan komposisi kustom.',
+          features: ['Soundscapes', 'Audio Dinamis', 'Sound FX']
         },
         {
-          title: 'Desain UI/UX',
-          desc: 'Antarmuka modern dan intuitif dengan animasi halus dan tata letak responsif untuk semua perangkat.',
-          features: ['Desain Antarmuka', 'Animasi', 'Siap Mobile']
+          title: 'Antarmuka Pengguna (UI/UX)',
+          desc: 'Desain visual yang fungsional dan estetis, dioptimalkan untuk pengalaman pengguna terbaik.',
+          features: ['Visual Design', 'User Journey', 'Multi-platform']
         },
         {
-          title: 'VFX & Pencahayaan',
-          desc: 'Efek visual sinematik dan sistem pencahayaan dinamis yang menghidupkan dunia Anda.',
-          features: ['Efek Partikel', 'Lampu Dinamis', 'Atmosfer']
+          title: 'Efek Visual & Atmosfer',
+          desc: 'Pengembangan efek partikel dan sistem pencahayaan untuk menciptakan identitas visual yang unik.',
+          features: ['VFX Production', 'Atmospheric FX', 'Shaders']
         },
         {
-          title: 'Optimalisasi',
-          desc: 'Penyetelan performa untuk gameplay yang lancar di semua perangkat, dari seluler hingga PC kelas atas.',
-          features: ['Boost FPS', 'Opt Memori', 'Waktu Muat']
+          title: 'Optimasi Performa',
+          desc: 'Memastikan game berjalan lancar di berbagai perangkat melalui audit dan penyempurnaan teknis.',
+          features: ['Code Audit', 'Asset Optimization', 'Frame Stability']
         },
         {
-          title: 'Sistem Komunitas',
-          desc: 'Papan peringkat, pencapaian, fitur sosial, dan alat keterlibatan untuk menumbuhkan basis pemain Anda.',
-          features: ['Papan Peringkat', 'Pencapaian', 'Sosial']
+          title: 'Ekosistem Komunitas',
+          desc: 'Membangun fitur sosial yang meningkatkan retensi dan interaksi antar pemain.',
+          features: ['Social Integration', 'Reward Systems', 'Analytics']
         }
       ]
     },
     portfolio: {
-      badge: 'KARYA KAMI',
+      badge: 'HASIL KARYA',
       title: 'PORTOFOLIO',
-      subtitle: 'Showcase pengalaman Roblox premium dan proyek pengembangan game kami',
+      subtitle: 'Representasi proyek-proyek strategis yang telah kami selesaikan dengan sukses',
       categories: ['Semua', 'Dunia Terbuka', 'Shooter', 'RPG', 'Balapan', 'Survival', 'Sosial'],
-      view_project: 'Lihat Proyek',
+      view_project: 'Detail Proyek',
       items: [
-        { title: 'Neon District', desc: 'Pemandangan kota cyberpunk yang luas dengan siklus siang/malam dinamis dan NPC interaktif.' },
-        { title: 'Galactic Warfare', desc: 'Game tempur luar angkasa yang menampilkan kapal yang dapat dikustomisasi dan pertempuran armada epik.' },
-        { title: 'Shadow Realms', desc: 'RPG fantasi gelap dengan pohon keterampilan, quest, dan dungeon prosedural.' },
-        { title: 'Speed Legends', desc: 'Balapan beroktan tinggi dengan mekanik drift dan kustomisasi kendaraan.' },
-        { title: 'Apocalypse Rising', desc: 'Survival pasca-apokaliptik dengan pembangunan pangkalan dan elemen PvP.' },
-        { title: 'Party Paradise', desc: 'Ruang nongkrong sosial dengan minigame dan avatar yang dapat dikustomisasi.' }
+        { title: 'Neon District', desc: 'Metropolis futuristik dengan detail lingkungan tinggi dan sistem pencahayaan dinamis.' },
+        { title: 'Galactic Warfare', desc: 'Simulasi pertempuran antariksa dengan mekanik kendaraan yang kompleks.' },
+        { title: 'Shadow Realms', desc: 'Dunia fantasi dengan sistem narasi dan perkembangan karakter yang mendalam.' },
+        { title: 'Speed Legends', desc: 'Pengalaman balap kompetitif dengan fokus pada presisi kendali.' },
+        { title: 'Apocalypse Rising', desc: 'Dunia survival pasca-apokaliptik dengan elemen strategi yang menantang.' },
+        { title: 'Party Paradise', desc: 'Platform interaksi sosial dengan berbagai aktivitas hiburan kustom.' }
       ]
     },
     pricing: {
-      badge: 'HARGA',
-      title1: 'PILIH',
-      title2: 'PAKETMU',
-      subtitle: 'Opsi harga fleksibel untuk setiap ukuran proyek dan anggaran',
-      most_popular: 'PALING POPULER',
+      badge: 'INVESTASI',
+      title1: 'PILIHAN',
+      title2: 'STRATEGIS',
+      subtitle: 'Struktur biaya transparan yang dirancang untuk mendukung pertumbuhan proyek Anda',
+      most_popular: 'REKOMENDASI UTAMA',
       per_project: '/ proyek',
       plans: [
         {
           name: 'Starter',
-          desc: 'Sangat cocok untuk aset kecil dan proyek mini-map',
-          features: ['Desain Map Dasar', 'Scripting Sederhana', 'UI Kit Standar', '3 Revisi', 'Pengiriman 5 Hari', 'Dukungan Dasar']
+          desc: 'Ideal untuk pengembangan aset spesifik dan proyek skala mikro',
+          features: ['Desain Dasar', 'Scripting Inti', 'UI Kit Standar', 'Revisi Terbatas', 'Pengiriman Cepat', 'Dukungan Teknis']
         },
         {
           name: 'Premium',
-          desc: 'Pilihan terbaik untuk pengembangan map game lengkap',
-          features: ['Desain Map Lanjutan', 'Scripting Kompleks', 'Custom UI/UX', 'VFX & Pencahayaan', '10 Revisi', 'Pengiriman 10 Hari', 'Dukungan Prioritas', 'File Sumber']
+          desc: 'Solusi lengkap untuk pengembangan map game yang komprehensif',
+          features: ['Desain Lingkungan Lanjut', 'Sistem Mekanik Kustom', 'Full UI/UX Design', 'VFX & Atmosfer', 'Revisi Fleksibel', 'Prioritas Pengerjaan', 'Dukungan Eksklusif', 'Aset Mentah']
         },
         {
           name: 'Ultimate Studio',
-          desc: 'Kualitas AAA profesional untuk proyek besar',
-          features: ['Pengembangan Map AAA', 'Sistem AI Lanjutan', 'Desain UI/UX Premium', 'VFX Sinematik', 'Optimalisasi Penuh', 'Revisi Tanpa Batas', 'Pengiriman 21 Hari', 'Dukungan 24/7', 'Kode Sumber Lengkap', 'Aset Pemasaran']
+          desc: 'Standar kualitas industri untuk proyek berskala besar',
+          features: ['Pengembangan Full AAA', 'Sistem AI Kompleks', 'Premium Interface', 'Visual Sinematik', 'Optimasi Menyeluruh', 'Revisi Berkelanjutan', 'Manajemen Proyek', 'Dukungan 24/7', 'Akses Kode Penuh', 'Konsultasi Strategis']
         }
       ]
     },
     community: {
-      badge: 'GABUNG SQUAD',
+      badge: 'EKOSISTEM KREATIF',
       title1: 'GABUNG',
       title2: 'KOMUNITAS KAMI',
-      subtitle: 'Terhubung dengan ribuan gamer, pengembang, dan kreator. Bagikan proyek Anda, dapatkan umpan balik, ikuti turnamen, dan jadilah bagian dari sesuatu yang epik.',
-      discord_btn: 'Gabung Server Discord',
-      online_status: 'anggota online saat ini',
+      subtitle: 'Bergabunglah dengan jaringan pengembang dan pemain profesional untuk bertukar ide dan pengalaman.',
+      discord_btn: 'Akses Server Discord',
+      online_status: 'anggota aktif saat ini',
       stats: {
         members: 'Anggota',
-        tournaments: 'Turnamen',
+        tournaments: 'Event',
         active: 'Aktif',
-        messages: 'Pesan'
+        messages: 'Interaksi'
       }
     },
     gallery: {
-      badge: 'DOKUMENTASI KOMUNITAS',
-      title1: 'MOMEN',
-      title2: 'SERU KAMI',
-      subtitle: 'Kumpulan foto dokumentasi kegiatan dan keseruan komunitas AV GAME STUDIO.'
+      badge: 'GALERI AKTIVITAS',
+      title1: 'JEJAK',
+      title2: 'PERJALANAN',
+      subtitle: 'Dokumentasi visual dari berbagai inisiatif dan kolaborasi dalam komunitas AV GAME STUDIO.'
+    },
+    assets: {
+      badge: 'KATALOG ASET',
+      title1: 'KOLEKSI',
+      title2: 'ASET GAME',
+      subtitle: 'Tingkatkan proyek Anda dengan aset berkualitas tinggi. Tersedia pilihan berbayar dan gratis.',
+      view_all: 'Lihat Semua Aset',
+      free_label: 'GRATIS',
+      paid_label: 'BERBAYAR',
+      get_now: 'Dapatkan Sekarang',
+      items: [
+        { title: 'Paket Tekstur Alam', type: 'free', desc: 'Kumpulan tekstur alam berkualitas tinggi untuk lingkungan game Anda.', link: 'https://discord.gg/vNjDDVf' },
+        { title: 'Sistem Pencahayaan Pro', type: 'paid', desc: 'Script pencahayaan dinamis untuk menciptakan atmosfer imersif.', price: 'Rp 50.000', link: 'https://wa.me/62895327025015?text=Halo%20AV%20GAME%20STUDIO,%20saya%20ingin%20membeli%20Aset%20Sistem%20Pencahayaan%20Pro' },
+        { title: 'Model Karakter Dasar', type: 'free', desc: 'Model karakter dasar yang siap digunakan untuk prototipe game.', link: 'https://discord.gg/vNjDDVf' },
+        { title: 'UI Kit Futuristik', type: 'paid', desc: 'Set antarmuka pengguna modern dengan tema sci-fi.', price: 'Rp 75.000', link: 'https://wa.me/62895327025015?text=Halo%20AV%20GAME%20STUDIO,%20saya%20ingin%20membeli%20Aset%20UI%20Kit%20Futuristik' }
+      ]
     },
     contact: {
-      badge: 'HUBUNGI KAMI',
+      badge: 'KONSULTASI',
       title1: 'MULAI',
-      title2: 'PROYEKMU',
-      subtitle: 'Siap untuk mewujudkan visi Anda? Hubungi kami dan mari buat sesuatu yang luar biasa bersama. Tim kami siap membantu.',
+      title2: 'KOLABORASI',
+      subtitle: 'Konsultasikan visi proyek Anda dengan tim ahli kami. Kami siap menghadirkan solusi pengembangan yang tepat sasaran.',
       form: {
-        name: 'Nama Anda',
-        name_placeholder: 'Masukkan nama Anda',
+        name: 'Nama Lengkap',
+        name_placeholder: 'Masukkan nama lengkap Anda',
         email: 'Alamat Email',
-        email_placeholder: 'anda@email.com',
-        project_type: 'Tipe Proyek',
-        project_placeholder: 'Pilih tipe proyek',
-        details: 'Detail Proyek',
-        details_placeholder: 'Ceritakan tentang proyek Anda...',
-        submit: 'Kirim Pesan via WhatsApp',
-        success: 'Pesan Terkirim!'
+        email_placeholder: 'nama@perusahaan.com',
+        project_type: 'Kategori Layanan',
+        project_placeholder: 'Pilih kategori proyek',
+        details: 'Deskripsi Kebutuhan',
+        details_placeholder: 'Jelaskan visi dan tujuan proyek Anda...',
+        submit: 'Kirim via WhatsApp',
+        success: 'Pesan Berhasil Terkirim!'
       },
-      types: ['Pengembangan Map', 'Scripting', 'UI/UX Design', 'Layanan Penuh', 'Konsultasi']
+      types: ['Arsitektur Map', 'Sistem Scripting', 'Desain UI/UX', 'Solusi End-to-End', 'Konsultasi Teknis']
     },
     footer: {
-      desc: 'Membangun pengalaman Roblox premium dengan teknologi mutakhir dan kreativitas yang tak tertandingi. Visi Anda, keahlian kami.',
+      desc: 'Menghadirkan pengalaman Roblox premium melalui sinergi teknologi mutakhir dan kreativitas strategis. Visi Anda, keahlian kami.',
       services: 'LAYANAN',
-      company: 'PERUSAHAAN',
-      connect: 'HUBUNGI',
-      made_with: 'Dibuat dengan',
-      for_gamers: 'untuk gamer',
-      rights: 'Semua hak dilindungi.'
+      company: 'PROFIL',
+      connect: 'KONTAK',
+      made_with: 'Dikembangkan dengan',
+      for_gamers: 'untuk komunitas',
+      rights: 'Seluruh hak cipta dilindungi.'
     },
     robux_packages: [
       {
@@ -329,17 +347,18 @@ const translations = {
       services: 'Services',
       portfolio: 'Portfolio',
       gallery: 'Gallery',
+      assets: 'Assets',
       topup: 'Top Up',
       pricing: 'Pricing',
       contact: 'Contact',
       topup_btn: 'TOP UP NOW'
     },
     hero: {
-      status: 'SYSTEM ONLINE • AAA DEVELOPMENT ACTIVE',
+      status: 'AV STUDIO • READY TO BUILD YOUR DREAM PROJECT',
       title1: 'AV GAME',
       title2: 'STUDIO',
       subtitle: 'Building Premium Roblox Experiences',
-      subtitle2: 'Next-Generation Game Development • Professional Scripting • Immersive Worlds',
+      subtitle2: 'Transform Your Game Ideas With Roblox Development Experts',
       explore: 'EXPLORE PROJECTS',
       order: 'ORDER YOUR MAP',
       community: 'JOIN COMMUNITY',
@@ -350,223 +369,240 @@ const translations = {
       }
     },
     topup: {
-      badge: 'TRUSTED ROBUX SELLER',
-      title1: 'SELL ROBUX',
-      title2: 'CHEAPEST',
-      subtitle: 'Safe, fast, and trusted Robux top up. The prices below have been adjusted following the promo poster you sent.',
+      badge: 'TRUSTED TOP UP SERVICES',
+      title1: 'TOP UP',
+      title2: 'ROBUX',
+      subtitle: 'Safe and efficient Robux top up services. Competitive pricing tailored to our exclusive offers.',
       market_badge: 'ROBUX MARKET',
-      market_title: 'Get your Robux right now',
-      market_desc: 'Just choose the nominal, click order, then continue chat to WhatsApp. The flow remains simple, fast, and directly processed.',
-      promo_flow: 'PROMO FLOW',
-      promo_title: 'Safe, fast, and trusted',
-      promo_desc: 'Choose Robux nominal, chat WhatsApp, send Roblox username, then transaction is directly processed without additional checkout.',
+      market_title: 'Get Your Robux Instantly',
+      market_desc: 'Select your desired nominal and complete transactions seamlessly through our WhatsApp service.',
+      search_placeholder: 'Search nominal or package...',
+      promo_flow: 'TRANSACTION FLOW',
+      promo_title: 'Safe, Fast, & Transparent',
+      promo_desc: 'Simplified ordering process for your convenience. Confirm, pay, and receive your Robux.',
       stats: {
-        fast: 'Fast Process',
-        fast_val: 'Instant In',
-        safe: 'Safe',
-        safe_val: '100% Trusted',
-        price: 'Price',
-        price_val: 'Cheapest',
-        fit: 'Fit',
-        fit_val: 'All Players'
+        fast: 'Express Service',
+        fast_val: 'Instant Process',
+        safe: 'Guaranteed',
+        safe_val: '100% Secure',
+        price: 'Efficiency',
+        price_val: 'Best Value',
+        fit: 'Flexible',
+        fit_val: 'All Needs'
       },
-      etalase_title: 'Robux Showcase',
-      etalase_desc: 'Nominals and prices have been matched with the promo poster design you sent.',
-      ready_stock: 'READY STOCK',
-      hot_item: 'HOT ITEM',
-      final_price: 'Final price',
-      order_desc: 'Fast order, send Roblox username and payment details via WhatsApp.',
-      order_btn: 'ORDER VIA WA',
+      etalase_title: 'Robux Catalog',
+      etalase_desc: 'A curated selection of Robux packages designed to meet your gaming requirements.',
+      ready_stock: 'IN STOCK',
+      hot_item: 'TOP CHOICE',
+      final_price: 'Final Price',
+      order_desc: 'Complete your order by providing account details and proof of payment.',
+      order_btn: 'CONTACT ADMIN WA',
       avatar_services: {
         title: 'Avatar Item Services',
-        desc: 'Right panel is made like a marketplace sidebar containing additional services and transaction information.',
-        chat: 'Chat WhatsApp'
+        desc: 'Enhance your character\'s visual identity with high-quality custom assets.',
+        chat: 'Consult Now'
       },
       info_transaksi: {
-        title: 'TRANSACTION INFO',
-        flow_title: 'Flow stays directly to WhatsApp',
-        flow_desc: 'No additional checkout, so it\'s faster to close transactions.',
-        easy_title: 'Order easy to process',
-        easy_desc: 'User just needs to send Roblox username, nominal, and payment method.'
+        title: 'TRANSACTION GUIDE',
+        flow_title: 'Direct WhatsApp Communication',
+        flow_desc: 'Direct interaction with our team to ensure every order is processed accurately.',
+        easy_title: 'Ease of Ordering',
+        easy_desc: 'Simply provide the basic details, and our team will handle the rest for you.'
       },
       community_check: {
-        title: 'Community Membership Check',
-        desc: 'Top up via community requires you to be a member of our Roblox group for at least 15 days.',
+        title: 'Community Member Verification',
+        desc: 'Exclusive service for community members. Please ensure you have joined our official group.',
         join_btn: 'JOIN ROBLOX GROUP',
-        input_placeholder: 'Enter Roblox Username...',
-        check_btn: 'CHECK STATUS',
-        checking: 'Checking...',
-        status_member: 'REGISTERED: You can top up now!',
+        input_placeholder: 'Enter Your Roblox Username...',
+        check_btn: 'VERIFY STATUS',
+        checking: 'Processing...',
+        status_member: 'VERIFIED: Service accessible.',
         status_not_member: 'NOT REGISTERED: Please join the group first.',
-        status_error: 'Username not found.',
-        membership_info: 'Make sure the username matches your Roblox name.'
+        status_error: 'Identity not found.',
+        membership_info: 'Ensure the username matches your Roblox profile data.'
       }
     },
     featured_maps: {
       badge: 'FEATURED PROJECTS',
-      title1: 'AV GAME STUDIO',
-      title2: 'MAP LIST',
-      subtitle: 'Explore our collection of AAA-quality Roblox experiences built with cutting-edge technology',
+      title1: 'EXPERIENCE',
+      title2: 'PORTFOLIO',
+      subtitle: 'A collection of premium virtual worlds developed with industry-standard quality',
       play_now: 'Play Now',
       categories: {
-        adventure: 'Adventure Exploration',
-        extreme: 'Extreme Adventure',
-        social: 'Social Hangout',
-        fighting: 'Fighting Arena',
-        farming: 'Farming Simulator',
-        parkour: 'Parkour Challenge',
-        mystery: 'Mystery Horror'
+        adventure: 'World Exploration',
+        extreme: 'Extreme Challenge',
+        social: 'Social Interaction',
+        fighting: 'Competitive Arena',
+        farming: 'Economic Simulator',
+        parkour: 'Physical Agility',
+        mystery: 'Narrative & Mystery'
       },
       status: {
         featured: 'FEATURED',
         new: 'NEW',
         popular: 'POPULAR',
-        live: 'LIVE'
+        live: 'ACTIVE'
       },
       stats: {
-        players: 'Players',
-        rating: 'Rating'
+        players: 'Active Players',
+        rating: 'Community Rating'
       },
       maps: [
-        { title: 'MOUNT BANDA NEIRA', desc: 'Explore the beauty of Mount Banda Neira with stunning natural scenery.' },
-        { title: 'MT BANDA NEIRA JALUR EXTREAM', desc: 'Extreme trail challenges in Banda Neira for true adventurers.' },
-        { title: 'AV NIGHT VIBES', desc: 'Experience the aesthetic night atmosphere with cool music and lighting.' },
-        { title: 'AV ARENA', desc: 'Intense fighting arena with an epic combat system.' },
-        { title: 'TEMPAT NONGKRONG', desc: 'Relaxing hangout place with friends with cool vibes.' },
-        { title: 'MENJADI PETANI', desc: 'Manage your dream farm, plant, harvest, and build a farming empire.' },
-        { title: 'PARKOUR CITY BLUE', desc: 'Parkour challenges in a futuristic city with challenging obstacles.' },
-        { title: 'ORANG HILANG', desc: 'Solve the mystery of missing people in a tense horror experience.' }
+        { title: 'MOUNT BANDA NEIRA', desc: 'Explore majestic natural beauty with stunning visuals.' },
+        { title: 'MT BANDA NEIRA JALUR EXTREAM', desc: 'Test your limits in the most challenging terrain.' },
+        { title: 'AV NIGHT VIBES', desc: 'Immersive night atmosphere with artistic lighting and audio.' },
+        { title: 'AV ARENA', desc: 'Combat competition with responsive and balanced mechanics.' },
+        { title: 'TEMPAT NONGKRONG', desc: 'Social collaboration space to interact in a lush environment.' },
+        { title: 'MENJADI PETANI', desc: 'Deep resource management and economic building simulation.' },
+        { title: 'PARKOUR CITY BLUE', desc: 'Futuristic urban navigation relying on precision and speed.' },
+        { title: 'ORANG HILANG', desc: 'Psychological horror experience with a gripping storyline.' }
       ]
     },
     services: {
-      badge: 'WHAT WE DO',
-      title1: 'OUR',
+      badge: 'OUR EXPERTISE',
+      title1: 'PROFESSIONAL',
       title2: 'SERVICES',
-      subtitle: 'Comprehensive game development solutions powered by cutting-edge technology',
+      subtitle: 'End-to-end game development solutions tailored to your needs',
       list: [
         {
-          title: 'Roblox Map Development',
-          desc: 'Custom world building with immersive environments, detailed terrain, and optimized assets for seamless gameplay.',
-          features: ['World Design', 'Asset Creation', 'Environment Art']
+          title: 'Roblox World Architecture',
+          desc: 'Creation of complex virtual environments with deep attention to aesthetics and performance.',
+          features: ['Level Design', '3D Modeling', 'Lighting Art']
         },
         {
-          title: 'Advanced Scripting',
-          desc: 'Professional Lua scripting for complex game mechanics, AI systems, and multiplayer functionality.',
-          features: ['Game Logic', 'AI Systems', 'Networking']
+          title: 'System Logic & Scripting',
+          desc: 'Efficient Lua code implementation for scalable game systems and innovative mechanics.',
+          features: ['Backend Systems', 'Custom Mechanics', 'Data Integration']
         },
         {
-          title: 'DJ Music Systems',
-          desc: 'Interactive audio systems with custom soundtracks, dynamic music, and immersive sound design.',
-          features: ['Sound Design', 'Music Integration', 'Audio FX']
+          title: 'Dynamic Audio Integration',
+          desc: 'Sound design that enhances player immersion through responsive audio and custom compositions.',
+          features: ['Soundscapes', 'Dynamic Audio', 'Sound FX']
         },
         {
-          title: 'UI/UX Design',
-          desc: 'Modern, intuitive interfaces with smooth animations and responsive layouts for all devices.',
-          features: ['Interface Design', 'Animation', 'Mobile Ready']
+          title: 'User Interface (UI/UX)',
+          desc: 'Functional and aesthetic visual design, optimized for the best user experience.',
+          features: ['Visual Design', 'User Journey', 'Multi-platform']
         },
         {
-          title: 'VFX & Lighting',
-          desc: 'Cinematic visual effects and dynamic lighting systems that bring your world to life.',
-          features: ['Particle FX', 'Dynamic Lights', 'Atmosphere']
+          title: 'Visual Effects & Atmosphere',
+          desc: 'Development of particle effects and lighting systems to create a unique visual identity.',
+          features: ['VFX Production', 'Atmospheric FX', 'Shaders']
         },
         {
-          title: 'Optimization',
-          desc: 'Performance tuning for smooth gameplay on all devices, from mobile to high-end PCs.',
-          features: ['FPS Boost', 'Memory Opt', 'Load Times']
+          title: 'Performance Optimization',
+          desc: 'Ensuring smooth gameplay across devices through technical audits and refinement.',
+          features: ['Code Audit', 'Asset Optimization', 'Frame Stability']
         },
         {
-          title: 'Community Systems',
-          desc: 'Leaderboards, achievements, social features, and engagement tools to grow your player base.',
-          features: ['Leaderboards', 'Achievements', 'Social']
+          title: 'Community Ecosystem',
+          desc: 'Building social features that increase retention and interaction between players.',
+          features: ['Social Integration', 'Reward Systems', 'Analytics']
         }
       ]
     },
     portfolio: {
       badge: 'OUR WORK',
       title: 'PORTFOLIO',
-      subtitle: 'Showcase of our premium Roblox experiences and game development projects',
+      subtitle: 'Representation of strategic projects successfully completed by our team',
       categories: ['All', 'Open World', 'Shooter', 'RPG', 'Racing', 'Survival', 'Social'],
-      view_project: 'View Project',
+      view_project: 'Project Details',
       items: [
-        { title: 'Neon District', desc: 'A sprawling cyberpunk cityscape with dynamic day/night cycles and interactive NPCs.' },
-        { title: 'Galactic Warfare', desc: 'Space combat game featuring customizable ships and epic fleet battles.' },
-        { title: 'Shadow Realms', desc: 'Dark fantasy RPG with skill trees, quests, and procedural dungeons.' },
-        { title: 'Speed Legends', desc: 'High-octane racing with drift mechanics and vehicle customization.' },
-        { title: 'Apocalypse Rising', desc: 'Post-apocalyptic survival with base building and PvP elements.' },
-        { title: 'Party Paradise', desc: 'Social hangout space with minigames and customizable avatars.' }
+        { title: 'Neon District', desc: 'Futuristic metropolis with high environmental detail and dynamic lighting.' },
+        { title: 'Galactic Warfare', desc: 'Space combat simulation with complex vehicle mechanics.' },
+        { title: 'Shadow Realms', desc: 'Fantasy world with deep narrative and character progression systems.' },
+        { title: 'Speed Legends', desc: 'Competitive racing experience focused on control precision.' },
+        { title: 'Apocalypse Rising', desc: 'Post-apocalyptic survival world with challenging strategic elements.' },
+        { title: 'Party Paradise', desc: 'Social interaction platform with various custom entertainment activities.' }
       ]
     },
     pricing: {
-      badge: 'PRICING',
-      title1: 'CHOOSE YOUR',
-      title2: 'PLAN',
-      subtitle: 'Flexible pricing options for every project size and budget',
-      most_popular: 'MOST POPULAR',
+      badge: 'INVESTMENT',
+      title1: 'STRATEGIC',
+      title2: 'CHOICE',
+      subtitle: 'Transparent cost structures designed to support your project\'s growth',
+      most_popular: 'TOP RECOMMENDATION',
       per_project: '/ project',
       plans: [
         {
           name: 'Starter',
-          desc: 'Perfect for small assets and mini-map projects',
-          features: ['Basic Map Design', 'Simple Scripting', 'Standard UI Kit', '3 Revisions', '5 Day Delivery', 'Basic Support']
+          desc: 'Ideal for specific asset development and micro-scale projects',
+          features: ['Basic Design', 'Core Scripting', 'Standard UI Kit', 'Limited Revisions', 'Fast Delivery', 'Technical Support']
         },
         {
           name: 'Premium',
-          desc: 'The sweet spot for full game map development',
-          features: ['Advanced Map Design', 'Complex Scripting', 'Custom UI/UX', 'VFX & Lighting', '10 Revisions', '10 Day Delivery', 'Priority Support', 'Source Files']
+          desc: 'Complete solution for comprehensive game map development',
+          features: ['Advanced Environment Design', 'Custom Mechanics Systems', 'Full UI/UX Design', 'VFX & Atmosphere', 'Flexible Revisions', 'Priority Processing', 'Exclusive Support', 'Source Assets']
         },
         {
           name: 'Ultimate Studio',
-          desc: 'Professional AAA quality for major projects',
-          features: ['AAA Map Development', 'Advanced AI Systems', 'Premium UI/UX Design', 'Cinematic VFX', 'Full Optimization', 'Unlimited Revisions', '21 Day Delivery', '24/7 Support', 'Full Source Code', 'Marketing Assets']
+          desc: 'Industry-standard quality for large-scale projects',
+          features: ['Full AAA Development', 'Complex AI Systems', 'Premium Interface', 'Cinematic Visuals', 'Comprehensive Optimization', 'Continuous Revisions', 'Project Management', '24/7 Support', 'Full Code Access', 'Strategic Consultation']
         }
       ]
     },
     community: {
-      badge: 'JOIN THE SQUAD',
+      badge: 'CREATIVE ECOSYSTEM',
       title1: 'JOIN OUR',
       title2: 'COMMUNITY',
-      subtitle: 'Connect with thousands of gamers, developers, and creators. Share your projects, get feedback, participate in tournaments, and be part of something epic.',
-      discord_btn: 'Join Discord Server',
-      online_status: 'members online right now',
+      subtitle: 'Join a network of professional developers and players to exchange ideas and experiences.',
+      discord_btn: 'Access Discord Server',
+      online_status: 'active members online',
       stats: {
         members: 'Members',
-        tournaments: 'Tournaments',
+        tournaments: 'Events',
         active: 'Active',
-        messages: 'Messages'
+        messages: 'Interactions'
       }
     },
     gallery: {
-      badge: 'COMMUNITY DOCUMENTATION',
-      title1: 'OUR COOL',
-      title2: 'MOMENTS',
-      subtitle: 'A collection of documentation photos of activities and fun from the AV GAME STUDIO community.'
+      badge: 'ACTIVITY GALLERY',
+      title1: 'OUR',
+      title2: 'JOURNEY',
+      subtitle: 'Visual documentation of various initiatives and collaborations within the AV GAME STUDIO community.'
+    },
+    assets: {
+      badge: 'ASSET CATALOG',
+      title1: 'GAME ASSET',
+      title2: 'COLLECTION',
+      subtitle: 'Enhance your projects with high-quality assets. Both paid and free options available.',
+      view_all: 'View All Assets',
+      free_label: 'FREE',
+      paid_label: 'PAID',
+      get_now: 'Get Now',
+      items: [
+        { title: 'Nature Texture Pack', type: 'free', desc: 'A collection of high-quality nature textures for your game environment.', link: 'https://discord.gg/vNjDDVf' },
+        { title: 'Pro Lighting System', type: 'paid', desc: 'Dynamic lighting script to create an immersive atmosphere.', price: 'Rp 50.000', link: 'https://wa.me/62895327025015?text=Hello%20AV%20GAME%20STUDIO,%20I%20want%20to%20buy%20Pro%20Lighting%20System%20Asset' },
+        { title: 'Basic Character Models', type: 'free', desc: 'Basic character models ready for game prototyping.', link: 'https://discord.gg/vNjDDVf' },
+        { title: 'Futuristic UI Kit', type: 'paid', desc: 'Modern user interface set with a sci-fi theme.', price: 'Rp 75.000', link: 'https://wa.me/62895327025015?text=Hello%20AV%20GAME%20STUDIO,%20I%20want%20to%20buy%20Futuristic%20UI%20Kit%20Asset' }
+      ]
     },
     contact: {
-      badge: 'GET IN TOUCH',
-      title1: 'START YOUR',
-      title2: 'PROJECT',
-      subtitle: 'Ready to bring your vision to life? Contact us and let\'s create something extraordinary together. Our team is ready to help.',
+      badge: 'CONSULTATION',
+      title1: 'START',
+      title2: 'COLLABORATION',
+      subtitle: 'Consult your project vision with our expert team. We are ready to deliver targeted development solutions.',
       form: {
-        name: 'Your Name',
-        name_placeholder: 'Enter your name',
+        name: 'Full Name',
+        name_placeholder: 'Enter your full name',
         email: 'Email Address',
-        email_placeholder: 'your@email.com',
-        project_type: 'Project Type',
-        project_placeholder: 'Select project type',
-        details: 'Project Details',
-        details_placeholder: 'Tell us about your project...',
-        submit: 'Send Message via WhatsApp',
-        success: 'Message Sent!'
+        email_placeholder: 'name@company.com',
+        project_type: 'Service Category',
+        project_placeholder: 'Select project category',
+        details: 'Requirement Description',
+        details_placeholder: 'Explain your project vision and goals...',
+        submit: 'Send via WhatsApp',
+        success: 'Message Successfully Sent!'
       },
-      types: ['Map Development', 'Scripting', 'UI/UX Design', 'Full Service', 'Consultation']
+      types: ['Map Architecture', 'Scripting Systems', 'UI/UX Design', 'End-to-End Solutions', 'Technical Consultation']
     },
     footer: {
-      desc: 'Building premium Roblox experiences with cutting-edge technology and unmatched creativity. Your vision, our expertise.',
+      desc: 'Delivering premium Roblox experiences through the synergy of cutting-edge technology and strategic creativity. Your vision, our expertise.',
       services: 'SERVICES',
-      company: 'COMPANY',
-      connect: 'CONNECT',
-      made_with: 'Made with',
-      for_gamers: 'for gamers',
+      company: 'PROFILE',
+      connect: 'CONTACT',
+      made_with: 'Developed with',
+      for_gamers: 'for community',
       rights: 'All rights reserved.'
     },
     robux_packages: [

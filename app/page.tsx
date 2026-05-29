@@ -5,6 +5,7 @@ import { Services } from '@/components/services'
 import { Portfolio } from '@/components/portfolio'
 import { Community } from '@/components/community'
 import { Gallery } from '@/components/gallery'
+import { Assets } from '@/components/assets'
 import { TopUp } from '@/components/topup'
 import { Pricing } from '@/components/pricing'
 import { Contact } from '@/components/contact'
@@ -27,6 +28,7 @@ export default function Home() {
       <Portfolio />
       <Community />
       <Gallery />
+      <Assets />
       <TopUp />
       <Pricing />
       <Contact />

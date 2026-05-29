@@ -139,7 +139,12 @@ Thank you!`
                 </div>
               </a>
 
-              <div className="flex items-center gap-4">
+              <a 
+                href="https://www.roblox.com/id/users/6200304820/profile"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-4 hover:opacity-80 transition-opacity group"
+              >
                 <div className="w-12 h-12 rounded-none glass border border-[#ff4655]/20 flex items-center justify-center skew-x-[-12deg]">
                   <Gamepad2 className="w-5 h-5 text-[#ff4655] -skew-x-[-12deg]" />
                 </div>
@@ -147,7 +152,7 @@ Thank you!`
                   <div className="text-[10px] text-white/40 font-black uppercase tracking-normal italic">Roblox</div>
                   <div className="text-white font-black uppercase text-xs tracking-normal">@AVGameStudio</div>
                 </div>
-              </div>
+              </a>
 
               <a 
                 href="https://www.instagram.com/avgamestudio"
@@ -207,7 +212,7 @@ Thank you!`
                         value={formData.name}
                         onChange={handleChange}
                         placeholder={t('contact.form.name_placeholder')}
-                        className="w-full pl-12 pr-4 py-4 rounded-none bg-[#111827]/50 border border-white/5 focus:border-[#ff4655] text-white placeholder-white/20 outline-none transition-colors font-bold text-xs uppercase"
+                        className="w-full pl-12 pr-4 py-4 rounded-none bg-[#111827]/50 border border-white/5 focus:border-[#ff4655] text-white placeholder-white/20 outline-none transition-colors font-bold text-xs"
                         required
                       />
                     </div>
@@ -224,7 +229,7 @@ Thank you!`
                         value={formData.email}
                         onChange={handleChange}
                         placeholder={t('contact.form.email_placeholder')}
-                        className="w-full pl-12 pr-4 py-4 rounded-none bg-[#111827]/50 border border-white/5 focus:border-[#ff4655] text-white placeholder-white/20 outline-none transition-colors font-bold text-xs uppercase"
+                        className="w-full pl-12 pr-4 py-4 rounded-none bg-[#111827]/50 border border-white/5 focus:border-[#ff4655] text-white placeholder-white/20 outline-none transition-colors font-bold text-xs"
                         required
                       />
                     </div>
@@ -239,7 +244,7 @@ Thank you!`
                         name="projectType"
                         value={formData.projectType}
                         onChange={handleChange}
-                        className="w-full pl-12 pr-10 py-4 rounded-none bg-[#111827]/50 border border-white/5 focus:border-[#ff4655] text-white outline-none transition-colors appearance-none cursor-pointer font-bold text-xs uppercase"
+                        className="w-full pl-12 pr-10 py-4 rounded-none bg-[#111827]/50 border border-white/5 focus:border-[#ff4655] text-white outline-none transition-colors appearance-none cursor-pointer font-bold text-xs"
                         required
                       >
                         <option value="" disabled className="bg-[#030303]">{t('contact.form.project_placeholder')}</option>

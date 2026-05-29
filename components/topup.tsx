@@ -335,7 +335,7 @@ export function TopUp() {
                     value={robloxUsername}
                     onChange={(e) => setRobloxUsername(e.target.value)}
                     placeholder={t('topup.community_check.input_placeholder')}
-                    className="w-full rounded-none bg-black/40 border border-white/10 px-5 py-4 text-sm text-white placeholder-white/30 outline-none focus:border-[#ff4655] transition-all font-bold uppercase"
+                    className="w-full rounded-none bg-black/40 border border-white/10 px-5 py-4 text-sm text-white placeholder-white/30 outline-none focus:border-[#ff4655] transition-all font-bold"
                   />
                   <button
                     onClick={handleCheckMembership}

@@ -40,6 +40,16 @@
       "meta": "Untuk player aktif",
       "stock": "Ready",
       "message": "Halo AV GAME STUDIO, saya ingin top up 2000 Robux dengan harga Rp 290.000. Mohon info proses dan pembayarannya ya."
+    },
+    {
+      "id": 5,
+      "name": "5000 Robux",
+      "price": "Rp 725.000",
+      "description": "Paket Sultan untuk kebutuhan item limited, gamepass mahal, dan dominasi avatar.",
+      "badge": "ULTIMATE",
+      "meta": "Pilihan para Sultan",
+      "stock": "Ready",
+      "message": "Halo AV GAME STUDIO, saya ingin top up 5000 Robux dengan harga Rp 725.000. Mohon info proses dan pembayarannya ya."
     }
   ],
   "avatar_services": [

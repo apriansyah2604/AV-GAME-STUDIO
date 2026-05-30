@@ -32,10 +32,27 @@ export async function POST(request: Request) {
         const amount = notification.custom_field2 ? parseInt(notification.custom_field2) : undefined;
         
         if (username && amount) {
-          console.log(`Processing payout for ${amount} Robux to ${username}.`);
-          // Jalankan payout otomatis
-          const result = await processPayout(username, amount);
-          console.log('Payout result:', result);
+          console.log(`Processing automatic payout for ${amount} Robux to ${username}.`);
+          
+          // Jalankan payout otomatis melalui API internal kita (yang sudah terhubung ke Hugging Face)
+          const payoutUrl = `${new URL(request.url).origin}/api/payout`;
+          
+          try {
+            const payoutResponse = await fetch(payoutUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                username: username,
+                amount: amount,
+                secret: process.env.PAYOUT_SECRET_KEY
+              })
+            });
+            
+            const payoutResult = await payoutResponse.json();
+            console.log('Automatic Payout result:', payoutResult);
+          } catch (err: any) {
+            console.error('Failed to trigger automatic payout:', err.message);
+          }
         } else {
           console.error('Data transaksi tidak lengkap (custom_fields kosong):', {
             username,

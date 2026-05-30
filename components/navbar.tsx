@@ -33,7 +33,6 @@ export function Navbar() {
     { name: t('nav.portfolio'), href: '#portfolio' },
     { name: t('nav.gallery'), href: '#gallery' },
     { name: t('nav.assets'), href: '#assets' },
-    { name: t('nav.topup'), href: '#topup' },
     { name: t('nav.pricing'), href: '#pricing' },
     { name: t('nav.contact'), href: '#contact' },
   ]
@@ -233,6 +232,19 @@ export function Navbar() {
 
               {/* Mobile Footer Area */}
               <div className="mt-auto space-y-8 pt-8 border-t border-[#ff4655]/10">
+                {/* Top Up CTA Mobile */}
+                <motion.a
+                  href="#topup"
+                  onClick={(e) => handleNavLinkClick(e, '#topup')}
+                  className="flex relative px-6 py-4 rounded-none overflow-hidden group items-center justify-center w-full"
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <div className="absolute inset-0 bg-[#ff4655] skew-x-[-12deg]" />
+                  <span className="relative font-black tracking-normal text-white uppercase text-lg skew-x-[12deg]">
+                    {t('nav.topup_btn')}
+                  </span>
+                </motion.a>
+
                 {/* Language Switcher */}
                 <div>
                   <p className="text-[10px] font-black tracking-normal text-[#ff4655] mb-4 uppercase opacity-50">Select Region</p>

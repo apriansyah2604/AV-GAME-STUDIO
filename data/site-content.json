@@ -3,7 +3,7 @@
     {
       "id": 1,
       "name": "100 Robux",
-      "price": "Rp 15.000",
+      "price": "Rp 1.000",
       "description": "Pilihan hemat untuk top up kecil, trial buy, atau kebutuhan item ringan.",
       "badge": "FAST",
       "meta": "Proses 5-15 menit",
@@ -173,43 +173,71 @@
       "id": 1,
       "title": "Pengembangan Map Roblox",
       "description": "Pembangunan dunia kustom dengan lingkungan imersif, medan mendetail, and aset yang dioptimalkan untuk gameplay yang lancar.",
-      "features": ["Desain Dunia", "Pembuatan Aset", "Seni Lingkungan"]
+      "features": [
+        "Desain Dunia",
+        "Pembuatan Aset",
+        "Seni Lingkungan"
+      ]
     },
     {
       "id": 2,
       "title": "Scripting Lanjutan",
       "description": "Scripting Lua profesional untuk mekanik game yang kompleks, sistem AI, and fungsionalitas multipemain.",
-      "features": ["Logika Game", "Sistem AI", "Networking"]
+      "features": [
+        "Logika Game",
+        "Sistem AI",
+        "Networking"
+      ]
     },
     {
       "id": 3,
       "title": "Sistem Musik DJ",
       "description": "Sistem audio interaktif dengan soundtrack kustom, musik dinamis, and desain suara imersif.",
-      "features": ["Desain Suara", "Integrasi Musik", "Efek Audio"]
+      "features": [
+        "Desain Suara",
+        "Integrasi Musik",
+        "Efek Audio"
+      ]
     },
     {
       "id": 4,
       "title": "Desain UI/UX",
       "description": "Antarmuka modern and intuitif dengan animasi halus and tata letak responsif untuk semua perangkat.",
-      "features": ["Desain Antarmuka", "Animasi", "Siap Mobile"]
+      "features": [
+        "Desain Antarmuka",
+        "Animasi",
+        "Siap Mobile"
+      ]
     },
     {
       "id": 5,
       "title": "VFX & Pencahayaan",
       "description": "Efek visual sinematik and sistem pencahayaan dinamis yang menghidupkan dunia Anda.",
-      "features": ["Efek Partikel", "Lampu Dinamis", "Atmosfer"]
+      "features": [
+        "Efek Partikel",
+        "Lampu Dinamis",
+        "Atmosfer"
+      ]
     },
     {
       "id": 6,
       "title": "Optimalisasi",
       "description": "Penyetelan performa untuk gameplay yang lancar di semua perangkat, dari seluler hingga PC kelas atas.",
-      "features": ["Boost FPS", "Opt Memori", "Waktu Muat"]
+      "features": [
+        "Boost FPS",
+        "Opt Memori",
+        "Waktu Muat"
+      ]
     },
     {
       "id": 7,
       "title": "Sistem Komunitas",
       "description": "Papan peringkat, pencapaian, fitur sosial, and alat keterlibatan untuk menumbuhkan basis pemain Anda.",
-      "features": ["Papan Peringkat", "Pencapaian", "Sosial"]
+      "features": [
+        "Papan Peringkat",
+        "Pencapaian",
+        "Sosial"
+      ]
     }
   ],
   "pricing_plans": [
@@ -219,7 +247,14 @@
       "description": "Sangat cocok untuk aset kecil and proyek mini-map",
       "price_idr": "Rp 500rb",
       "price_usd": "$35",
-      "features": ["Desain Map Dasar", "Scripting Sederhana", "UI Kit Standar", "3 Revisi", "Pengiriman 5 Hari", "Dukungan Dasar"],
+      "features": [
+        "Desain Map Dasar",
+        "Scripting Sederhana",
+        "UI Kit Standar",
+        "3 Revisi",
+        "Pengiriman 5 Hari",
+        "Dukungan Dasar"
+      ],
       "popular": false
     },
     {
@@ -228,7 +263,16 @@
       "description": "Pilihan terbaik untuk pengembangan map game lengkap",
       "price_idr": "Rp 1.5Jt",
       "price_usd": "$99",
-      "features": ["Desain Map Lanjutan", "Scripting Kompleks", "Custom UI/UX", "VFX & Pencahayaan", "10 Revisi", "10 Hari Delivery", "Dukungan Prioritas", "File Sumber"],
+      "features": [
+        "Desain Map Lanjutan",
+        "Scripting Kompleks",
+        "Custom UI/UX",
+        "VFX & Pencahayaan",
+        "10 Revisi",
+        "10 Hari Delivery",
+        "Dukungan Prioritas",
+        "File Sumber"
+      ],
       "popular": true
     },
     {
@@ -237,7 +281,18 @@
       "description": "Kualitas AAA profesional untuk proyek besar",
       "price_idr": "Rp 10Jt",
       "price_usd": "$650",
-      "features": ["AAA Map Development", "Advanced AI Systems", "Premium UI/UX Design", "Cinematic VFX", "Full Optimization", "Unlimited Revisions", "21 Day Delivery", "24/7 Support", "Full Source Code", "Marketing Assets"],
+      "features": [
+        "AAA Map Development",
+        "Advanced AI Systems",
+        "Premium UI/UX Design",
+        "Cinematic VFX",
+        "Full Optimization",
+        "Unlimited Revisions",
+        "21 Day Delivery",
+        "24/7 Support",
+        "Full Source Code",
+        "Marketing Assets"
+      ],
       "popular": false
     }
   ]

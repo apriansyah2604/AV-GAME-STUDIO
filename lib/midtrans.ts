@@ -8,7 +8,7 @@ import midtransClient from 'midtrans-client';
 export const snap = new midtransClient.Snap({
   isProduction: process.env.MIDTRANS_IS_PRODUCTION === 'true',
   serverKey: process.env.MIDTRANS_SERVER_KEY,
-  clientKey: process.env.MIDTRANS_CLIENT_KEY
+  clientKey: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY
 });
 
 export async function createTransaction(orderId: string, amount: number, itemDetails: any, customerDetails: any, metadata: { username: string, robux_amount: number }) {
@@ -22,8 +22,8 @@ export async function createTransaction(orderId: string, amount: number, itemDet
     // Gunakan custom_field untuk meneruskan data ke webhook
     custom_field1: metadata.username,
     custom_field2: metadata.robux_amount.toString(),
-    // Aktifkan metode pembayaran umum secara eksplisit
-    enabled_payments: ["gopay", "qris", "shopeepay", "bank_transfer"],
+    // Biarkan Midtrans menampilkan semua metode yang aktif di dashboard
+    // enabled_payments: ["gopay", "qris", "shopeepay", "bank_transfer"],
     credit_card: {
       secure: true
     }

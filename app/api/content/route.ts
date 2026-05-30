@@ -1,10 +1,5 @@
 import { NextResponse } from 'next/server'
-import fs from 'fs/promises'
-import path from 'path'
-
-// Konfigurasi Path Database
-const CONTENT_PATH = path.join(process.cwd(), 'data', 'site-content.json')
-const GALLERY_PATH = path.join(process.cwd(), 'data', 'gallery.json')
+import { supabase } from '@/lib/supabase'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -12,44 +7,61 @@ export async function GET(request: Request) {
 
   try {
     if (type === 'gallery') {
-      const data = await fs.readFile(GALLERY_PATH, 'utf-8')
-      return NextResponse.json(JSON.parse(data))
+      const { data, error } = await supabase.from('gallery').select('*').order('created_at', { ascending: false })
+      if (error) throw error
+      return NextResponse.json(data || [])
     }
-    const data = await fs.readFile(CONTENT_PATH, 'utf-8')
-    return NextResponse.json(JSON.parse(data))
-  } catch (error) {
-    return NextResponse.json({ robux_packages: [], avatar_services: [], general: {} })
+    
+    // Fetch all content
+    const { data: pricing, error: pError } = await supabase.from('pricing').select('*').order('created_at', { ascending: true })
+    const { data: assets, error: aError } = await supabase.from('assets').select('*').order('created_at', { ascending: true })
+    
+    if (pError || aError) throw (pError || aError)
+
+    return NextResponse.json({
+      robux_packages: pricing || [],
+      avatar_services: assets || [],
+      general: {}
+    })
+  } catch (error: any) {
+    console.error('Supabase Fetch Content Error:', error)
+    return NextResponse.json({
+      robux_packages: [],
+      avatar_services: [],
+      general: {}
+    }, { status: 200 })
   }
 }
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json()
-    const { type, data: newData } = body
+    const { type, data: newData } = await request.json()
 
-    // Logika simpan data berdasarkan type
     if (type === 'gallery') {
-      await fs.writeFile(GALLERY_PATH, JSON.stringify(newData, null, 2))
+      // Gallery usually is an array of items
+      // We'll delete and re-insert for simplicity in this admin context, 
+      // or handle upserts if data has IDs.
+      await supabase.from('gallery').delete().neq('id', '00000000-0000-0000-0000-000000000000') // Clear all
+      const { error } = await supabase.from('gallery').insert(newData)
+      if (error) throw error
       return NextResponse.json({ success: true })
     }
 
-    const fileContent = await fs.readFile(CONTENT_PATH, 'utf-8')
-    const content = JSON.parse(fileContent)
-
     if (type === 'pricing') {
-      content.robux_packages = newData
+      await supabase.from('pricing').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+      const { error } = await supabase.from('pricing').insert(newData)
+      if (error) throw error
     } else if (type === 'assets') {
-      content.avatar_services = newData
-    } else if (type === 'general') {
-      content.general = { ...content.general, ...newData }
+      await supabase.from('assets').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+      const { error } = await supabase.from('assets').insert(newData)
+      if (error) throw error
     } else {
       return NextResponse.json({ error: 'Invalid type' }, { status: 400 })
     }
 
-    await fs.writeFile(CONTENT_PATH, JSON.stringify(content, null, 2))
     return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error('Update content error:', error)
-    return NextResponse.json({ error: 'Failed to update' }, { status: 500 })
+  } catch (error: any) {
+    console.error('Supabase Update Content Error:', error)
+    return NextResponse.json({ error: 'Failed to update content' }, { status: 500 })
   }
 }

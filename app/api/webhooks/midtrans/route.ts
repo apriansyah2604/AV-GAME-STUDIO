@@ -1,9 +1,5 @@
 import { NextResponse } from 'next/server';
-import { processPayout } from '@/lib/roblox';
-import fs from 'fs';
-import path from 'path';
-
-const ORDERS_FILE = path.join(process.cwd(), 'data', 'orders.json');
+import { supabase } from '@/lib/supabase';
 
 /**
  * Webhook Midtrans untuk menangani notifikasi pembayaran.
@@ -35,42 +31,28 @@ export async function POST(request: Request) {
         const username = notification.custom_field1;
         const amount = notification.custom_field2 ? parseInt(notification.custom_field2) : undefined;
         
-        // --- CATAT PESANAN KE ORDERS.JSON (Hanya Berhasil di Local, Gagal di Vercel) ---
+        // --- CATAT/UPDATE PESANAN KE SUPABASE ---
         try {
-          if (fs.appendFileSync) { // Cek apakah filesystem writable
-            let orders = [];
-            if (fs.existsSync(ORDERS_FILE)) {
-              orders = JSON.parse(fs.readFileSync(ORDERS_FILE, 'utf8'));
-            }
-            
-            const newOrder = {
+          const { error } = await supabase
+            .from('orders')
+            .upsert({
               id: orderId,
               username,
               package: `${amount} Robux`,
               price: `Rp ${notification.gross_amount}`,
               status: 'completed',
-              timestamp: new Date().toISOString(),
               proof: 'PAID VIA MIDTRANS'
-            };
-
-            const existingIndex = orders.findIndex((o: any) => o.id === orderId);
-            if (existingIndex > -1) {
-              orders[existingIndex] = { ...orders[existingIndex], status: 'completed' };
-            } else {
-              orders.push(newOrder);
-            }
+            });
             
-            fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2));
-          }
+          if (error) throw error;
         } catch (err) {
-          console.log('Note: File storage not available (Vercel environment). Skipping history save.');
+          console.error('Failed to update Supabase in webhook:', err);
         }
         // ------------------------------------
 
         if (username && amount) {
           console.log(`Processing automatic payout for ${amount} Robux to ${username}.`);
           
-          // AMBIL URL BOT LANGSUNG DARI ENV
           const botUrl = process.env.ROBLOX_SERVER_URL;
           const secret = process.env.PAYOUT_SECRET_KEY;
           
@@ -100,9 +82,7 @@ export async function POST(request: Request) {
         } else {
           console.error('Data transaksi tidak lengkap (custom_fields kosong):', {
             username,
-            amount,
-            custom_field1: notification.custom_field1,
-            custom_field2: notification.custom_field2
+            amount
           });
         }
       }

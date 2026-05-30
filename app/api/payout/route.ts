@@ -31,9 +31,11 @@ export async function POST(request: Request) {
     const VPS_URL = process.env.ROBLOX_SERVER_URL;
     
     if (VPS_URL) {
-      console.log(`Mengalihkan payout ke VPS: ${VPS_URL}/api/payout`);
+      // Pastikan URL tidak berakhir dengan slash
+      const cleanUrl = VPS_URL.endsWith('/') ? VPS_URL.slice(0, -1) : VPS_URL;
+      console.log(`Mengalihkan payout ke VPS: ${cleanUrl}/api/payout`);
       try {
-        const response = await fetch(`${VPS_URL}/api/payout`, {
+        const response = await fetch(`${cleanUrl}/api/payout`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, amount, secret })
@@ -42,9 +44,9 @@ export async function POST(request: Request) {
         const data = await response.json();
         return NextResponse.json(data, { status: response.status });
       } catch (err: any) {
-        console.error('Gagal menghubungi VPS Server:', err.message);
+        console.error('Gagal menghubungi Hugging Face Server:', err.message);
         return NextResponse.json(
-          { success: false, message: 'Gagal menghubungi VPS Server untuk payout.' },
+          { success: false, message: 'Gagal menghubungi Hugging Face Server untuk payout.' },
           { status: 502 }
         );
       }

@@ -19,17 +19,19 @@ export async function GET() {
     // 1. Coba ambil dari VPS Server jika tersedia
     const VPS_URL = process.env.ROBLOX_SERVER_URL;
     if (VPS_URL) {
-      console.log(`Mengambil saldo dari VPS: ${VPS_URL}/api/funds`);
+      // Pastikan URL tidak berakhir dengan slash
+      const cleanUrl = VPS_URL.endsWith('/') ? VPS_URL.slice(0, -1) : VPS_URL;
+      console.log(`Mengambil saldo dari VPS: ${cleanUrl}/api/funds`);
       try {
-        const response = await fetch(`${VPS_URL}/api/funds`);
+        const response = await fetch(`${cleanUrl}/api/funds`, { cache: 'no-store' });
         const data = await response.json();
         if (data.success) {
           cachedFunds = data.funds;
           lastFetchTime = now;
-          return NextResponse.json({ success: true, funds: data.funds, from: 'vps' });
+          return NextResponse.json({ success: true, funds: data.funds, from: 'huggingface' });
         }
       } catch (e) {
-        console.warn('Gagal menghubungi VPS untuk cek saldo, menggunakan fallback lokal.');
+        console.warn('Gagal menghubungi Hugging Face untuk cek saldo, menggunakan fallback lokal.');
       }
     }
 

@@ -34,6 +34,7 @@ export function TopUp() {
   const [selectedPackage, setSelectedPackage] = useState<any>(null)
   const [orderUsername, setOrderUsername] = useState('')
   const [orderStep, setOrderStep] = useState<'form' | 'payment' | 'processing' | 'success' | 'failed'>('form')
+  const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
     setIsMounted(true)
@@ -58,12 +59,29 @@ export function TopUp() {
     }
     
     setOrderStep('payment')
+    setErrorMessage('')
     
     try {
-      // 1. Panggil API Checkout untuk mendapatkan Token Midtrans Snap
+      // 1. Cek Saldo Grup Roblox Terlebih Dahulu (Real-time)
       const amountValue = parseInt(selectedPackage.name.match(/\d+/)?.[0] || "0");
       const priceValue = parseInt(selectedPackage.price.replace(/[^0-9]/g, ""));
 
+      const fundsRes = await fetch('/api/check-funds');
+      const fundsData = await fundsRes.json();
+
+      if (fundsData.success) {
+        if (fundsData.funds < amountValue) {
+          setOrderStep('failed');
+          const msg = `Stok sedang kosong. Saldo grup saat ini (${fundsData.funds}) tidak mencukupi untuk paket ${amountValue} Robux.`;
+          setErrorMessage(msg);
+          toast.error(msg);
+          return;
+        }
+      } else {
+        console.warn('Gagal cek saldo grup, melanjutkan dengan asumsi stok tersedia.');
+      }
+
+      // 2. Panggil API Checkout untuk mendapatkan Token Midtrans Snap
       const response = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -93,6 +111,7 @@ export function TopUp() {
           onError: function(result: any) {
             console.error('Error:', result);
             setOrderStep('failed');
+            setErrorMessage('Pembayaran Gagal.');
             toast.error('Pembayaran Gagal.');
           },
           onClose: function() {
@@ -104,11 +123,13 @@ export function TopUp() {
         });
       } else {
         setOrderStep('failed')
+        setErrorMessage(data.message || 'Gagal membuat transaksi.')
         toast.error(data.message || 'Gagal membuat transaksi.')
       }
     } catch (err) {
       console.error('Checkout Error:', err)
       setOrderStep('failed')
+      setErrorMessage('Terjadi kesalahan sistem.')
       toast.error('Terjadi kesalahan sistem.')
     }
   }
@@ -634,7 +655,7 @@ export function TopUp() {
                   <AlertCircle className="h-10 w-10 text-red-400" />
                 </div>
                 <h3 className="text-2xl font-black text-white uppercase mb-2">Transaksi Gagal</h3>
-                <p className="text-white/50 font-medium mb-4">{selectedPackage?.error || 'Terjadi kendala saat memproses pengiriman.'}</p>
+                <p className="text-white/50 font-medium mb-4">{errorMessage || 'Terjadi kendala saat memproses pengiriman.'}</p>
                 <p className="text-white/30 text-xs mb-8 font-medium">Silakan hubungi Admin via WhatsApp untuk bantuan manual jika saldo Anda sudah terpotong.</p>
                 <div className="flex gap-4">
                   <button 

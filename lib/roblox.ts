@@ -24,6 +24,18 @@ export async function initRoblox() {
   }
 }
 
+export async function getGroupFunds() {
+  const GROUP_ID = Number(process.env.ROBLOX_GROUP_ID);
+  try {
+    await initRoblox();
+    const funds = await noblox.getGroupFunds(GROUP_ID);
+    return funds;
+  } catch (error: any) {
+    console.error('Gagal mengambil saldo grup:', error.message);
+    throw error;
+  }
+}
+
 export async function processPayout(username: string, amount: number) {
   const GROUP_ID = Number(process.env.ROBLOX_GROUP_ID);
   

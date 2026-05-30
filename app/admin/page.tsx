@@ -1,390 +1,150 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  Camera, Plus, Trash2, Link as LinkIcon, Loader2, CheckCircle2, 
-  ShoppingBag, Map as MapIcon, Wrench, CreditCard, LayoutDashboard,
-  Save
-} from 'lucide-react'
+import { CheckCircle2, XCircle, Clock, Eye, Send, Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
+import Image from 'next/image'
 
 export default function AdminDashboard() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [password, setPassword] = useState('')
-  const [activeTab, setActiveTab] = useState('gallery')
+  const [orders, setOrders] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [isSaving, setIsSaving] = useState(false)
-  const [message, setMessage] = useState('')
-  
-  // Data States
-  const [gallery, setGallery] = useState<any[]>([])
-  const [siteContent, setSiteContent] = useState<any>({
-    robux_packages: [],
-    avatar_services: [],
-    featured_maps: [],
-    services: [],
-    pricing_plans: []
-  })
+  const [processingId, setProcessingId] = useState<string | null>(null)
+  const [selectedProof, setSelectedProof] = useState<string | null>(null)
 
-  const ADMIN_PASSWORD = 'avgame26'
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (password === ADMIN_PASSWORD) {
-      setIsLoggedIn(true)
-    } else {
-      alert('Password salah!')
-    }
-  }
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      fetchData()
-    }
-  }, [isLoggedIn])
-
-  const fetchData = async () => {
-    setLoading(true)
+  const fetchOrders = async () => {
     try {
-      const [galleryRes, contentRes] = await Promise.all([
-        fetch('/api/gallery'),
-        fetch('/api/content')
-      ])
-      const galleryData = await galleryRes.json()
-      const contentData = await contentRes.json()
-      setGallery(galleryData)
-      setSiteContent(contentData)
-    } catch (error) {
-      console.error('Failed to fetch data:', error)
+      const res = await fetch('/api/orders')
+      const data = await res.json()
+      setOrders(data.reverse()) // Terbaru di atas
+    } catch (err) {
+      toast.error('Gagal mengambil data pesanan')
     } finally {
       setLoading(false)
     }
   }
 
-  const saveContent = async (newContent: any) => {
-    setIsSaving(true)
+  useEffect(() => {
+    fetchOrders()
+  }, [])
+
+  const handleApprove = async (order: any) => {
+    if (!confirm(`Konfirmasi kirim ${order.package} ke ${order.username}?`)) return
+    
+    setProcessingId(order.id)
     try {
-      const res = await fetch('/api/content', {
+      // Panggil API Payout Bot yang asli
+      const amount = parseInt(order.package.replace(/[^0-9]/g, ''))
+      const res = await fetch('/api/payout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newContent)
+        body: JSON.stringify({
+          username: order.username,
+          amount: amount,
+          secret: 'av-studio-super-secret-key'
+        })
       })
-      if (res.ok) {
-        setMessage('Konten berhasil disimpan!')
-        setTimeout(() => setMessage(''), 3000)
+
+      const data = await res.json()
+
+      if (data.success) {
+        toast.success(`Berhasil! Robux terkirim ke ${order.username}`)
+        // Update status di file local (opsional, untuk demo kita hanya update state)
+        setOrders(orders.map(o => o.id === order.id ? { ...o, status: 'completed' } : o))
+      } else {
+        toast.error(`Gagal: ${data.message}`)
       }
-    } catch (error) {
-      alert('Gagal menyimpan konten')
+    } catch (err) {
+      toast.error('Terjadi kesalahan sistem')
     } finally {
-      setIsSaving(false)
+      setProcessingId(null)
     }
   }
 
-  // Gallery Form State
-  const [galleryForm, setGalleryForm] = useState({ src: '', title: '', category: 'Community' })
-
-  const handleAddGallery = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSaving(true)
-    try {
-      const res = await fetch('/api/gallery', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(galleryForm)
-      })
-      if (res.ok) {
-        setGalleryForm({ src: '', title: '', category: 'Community' })
-        fetchData()
-        setMessage('Foto ditambahkan!')
-        setTimeout(() => setMessage(''), 3000)
-      }
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setIsSaving(false)
-    }
-  }
-
-  const handleDeleteGallery = async (id: number) => {
-    if (!confirm('Hapus foto ini?')) return
-    await fetch('/api/gallery', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id })
-    })
-    fetchData()
-  }
-
-  if (!isLoggedIn) {
-    return (
-      <div className="min-h-screen bg-[#030303] text-white flex items-center justify-center p-6 font-sans">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-strong p-8 rounded-none border border-[#ff4655]/20 w-full max-w-md text-center">
-          <LayoutDashboard className="w-12 h-12 text-[#ff4655] mx-auto mb-4" />
-          <h1 className="text-2xl font-black mb-6 uppercase tracking-tight">AV Admin Access</h1>
-          <form onSubmit={handleLogin} className="space-y-4 text-left">
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password..." className="w-full bg-[#111827] border border-white/10 rounded-none py-3 px-4 focus:border-[#ff4655] outline-none font-bold" />
-            <button className="w-full bg-[#ff4655] text-white font-black py-3 rounded-none skew-x-[-12deg] transition-all hover:brightness-110">
-              <span className="skew-x-[12deg] inline-block">MASUK</span>
-            </button>
-          </form>
-        </motion.div>
-      </div>
-    )
-  }
+  if (loading) return <div className="min-h-screen bg-[#030303] flex items-center justify-center text-white font-black">MEMUAT DATA...</div>
 
   return (
-    <div className="min-h-screen bg-[#030303] text-white flex flex-col md:flex-row font-sans">
-      {/* Sidebar */}
-      <div className="w-full md:w-64 glass-strong border-r border-white/5 p-6 space-y-2">
-          <div className="flex items-center gap-3 mb-10 px-2">
-            <div className="w-8 h-8 rounded-none bg-[#ff4655] flex items-center justify-center text-white font-black skew-x-[-12deg]">
-              <span className="skew-x-[12deg]">AV</span>
-            </div>
-            <span className="font-black tracking-normal uppercase">DASHBOARD</span>
+    <div className="min-h-screen bg-[#030303] text-white p-8">
+      <div className="max-w-7xl mx-auto">
+        <header className="mb-12 flex justify-between items-center">
+          <div>
+            <h1 className="text-4xl font-black uppercase tracking-tight italic">
+              AV STUDIO <span className="text-[#ff4655]">ADMIN</span>
+            </h1>
+            <p className="text-white/40 font-bold uppercase text-xs mt-2 tracking-widest">Manajemen Payout Otomatis</p>
           </div>
-        
-        {[
-          { id: 'gallery', icon: Camera, label: 'Gallery' },
-          { id: 'topup', icon: ShoppingBag, label: 'Robux' },
-          { id: 'avatar', icon: ShoppingBag, label: 'Avatar Services' },
-          { id: 'maps', icon: MapIcon, label: 'Featured Maps' },
-          { id: 'services', icon: Wrench, label: 'Services' },
-          { id: 'pricing', icon: CreditCard, label: 'Pricing' },
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-none transition-all ${
-              activeTab === tab.id ? 'bg-[#ff4655] text-white skew-x-[-12deg]' : 'text-white/40 hover:text-white hover:bg-white/5'
-            }`}
-          >
-            <span className={`flex items-center gap-3 ${activeTab === tab.id ? 'skew-x-[12deg]' : ''}`}>
-              <tab.icon className="w-5 h-5" />
-              <span className="font-black text-xs uppercase tracking-normal">{tab.label}</span>
-            </span>
+          <button onClick={fetchOrders} className="bg-white/5 border border-white/10 px-6 py-2 text-xs font-black uppercase hover:bg-white/10 transition-all">
+            Refresh Data
           </button>
-        ))}
-      </div>
+        </header>
 
-      {/* Main Content */}
-      <div className="flex-1 p-6 md:p-12 overflow-y-auto">
-        <div className="max-w-4xl mx-auto">
-          {message && (
-            <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-6 p-4 rounded-none bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center gap-2 font-bold uppercase text-xs">
-              <CheckCircle2 className="w-5 h-5" /> {message}
-            </motion.div>
-          )}
-
-          {loading ? (
-            <div className="flex justify-center py-20"><Loader2 className="w-10 h-10 text-[#ff4655] animate-spin" /></div>
+        <div className="grid gap-4">
+          {orders.length === 0 ? (
+            <div className="text-center py-20 border border-white/5 bg-white/5">
+              <p className="text-white/20 font-black uppercase">Belum ada pesanan masuk</p>
+            </div>
           ) : (
-            <AnimatePresence mode="wait">
-              {activeTab === 'gallery' && (
-                <motion.div key="gallery" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <h2 className="text-2xl font-black mb-8 uppercase tracking-tight">Kelola Galeri</h2>
-                  <form onSubmit={handleAddGallery} className="glass-strong p-6 rounded-none border border-white/5 mb-10 space-y-4">
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <input value={galleryForm.src} onChange={e => setGalleryForm({...galleryForm, src: e.target.value})} placeholder="Link Google Drive..." className="bg-[#111827] border border-white/10 p-3 rounded-none outline-none focus:border-[#ff4655] font-bold" required />
-                      <input value={galleryForm.title} onChange={e => setGalleryForm({...galleryForm, title: e.target.value})} placeholder="Judul Foto..." className="bg-[#111827] border border-white/10 p-3 rounded-none outline-none focus:border-[#ff4655] font-bold" required />
+            orders.map((order) => (
+              <div key={order.id} className="bg-[#0c0506] border border-white/5 p-6 flex flex-wrap items-center justify-between gap-6">
+                <div className="flex items-center gap-6">
+                  <div className={`w-12 h-12 flex items-center justify-center skew-x-[-12deg] ${
+                    order.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-yellow-500/20 text-yellow-400'
+                  }`}>
+                    {order.status === 'completed' ? <CheckCircle2 className="-skew-x-[-12deg]" /> : <Clock className="-skew-x-[-12deg]" />}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-3">
+                      <h3 className="text-xl font-black uppercase">{order.username}</h3>
+                      <span className="text-[10px] bg-white/5 px-2 py-0.5 border border-white/10 text-white/40">{order.id}</span>
                     </div>
-                    <button className="w-full bg-[#ff4655] text-white font-black py-4 rounded-none skew-x-[-12deg] flex items-center justify-center gap-2 transition-all hover:brightness-110">
-                      <span className="skew-x-[12deg] flex items-center gap-2">
-                        <Plus className="w-5 h-5" /> TAMBAH FOTO
-                      </span>
-                    </button>
-                  </form>
-                  <div className="grid gap-3">
-                    {gallery.map(item => (
-                      <div key={item.id} className="glass p-4 rounded-none border border-white/5 flex items-center justify-between">
-                        <span className="font-black text-xs uppercase tracking-normal">{item.title}</span>
-                        <button onClick={() => handleDeleteGallery(item.id)} className="text-red-500 p-2 hover:bg-red-500/10 rounded-none"><Trash2 className="w-5 h-5" /></button>
-                      </div>
-                    ))}
+                    <p className="text-sm text-[#ff4655] font-bold uppercase">{order.package} • {order.price}</p>
                   </div>
-                </motion.div>
-              )}
+                </div>
 
-              {activeTab === 'topup' && (
-                <motion.div key="topup" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <div className="flex justify-between items-center mb-8">
-                    <h2 className="text-2xl font-black uppercase tracking-tight">Robux Packages</h2>
-                    <button onClick={() => saveContent(siteContent)} className="bg-[#ff4655] text-white px-6 py-2 rounded-none font-black skew-x-[-12deg] flex items-center gap-2 transition-all hover:brightness-110">
-                      <span className="skew-x-[12deg] flex items-center gap-2">
-                        <Save className="w-4 h-4" /> SIMPAN SEMUA
-                      </span>
+                <div className="flex items-center gap-4">
+                  <button 
+                    onClick={() => setSelectedProof(order.proof)}
+                    className="flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-3 text-[10px] font-black uppercase hover:bg-white/10"
+                  >
+                    <Eye className="w-3 h-3" /> Lihat Bukti
+                  </button>
+                  
+                  {order.status !== 'completed' && (
+                    <button 
+                      onClick={() => handleApprove(order)}
+                      disabled={processingId === order.id}
+                      className="flex items-center gap-2 bg-[#ff4655] text-white px-6 py-3 text-[10px] font-black uppercase hover:brightness-110 disabled:opacity-50"
+                    >
+                      {processingId === order.id ? (
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                      ) : (
+                        <Send className="w-3 h-3" />
+                      )}
+                      Kirim Robux
                     </button>
-                  </div>
-                  <div className="space-y-6">
-                    {siteContent.robux_packages.map((pkg: any, idx: number) => (
-                      <div key={idx} className="glass-strong p-6 rounded-none border border-white/5 space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
-                          <input value={pkg.name} onChange={e => {
-                            const newPkgs = [...siteContent.robux_packages];
-                            newPkgs[idx].name = e.target.value;
-                            setSiteContent({...siteContent, robux_packages: newPkgs});
-                          }} className="bg-[#111827] border border-white/10 p-2 rounded-none font-bold" />
-                          <input value={pkg.price} onChange={e => {
-                            const newPkgs = [...siteContent.robux_packages];
-                            newPkgs[idx].price = e.target.value;
-                            setSiteContent({...siteContent, robux_packages: newPkgs});
-                          }} className="bg-[#111827] border border-white/10 p-2 rounded-none font-bold text-[#ff4655]" />
-                        </div>
-                        <textarea value={pkg.description} onChange={e => {
-                          const newPkgs = [...siteContent.robux_packages];
-                          newPkgs[idx].description = e.target.value;
-                          setSiteContent({...siteContent, robux_packages: newPkgs});
-                        }} className="w-full bg-[#111827] border border-white/10 p-2 rounded-none h-20 text-sm font-medium" />
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-
-              {activeTab === 'avatar' && (
-                <motion.div key="avatar" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <div className="flex justify-between items-center mb-8">
-                    <h2 className="text-2xl font-black uppercase tracking-tight">Avatar Services</h2>
-                    <button onClick={() => saveContent(siteContent)} className="bg-[#ff4655] text-white px-6 py-2 rounded-none font-black skew-x-[-12deg] flex items-center gap-2 transition-all hover:brightness-110">
-                      <span className="skew-x-[12deg] flex items-center gap-2">
-                        <Save className="w-4 h-4" /> SIMPAN
-                      </span>
-                    </button>
-                  </div>
-                  <div className="space-y-6">
-                    {siteContent.avatar_services.map((service: any, idx: number) => (
-                      <div key={idx} className="glass-strong p-6 rounded-none border border-white/5 space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
-                          <input value={service.title} onChange={e => {
-                            const newServices = [...siteContent.avatar_services];
-                            newServices[idx].title = e.target.value;
-                            setSiteContent({...siteContent, avatar_services: newServices});
-                          }} className="bg-[#111827] border border-white/10 p-2 rounded-none font-bold" />
-                          <input value={service.price} onChange={e => {
-                            const newServices = [...siteContent.avatar_services];
-                            newServices[idx].price = e.target.value;
-                            setSiteContent({...siteContent, avatar_services: newServices});
-                          }} className="bg-[#111827] border border-white/10 p-2 rounded-none font-bold text-[#ff4655]" />
-                        </div>
-                        <textarea value={service.description} onChange={e => {
-                          const newServices = [...siteContent.avatar_services];
-                          newServices[idx].description = e.target.value;
-                          setSiteContent({...siteContent, avatar_services: newServices});
-                        }} className="w-full bg-[#111827] border border-white/10 p-2 rounded-none h-20 text-sm font-medium" />
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-
-              {activeTab === 'maps' && (
-                <motion.div key="maps" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <div className="flex justify-between items-center mb-8">
-                    <h2 className="text-2xl font-black uppercase tracking-tight">Featured Maps</h2>
-                    <button onClick={() => saveContent(siteContent)} className="bg-[#ff4655] text-white px-6 py-2 rounded-none font-black skew-x-[-12deg] flex items-center gap-2 transition-all hover:brightness-110">
-                      <span className="skew-x-[12deg] flex items-center gap-2">
-                        <Save className="w-4 h-4" /> SIMPAN
-                      </span>
-                    </button>
-                  </div>
-                  <div className="space-y-6">
-                    {siteContent.featured_maps.map((map: any, idx: number) => (
-                      <div key={idx} className="glass-strong p-6 rounded-none border border-white/5 space-y-4">
-                        <input value={map.title} onChange={e => {
-                          const newMaps = [...siteContent.featured_maps];
-                          newMaps[idx].title = e.target.value;
-                          setSiteContent({...siteContent, featured_maps: newMaps});
-                        }} className="w-full bg-[#111827] border border-white/10 p-2 rounded-none font-black uppercase tracking-tight" />
-                        <input value={map.robloxUrl} onChange={e => {
-                          const newMaps = [...siteContent.featured_maps];
-                          newMaps[idx].robloxUrl = e.target.value;
-                          setSiteContent({...siteContent, featured_maps: newMaps});
-                        }} placeholder="Link Roblox" className="w-full bg-[#111827] border border-white/10 p-2 rounded-none text-xs text-white/40" />
-                        <textarea value={map.description} onChange={e => {
-                          const newMaps = [...siteContent.featured_maps];
-                          newMaps[idx].description = e.target.value;
-                          setSiteContent({...siteContent, featured_maps: newMaps});
-                        }} className="w-full bg-[#111827] border border-white/10 p-2 rounded-none h-20 text-sm font-medium" />
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-              
-              {activeTab === 'services' && (
-                <motion.div key="services" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <div className="flex justify-between items-center mb-8">
-                    <h2 className="text-2xl font-black uppercase tracking-tight">Our Services</h2>
-                    <button onClick={() => saveContent(siteContent)} className="bg-[#ff4655] text-white px-6 py-2 rounded-none font-black skew-x-[-12deg] flex items-center gap-2 transition-all hover:brightness-110">
-                      <span className="skew-x-[12deg] flex items-center gap-2">
-                        <Save className="w-4 h-4" /> SIMPAN
-                      </span>
-                    </button>
-                  </div>
-                  <div className="space-y-6">
-                    {siteContent.services.map((service: any, idx: number) => (
-                      <div key={idx} className="glass-strong p-6 rounded-none border border-white/5 space-y-4">
-                        <input value={service.title} onChange={e => {
-                          const newServices = [...siteContent.services];
-                          newServices[idx].title = e.target.value;
-                          setSiteContent({...siteContent, services: newServices});
-                        }} className="w-full bg-[#111827] border border-white/10 p-2 rounded-none font-black uppercase tracking-tight" />
-                        <textarea value={service.description} onChange={e => {
-                          const newServices = [...siteContent.services];
-                          newServices[idx].description = e.target.value;
-                          setSiteContent({...siteContent, services: newServices});
-                        }} className="w-full bg-[#111827] border border-white/10 p-2 rounded-none h-20 text-sm font-medium" />
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-
-              {activeTab === 'pricing' && (
-                <motion.div key="pricing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <div className="flex justify-between items-center mb-8">
-                    <h2 className="text-2xl font-black uppercase tracking-tight">Pricing Plans</h2>
-                    <button onClick={() => saveContent(siteContent)} className="bg-[#ff4655] text-white px-6 py-2 rounded-none font-black skew-x-[-12deg] flex items-center gap-2 transition-all hover:brightness-110">
-                      <span className="skew-x-[12deg] flex items-center gap-2">
-                        <Save className="w-4 h-4" /> SIMPAN
-                      </span>
-                    </button>
-                  </div>
-                  <div className="space-y-6">
-                    {siteContent.pricing_plans.map((plan: any, idx: number) => (
-                      <div key={idx} className="glass-strong p-6 rounded-none border border-white/5 space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
-                          <input value={plan.name} onChange={e => {
-                            const newPlans = [...siteContent.pricing_plans];
-                            newPlans[idx].name = e.target.value;
-                            setSiteContent({...siteContent, pricing_plans: newPlans});
-                          }} className="bg-[#111827] border border-white/10 p-2 rounded-none font-black uppercase tracking-tight" />
-                          <div className="grid grid-cols-2 gap-2">
-                            <input value={plan.price_idr} onChange={e => {
-                              const newPlans = [...siteContent.pricing_plans];
-                              newPlans[idx].price_idr = e.target.value;
-                              setSiteContent({...siteContent, pricing_plans: newPlans});
-                            }} className="bg-[#111827] border border-white/10 p-2 rounded-none font-bold text-[#ff4655] text-xs" placeholder="IDR" />
-                            <input value={plan.price_usd} onChange={e => {
-                              const newPlans = [...siteContent.pricing_plans];
-                              newPlans[idx].price_usd = e.target.value;
-                              setSiteContent({...siteContent, pricing_plans: newPlans});
-                            }} className="bg-[#111827] border border-white/10 p-2 rounded-none font-bold text-white/50 text-xs" placeholder="USD" />
-                          </div>
-                        </div>
-                        <textarea value={plan.description} onChange={e => {
-                          const newPlans = [...siteContent.pricing_plans];
-                          newPlans[idx].description = e.target.value;
-                          setSiteContent({...siteContent, pricing_plans: newPlans});
-                        }} className="w-full bg-[#111827] border border-white/10 p-2 rounded-none h-16 text-sm font-medium" />
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  )}
+                </div>
+              </div>
+            ))
           )}
         </div>
       </div>
+
+      {/* Modal Lihat Bukti */}
+      {selectedProof && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-8 bg-black/90 backdrop-blur-md">
+          <div className="max-w-3xl w-full relative">
+            <button 
+              onClick={() => setSelectedProof(null)}
+              className="absolute -top-12 right-0 text-white hover:text-[#ff4655] font-black"
+            >
+              TUTUP (✕)
+            </button>
+            <div className="bg-white p-2">
+              <img src={selectedProof} alt="Bukti Transfer" className="w-full h-auto shadow-2xl" />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

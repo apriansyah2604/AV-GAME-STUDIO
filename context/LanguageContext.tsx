@@ -43,17 +43,17 @@ const translations = {
       badge: 'LAYANAN TOP UP TERPERCAYA',
       title1: 'TOP UP',
       title2: 'ROBUX',
-      subtitle: 'Layanan pengisian Robux aman dan efisien. Harga kompetitif sesuai dengan penawaran eksklusif kami.',
+      subtitle: 'Layanan pengisian Robux aman dan efisien. Harga kompetitif dengan sistem pengiriman otomatis.',
       market_badge: 'ROBUX MARKET',
       market_title: 'Dapatkan Robux Secara Instan',
-      market_desc: 'Pilih nominal yang Anda butuhkan dan selesaikan transaksi dengan mudah melalui layanan WhatsApp kami.',
+      market_desc: 'Pilih nominal yang Anda butuhkan dan selesaikan transaksi secara otomatis melalui sistem pembayaran kami.',
       search_placeholder: 'Cari nominal atau paket...',
       promo_flow: 'ALUR TRANSAKSI',
       promo_title: 'Aman, Cepat, & Transparan',
-      promo_desc: 'Proses pemesanan yang disederhanakan untuk kenyamanan Anda. Konfirmasi, bayar, dan terima Robux Anda.',
+      promo_desc: 'Proses pemesanan otomatis untuk kenyamanan Anda. Pilih, bayar, dan terima Robux secara instan.',
       stats: {
         fast: 'Layanan Kilat',
-        fast_val: 'Proses Instan',
+        fast_val: 'Proses Otomatis',
         safe: 'Terjamin',
         safe_val: '100% Keamanan',
         price: 'Efisiensi',
@@ -66,8 +66,8 @@ const translations = {
       ready_stock: 'STOK TERSEDIA',
       hot_item: 'PILIHAN UTAMA',
       final_price: 'Harga Final',
-      order_desc: 'Selesaikan pesanan Anda dengan mengirimkan detail akun dan bukti pembayaran.',
-      order_btn: 'HUBUNGI ADMIN WA',
+      order_desc: 'Selesaikan pesanan Anda dengan memasukkan username dan melakukan pembayaran.',
+      order_btn: 'BELI SEKARANG',
       avatar_services: {
         title: 'Layanan Item Avatar',
         desc: 'Tingkatkan identitas visual karakter Anda dengan aset kustom berkualitas tinggi.',
@@ -75,10 +75,10 @@ const translations = {
       },
       info_transaksi: {
         title: 'PANDUAN TRANSAKSI',
-        flow_title: 'Komunikasi Langsung via WhatsApp',
-        flow_desc: 'Interaksi langsung dengan tim kami untuk memastikan setiap pesanan diproses dengan akurat.',
+        flow_title: 'Sistem Pembayaran Otomatis',
+        flow_desc: 'Integrasi Midtrans memungkinkan setiap pesanan diproses secara instan segera setelah pembayaran sukses.',
         easy_title: 'Kemudahan Pemesanan',
-        easy_desc: 'Cukup berikan detail dasar, dan tim kami akan menangani sisanya untuk Anda.'
+        easy_desc: 'Cukup masukkan username Roblox Anda, pilih paket, dan selesaikan pembayaran.'
       },
       community_check: {
         title: 'Verifikasi Anggota Komunitas',
@@ -283,8 +283,7 @@ const translations = {
         description: 'Pilihan hemat untuk top up kecil, trial buy, atau kebutuhan item ringan.',
         badge: 'FAST',
         meta: 'Proses 5-15 menit',
-        stock: 'Ready',
-        message: 'Halo AV GAME STUDIO, saya ingin top up 100 Robux dengan harga Rp 15.000. Mohon info proses dan pembayarannya ya.'
+        stock: 'Ready'
       },
       {
         name: '300 Robux',
@@ -293,7 +292,6 @@ const translations = {
         badge: 'BEST SELLER',
         meta: 'Paling sering dipesan',
         stock: 'Ready',
-        message: 'Halo AV GAME STUDIO, saya ingin top up 300 Robux dengan harga Rp 50.000. Mohon info proses dan pembayarannya ya.',
         featured: true
       },
       {
@@ -302,8 +300,7 @@ const translations = {
         description: 'Cocok untuk pembelian item premium, bundle avatar, dan kebutuhan creator.',
         badge: 'SAVE MORE',
         meta: 'Paket hemat besar',
-        stock: 'Ready',
-        message: 'Halo AV GAME STUDIO, saya ingin top up 1000 Robux dengan harga Rp 150.000. Mohon info proses dan pembayarannya ya.'
+        stock: 'Ready'
       },
       {
         name: '2000 Robux',
@@ -311,8 +308,7 @@ const translations = {
         description: 'Pilihan terbaik untuk top up skala besar dengan harga lebih bersahabat.',
         badge: 'BIG VALUE',
         meta: 'Untuk player aktif',
-        stock: 'Ready',
-        message: 'Halo AV GAME STUDIO, saya ingin top up 2000 Robux dengan harga Rp 290.000. Mohon info proses dan pembayarannya ya.'
+        stock: 'Ready'
       }
     ],
     avatar_services: [
@@ -372,17 +368,17 @@ const translations = {
       badge: 'TRUSTED TOP UP SERVICES',
       title1: 'TOP UP',
       title2: 'ROBUX',
-      subtitle: 'Safe and efficient Robux top up services. Competitive pricing tailored to our exclusive offers.',
+      subtitle: 'Safe and efficient Robux top up services. Competitive pricing with automated delivery system.',
       market_badge: 'ROBUX MARKET',
       market_title: 'Get Your Robux Instantly',
-      market_desc: 'Select your desired nominal and complete transactions seamlessly through our WhatsApp service.',
+      market_desc: 'Select your desired nominal and complete transactions automatically through our payment system.',
       search_placeholder: 'Search nominal or package...',
       promo_flow: 'TRANSACTION FLOW',
       promo_title: 'Safe, Fast, & Transparent',
-      promo_desc: 'Simplified ordering process for your convenience. Confirm, pay, and receive your Robux.',
+      promo_desc: 'Automated ordering process for your convenience. Select, pay, and receive your Robux instantly.',
       stats: {
         fast: 'Express Service',
-        fast_val: 'Instant Process',
+        fast_val: 'Automated Process',
         safe: 'Guaranteed',
         safe_val: '100% Secure',
         price: 'Efficiency',
@@ -395,8 +391,8 @@ const translations = {
       ready_stock: 'IN STOCK',
       hot_item: 'TOP CHOICE',
       final_price: 'Final Price',
-      order_desc: 'Complete your order by providing account details and proof of payment.',
-      order_btn: 'CONTACT ADMIN WA',
+      order_desc: 'Complete your order by entering your username and making a payment.',
+      order_btn: 'BUY NOW',
       avatar_services: {
         title: 'Avatar Item Services',
         desc: 'Enhance your character\'s visual identity with high-quality custom assets.',
@@ -404,10 +400,10 @@ const translations = {
       },
       info_transaksi: {
         title: 'TRANSACTION GUIDE',
-        flow_title: 'Direct WhatsApp Communication',
-        flow_desc: 'Direct interaction with our team to ensure every order is processed accurately.',
+        flow_title: 'Automated Payment System',
+        flow_desc: 'Midtrans integration allows every order to be processed instantly as soon as payment is successful.',
         easy_title: 'Ease of Ordering',
-        easy_desc: 'Simply provide the basic details, and our team will handle the rest for you.'
+        easy_desc: 'Simply enter your Roblox username, select a package, and complete the payment.'
       },
       community_check: {
         title: 'Community Member Verification',
@@ -612,8 +608,7 @@ const translations = {
         description: 'Budget-friendly choice for small top ups, trial buys, or light item needs.',
         badge: 'FAST',
         meta: '5-15 mins process',
-        stock: 'Ready',
-        message: 'Hello AV GAME STUDIO, I would like to top up 100 Robux for Rp 15.000. Please info about the process and payment.'
+        stock: 'Ready'
       },
       {
         name: '300 Robux',
@@ -622,7 +617,6 @@ const translations = {
         badge: 'BEST SELLER',
         meta: 'Most frequently ordered',
         stock: 'Ready',
-        message: 'Hello AV GAME STUDIO, I would like to top up 300 Robux for Rp 50.000. Please info about the process and payment.',
         featured: true
       },
       {
@@ -631,8 +625,7 @@ const translations = {
         description: 'Suitable for premium item purchases, avatar bundles, and creator needs.',
         badge: 'SAVE MORE',
         meta: 'Big savings pack',
-        stock: 'Ready',
-        message: 'Hello AV GAME STUDIO, I would like to top up 1000 Robux for Rp 150.000. Please info about the process and payment.'
+        stock: 'Ready'
       },
       {
         name: '2000 Robux',
@@ -640,8 +633,7 @@ const translations = {
         description: 'Best choice for large-scale top up with friendlier prices.',
         badge: 'BIG VALUE',
         meta: 'For active players',
-        stock: 'Ready',
-        message: 'Hello AV GAME STUDIO, I would like to top up 2000 Robux for Rp 290.000. Please info about the process and payment.'
+        stock: 'Ready'
       }
     ],
     avatar_services: [

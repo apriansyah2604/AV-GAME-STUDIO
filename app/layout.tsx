@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/next'
 import { LanguageProvider } from '@/context/LanguageContext'
 import { TransitionProvider } from '@/context/TransitionContext'
 import { SceneTransition } from '@/components/scene-transition'
+import Script from 'next/script'
 import './globals.css'
 
 const orbitron = Orbitron({ 
@@ -59,6 +60,13 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${orbitron.variable} ${jakarta.variable} ${inter.variable} ${anton.variable} ${barlow.variable} bg-[#030303]`} suppressHydrationWarning>
       <body className="font-sans antialiased bg-[#030303] text-white overflow-x-hidden" suppressHydrationWarning>
+        <Script 
+          src={process.env.MIDTRANS_IS_PRODUCTION === 'true' 
+            ? "https://app.midtrans.com/snap/snap.js" 
+            : "https://app.sandbox.midtrans.com/snap/snap.js"} 
+          data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}
+          strategy="beforeInteractive"
+        />
         <LanguageProvider>
           <TransitionProvider>
             <SceneTransition />

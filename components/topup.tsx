@@ -13,10 +13,14 @@ import {
   Users,
   CheckCircle2,
   AlertCircle,
-  Loader2
+  Loader2,
+  Upload,
+  QrCode,
+  Smartphone
 } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
 import { useState, useEffect } from 'react'
+import { toast } from 'sonner'
 
 export function TopUp() {
   const { t } = useLanguage()
@@ -24,6 +28,12 @@ export function TopUp() {
   const [robloxUsername, setRobloxUsername] = useState('')
   const [checkStatus, setCheckStatus] = useState<'idle' | 'loading' | 'member' | 'not_member' | 'error'>('idle')
   const [content, setContent] = useState<any>(null)
+  
+  // State untuk alur pembayaran baru
+  const [isOrdering, setIsOrdering] = useState(false)
+  const [selectedPackage, setSelectedPackage] = useState<any>(null)
+  const [orderUsername, setOrderUsername] = useState('')
+  const [orderStep, setOrderStep] = useState<'form' | 'payment' | 'processing' | 'success' | 'failed'>('form')
 
   useEffect(() => {
     setIsMounted(true)
@@ -33,6 +43,72 @@ export function TopUp() {
   }, [])
 
   if (!isMounted) return null
+
+  const handleOrderClick = (item: any) => {
+    setSelectedPackage(item)
+    setOrderUsername(robloxUsername)
+    setOrderStep('form')
+    setIsOrdering(true)
+  }
+
+  const handleProcessPayment = async () => {
+    if (!orderUsername) {
+      toast.error('Silakan masukkan username Roblox Anda')
+      return
+    }
+    
+    setOrderStep('payment')
+    
+    try {
+      // 1. Panggil API Checkout untuk mendapatkan Token Midtrans Snap
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: orderUsername,
+          amount: parseInt(selectedPackage.name.replace(/[^0-9]/g, '')),
+          packageName: selectedPackage.name,
+          price: parseInt(selectedPackage.price.replace(/[^0-9]/g, ''))
+        })
+      })
+      
+      const data = await response.json()
+      
+      if (data.success && data.token) {
+        // @ts-ignore
+        window.snap.pay(data.token, {
+          onSuccess: function(result: any) {
+            console.log('Success:', result);
+            setOrderStep('success');
+            toast.success('Pembayaran Berhasil! Robux akan segera dikirim.');
+          },
+          onPending: function(result: any) {
+            console.log('Pending:', result);
+            setOrderStep('payment');
+            toast.info('Menunggu pembayaran...');
+          },
+          onError: function(result: any) {
+            console.error('Error:', result);
+            setOrderStep('failed');
+            toast.error('Pembayaran Gagal.');
+          },
+          onClose: function() {
+            console.log('Customer closed the popup without finishing the payment');
+            if (orderStep !== 'success') {
+              setIsOrdering(false);
+            }
+          }
+        });
+      } else {
+        setOrderStep('failed')
+        toast.error(data.message || 'Gagal membuat transaksi.')
+      }
+    } catch (err) {
+      console.error('Checkout Error:', err)
+      setOrderStep('failed')
+      toast.error('Terjadi kesalahan sistem.')
+    }
+  }
 
   const handleCheckMembership = async () => {
     if (!robloxUsername) return
@@ -254,7 +330,7 @@ export function TopUp() {
                           <div className="text-[10px] font-black text-white/30 uppercase tracking-normal">Flow</div>
                           <div className="mt-2 flex items-center gap-2 text-sm text-white/70 font-black uppercase">
                             <Clock3 className="h-4 w-4 text-[#ff4655]" />
-                            WhatsApp
+                            Otomatis
                           </div>
                         </div>
                       </div>
@@ -275,10 +351,8 @@ export function TopUp() {
                         </div>
                       </div>
 
-                      <motion.a
-                        href={`https://wa.me/62895327025015?text=${encodeURIComponent(item.message)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <motion.button
+                        onClick={() => handleOrderClick(item)}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         className={`mt-5 flex w-full items-center justify-center gap-2 rounded-none py-4 text-sm font-black uppercase tracking-normal transition-all ${
@@ -291,7 +365,7 @@ export function TopUp() {
                           {t('topup.order_btn')}
                           <ArrowRight className="h-4 w-4" />
                         </span>
-                      </motion.a>
+                      </motion.button>
                     </div>
                   </div>
                 </motion.div>
@@ -465,6 +539,120 @@ export function TopUp() {
           </div>
         </div>
       </div>
+
+      {/* Overlay Pembayaran Profesional */}
+      {isOrdering && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6 bg-black/80 backdrop-blur-sm">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-full max-w-lg bg-[#0c0506] border border-[#ff4655]/20 p-8 relative overflow-hidden"
+          >
+            {/* Dekorasi Background */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff4655]/5 blur-3xl" />
+            
+            {/* Tombol Tutup */}
+            <button 
+              onClick={() => setIsOrdering(false)}
+              className="absolute top-4 right-4 text-white/40 hover:text-white"
+            >
+              ✕
+            </button>
+
+            {orderStep === 'form' && (
+              <div className="relative z-10">
+                <div className="mb-6 flex items-center gap-4">
+                  <div className="h-12 w-12 bg-[#ff4655]/10 border border-[#ff4655]/20 flex items-center justify-center">
+                    <Image src="/icon robux.png" alt="Robux" width={32} height={32} />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-black text-white uppercase tracking-tight">Detail Pesanan</h3>
+                    <p className="text-sm text-[#ff4655] font-bold">{selectedPackage?.name} - {selectedPackage?.price}</p>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-[10px] font-black text-white/40 mb-2 uppercase tracking-normal">Username Roblox Anda</label>
+                    <input
+                      type="text"
+                      value={orderUsername}
+                      onChange={(e) => setOrderUsername(e.target.value)}
+                      placeholder="Masukkan Username..."
+                      className="w-full bg-black/40 border border-white/10 px-5 py-4 text-sm text-white placeholder-white/20 outline-none focus:border-[#ff4655] transition-all font-bold"
+                    />
+                  </div>
+
+                  <div className="p-4 bg-white/5 border border-white/5 text-[11px] text-white/50 leading-relaxed font-medium">
+                    <span className="text-[#ff4655] font-black">INFO:</span> Anda akan diarahkan ke jendela pembayaran Midtrans. Silakan pilih metode **GoPay** atau **QRIS** untuk pembayaran instan. Robux akan dikirim otomatis setelah pembayaran berhasil.
+                  </div>
+
+                  <motion.button
+                    onClick={handleProcessPayment}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full bg-[#ff4655] text-white py-4 font-black uppercase tracking-normal skew-x-[-12deg]"
+                  >
+                    <span className="-skew-x-[-12deg] inline-block">Lanjut ke Pembayaran</span>
+                  </motion.button>
+                </div>
+              </div>
+            )}
+
+            {(orderStep === 'payment' || orderStep === 'processing') && (
+              <div className="text-center py-12 relative z-10">
+                <Loader2 className="h-16 w-16 text-[#ff4655] animate-spin mx-auto mb-6" />
+                <h3 className="text-2xl font-black text-white uppercase mb-2">
+                  {orderStep === 'payment' ? 'Menyiapkan Pembayaran' : 'Memproses Transaksi'}
+                </h3>
+                <p className="text-white/50 font-medium">Mohon tunggu sebentar, sistem sedang bekerja...</p>
+              </div>
+            )}
+
+            {orderStep === 'success' && (
+              <div className="text-center py-8 relative z-10">
+                <div className="h-20 w-20 bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-6">
+                  <CheckCircle2 className="h-10 w-10 text-emerald-400" />
+                </div>
+                <h3 className="text-2xl font-black text-white uppercase mb-2">Transaksi Berhasil!</h3>
+                <p className="text-white/50 font-medium mb-8">Robux telah dikirim otomatis ke <span className="text-white">{orderUsername}</span>.</p>
+                <button 
+                  onClick={() => setIsOrdering(false)}
+                  className="w-full border border-white/10 bg-white/5 text-white py-4 font-black uppercase"
+                >
+                  Tutup
+                </button>
+              </div>
+            )}
+
+            {orderStep === 'failed' && (
+              <div className="text-center py-8 relative z-10">
+                <div className="h-20 w-20 bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto mb-6">
+                  <AlertCircle className="h-10 w-10 text-red-400" />
+                </div>
+                <h3 className="text-2xl font-black text-white uppercase mb-2">Transaksi Gagal</h3>
+                <p className="text-white/50 font-medium mb-4">{selectedPackage?.error || 'Terjadi kendala saat memproses pengiriman.'}</p>
+                <p className="text-white/30 text-xs mb-8 font-medium">Silakan hubungi Admin via WhatsApp untuk bantuan manual jika saldo Anda sudah terpotong.</p>
+                <div className="flex gap-4">
+                  <button 
+                    onClick={() => setOrderStep('form')}
+                    className="flex-1 border border-white/10 bg-white/5 text-white py-4 font-black uppercase"
+                  >
+                    Coba Lagi
+                  </button>
+                  <a 
+                    href={`https://wa.me/62895327025015?text=Halo%20Admin,%20transaksi%20otomatis%20saya%20gagal.%20Username:%20${orderUsername}`}
+                    target="_blank"
+                    className="flex-1 bg-[#ff4655] text-white py-4 font-black uppercase text-center"
+                  >
+                    Hubungi WA
+                  </a>
+                </div>
+              </div>
+            )}
+          </motion.div>
+        </div>
+      )}
     </section>
   )
 }

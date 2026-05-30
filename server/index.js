@@ -162,6 +162,17 @@ app.get('/health', (req, res) => {
     });
 });
 
+// Endpoint untuk cek saldo grup
+app.get('/api/funds', async (req, res) => {
+    try {
+        await noblox.setCookie(currentCookie);
+        const funds = await noblox.getGroupFunds(CONFIG.ROBLOX_GROUP_ID);
+        res.json({ success: true, funds });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
 // Start Server
 app.listen(CONFIG.PORT, () => {
     console.log(`================================================`);

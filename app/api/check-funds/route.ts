@@ -16,6 +16,23 @@ export async function GET() {
   }
 
   try {
+    // 1. Coba ambil dari VPS Server jika tersedia
+    const VPS_URL = process.env.ROBLOX_SERVER_URL;
+    if (VPS_URL) {
+      console.log(`Mengambil saldo dari VPS: ${VPS_URL}/api/funds`);
+      try {
+        const response = await fetch(`${VPS_URL}/api/funds`);
+        const data = await response.json();
+        if (data.success) {
+          cachedFunds = data.funds;
+          lastFetchTime = now;
+          return NextResponse.json({ success: true, funds: data.funds, from: 'vps' });
+        }
+      } catch (e) {
+        console.warn('Gagal menghubungi VPS untuk cek saldo, menggunakan fallback lokal.');
+      }
+    }
+
     const funds = await getGroupFunds();
     cachedFunds = funds;
     lastFetchTime = now;

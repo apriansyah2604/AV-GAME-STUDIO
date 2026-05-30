@@ -31,24 +31,15 @@ export async function POST(request: Request) {
       phone: '08123456789'
     };
 
-    const parameter = {
-      transaction_details: {
-        order_id: orderId,
-        gross_amount: price
-      },
-      item_details: itemDetails,
-      customer_details: customerDetails,
-      metadata: {
-        username: username,
-        robux_amount: amount
-      }
-    };
+    // Gunakan helper createTransaction yang baru
+    const transaction = await createTransaction(
+      orderId, 
+      price, 
+      itemDetails, 
+      customerDetails, 
+      { username, robux_amount: amount }
+    );
 
-    const transaction = await snap.createTransaction(parameter);
-
-    // Menambahkan pembatasan metode pembayaran jika diinginkan
-    // Di sini kita bisa menambahkan parameter enabled_payments
-    
     return NextResponse.json({
       success: true,
       token: transaction.token,

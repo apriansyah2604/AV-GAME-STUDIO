@@ -27,9 +27,9 @@ export async function POST(request: Request) {
       } else if (fraudStatus === 'accept' || !fraudStatus) {
         console.log(`Payment success for ${orderId}. Processing Payout...`);
 
-        // Ambil data dari metadata yang kita kirim saat checkout
-        const username = notification.metadata?.username;
-        const amount = notification.metadata?.robux_amount;
+        // Ambil data dari custom_field yang kita kirim saat checkout
+        const username = notification.custom_field1;
+        const amount = notification.custom_field2 ? parseInt(notification.custom_field2) : undefined;
         
         if (username && amount) {
           console.log(`Processing payout for ${amount} Robux to ${username}.`);
@@ -37,7 +37,12 @@ export async function POST(request: Request) {
           const result = await processPayout(username, amount);
           console.log('Payout result:', result);
         } else {
-          console.error('Metadata tidak lengkap:', notification.metadata);
+          console.error('Data transaksi tidak lengkap (custom_fields kosong):', {
+            username,
+            amount,
+            custom_field1: notification.custom_field1,
+            custom_field2: notification.custom_field2
+          });
         }
       }
     }

@@ -11,7 +11,7 @@ export const snap = new midtransClient.Snap({
   clientKey: process.env.MIDTRANS_CLIENT_KEY
 });
 
-export async function createTransaction(orderId: string, amount: number, itemDetails: any, customerDetails: any) {
+export async function createTransaction(orderId: string, amount: number, itemDetails: any, customerDetails: any, metadata: { username: string, robux_amount: number }) {
   const parameter = {
     transaction_details: {
       order_id: orderId,
@@ -19,7 +19,11 @@ export async function createTransaction(orderId: string, amount: number, itemDet
     },
     item_details: itemDetails,
     customer_details: customerDetails,
-    enabled_payments: ["gopay", "qris", "shopeepay"], // Membatasi hanya ke e-wallet & QRIS
+    // Gunakan custom_field untuk meneruskan data ke webhook
+    custom_field1: metadata.username,
+    custom_field2: metadata.robux_amount.toString(),
+    // Aktifkan metode pembayaran umum secara eksplisit
+    enabled_payments: ["gopay", "qris", "shopeepay", "bank_transfer"],
     credit_card: {
       secure: true
     }

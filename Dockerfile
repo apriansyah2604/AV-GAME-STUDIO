@@ -3,14 +3,14 @@ FROM node:20
 # Buat direktori kerja
 WORKDIR /app
 
-# Salin package.json utama dari root project
+# Salin package.json
 COPY package.json ./
 
-# Install dependensi (termasuk express, noblox.js, cors)
+# Install dependensi
 RUN npm install
 
-# Salin seluruh isi folder server ke direktori kerja
-COPY server/ ./
+# Salin index.js (Hugging Face upload manual biasanya ditaruh di root)
+COPY index.js ./
 
 # Expose port 7860 (Port default Hugging Face Spaces)
 EXPOSE 7860

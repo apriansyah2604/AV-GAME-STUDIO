@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     if (VPS_URL) {
       // Pastikan URL tidak berakhir dengan slash
       const cleanUrl = VPS_URL.endsWith('/') ? VPS_URL.slice(0, -1) : VPS_URL;
-      console.log(`Mengalihkan payout ke VPS: ${cleanUrl}/api/payout`);
+      console.log(`Attempting payout to ${username} for ${amount} Robux via ${cleanUrl}/api/payout`);
       try {
         const response = await fetch(`${cleanUrl}/api/payout`, {
           method: 'POST',
@@ -42,6 +42,7 @@ export async function POST(request: Request) {
         });
         
         const data = await response.json();
+        console.log('Bot Response:', data);
         return NextResponse.json(data, { status: response.status });
       } catch (err: any) {
         console.error('Gagal menghubungi Hugging Face Server:', err.message);

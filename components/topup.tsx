@@ -78,7 +78,12 @@ export function TopUp() {
           return;
         }
       } else {
-        console.warn('Gagal cek saldo grup, melanjutkan dengan asumsi stok tersedia.');
+        // JIKA GAGAL CEK SALDO, BLOKIR TRANSAKSI (SANGAT KETAT)
+        setOrderStep('failed');
+        const msg = `Gagal memverifikasi stok Robux. Silakan coba beberapa saat lagi atau hubungi Admin.`;
+        setErrorMessage(msg);
+        toast.error(msg);
+        return;
       }
 
       // 2. Panggil API Checkout untuk mendapatkan Token Midtrans Snap

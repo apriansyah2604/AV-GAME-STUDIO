@@ -19,8 +19,8 @@ const CONFIG = {
     // Secret Key untuk keamanan API (Harus sama dengan di Next.js)
     PAYOUT_SECRET_KEY: "av-studio-super-secret-key",
     
-    // Port server berjalan
-    PORT: 5000
+    // Port server berjalan (Otomatis mengikuti environment Hugging Face)
+    PORT: process.env.ROBLOX_SERVER_PORT || process.env.PORT || 7860
 };
 /** ================================================================= */
 
@@ -174,7 +174,7 @@ app.get('/api/funds', async (req, res) => {
 });
 
 // Start Server
-app.listen(CONFIG.PORT, () => {
+app.listen(CONFIG.PORT, "0.0.0.0", () => {
     console.log(`================================================`);
     console.log(`Roblox Payout Server Berjalan di Port ${CONFIG.PORT}`);
     console.log(`URL API: http://localhost:${CONFIG.PORT}/api/payout`);

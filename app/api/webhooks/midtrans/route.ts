@@ -35,58 +35,67 @@ export async function POST(request: Request) {
         const username = notification.custom_field1;
         const amount = notification.custom_field2 ? parseInt(notification.custom_field2) : undefined;
         
-        // --- CATAT PESANAN KE ORDERS.JSON ---
+        // --- CATAT PESANAN KE ORDERS.JSON (Hanya Berhasil di Local, Gagal di Vercel) ---
         try {
-          let orders = [];
-          if (fs.existsSync(ORDERS_FILE)) {
-            orders = JSON.parse(fs.readFileSync(ORDERS_FILE, 'utf8'));
-          }
-          
-          const newOrder = {
-            id: orderId,
-            username,
-            package: `${amount} Robux`,
-            price: `Rp ${notification.gross_amount}`,
-            status: 'completed',
-            timestamp: new Date().toISOString(),
-            proof: 'PAID VIA MIDTRANS'
-          };
+          if (fs.appendFileSync) { // Cek apakah filesystem writable
+            let orders = [];
+            if (fs.existsSync(ORDERS_FILE)) {
+              orders = JSON.parse(fs.readFileSync(ORDERS_FILE, 'utf8'));
+            }
+            
+            const newOrder = {
+              id: orderId,
+              username,
+              package: `${amount} Robux`,
+              price: `Rp ${notification.gross_amount}`,
+              status: 'completed',
+              timestamp: new Date().toISOString(),
+              proof: 'PAID VIA MIDTRANS'
+            };
 
-          // Cari apakah order sudah ada, jika ada update, jika tidak push
-          const existingIndex = orders.findIndex((o: any) => o.id === orderId);
-          if (existingIndex > -1) {
-            orders[existingIndex] = { ...orders[existingIndex], status: 'completed' };
-          } else {
-            orders.push(newOrder);
+            const existingIndex = orders.findIndex((o: any) => o.id === orderId);
+            if (existingIndex > -1) {
+              orders[existingIndex] = { ...orders[existingIndex], status: 'completed' };
+            } else {
+              orders.push(newOrder);
+            }
+            
+            fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2));
           }
-          
-          fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2));
         } catch (err) {
-          console.error('Failed to save order in webhook:', err);
+          console.log('Note: File storage not available (Vercel environment). Skipping history save.');
         }
         // ------------------------------------
 
         if (username && amount) {
           console.log(`Processing automatic payout for ${amount} Robux to ${username}.`);
           
-          // Jalankan payout otomatis melalui API internal kita (yang sudah terhubung ke Hugging Face)
-          const payoutUrl = `${new URL(request.url).origin}/api/payout`;
+          // AMBIL URL BOT LANGSUNG DARI ENV
+          const botUrl = process.env.ROBLOX_SERVER_URL;
+          const secret = process.env.PAYOUT_SECRET_KEY;
+          
+          if (!botUrl || !secret) {
+            console.error('Missing Bot URL or Secret in Environment Variables!');
+            return NextResponse.json({ status: 'Error', message: 'Config missing' }, { status: 500 });
+          }
+
+          const cleanBotUrl = botUrl.endsWith('/') ? botUrl.slice(0, -1) : botUrl;
           
           try {
-            const payoutResponse = await fetch(payoutUrl, {
+            const payoutResponse = await fetch(`${cleanBotUrl}/api/payout`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 username: username,
                 amount: amount,
-                secret: process.env.PAYOUT_SECRET_KEY
+                secret: secret
               })
             });
             
             const payoutResult = await payoutResponse.json();
-            console.log('Automatic Payout result:', payoutResult);
+            console.log('Bot Response:', payoutResult);
           } catch (err: any) {
-            console.error('Failed to trigger automatic payout:', err.message);
+            console.error('Failed to contact Hugging Face Bot:', err.message);
           }
         } else {
           console.error('Data transaksi tidak lengkap (custom_fields kosong):', {

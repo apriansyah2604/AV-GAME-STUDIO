@@ -1,10 +1,24 @@
 import { NextResponse } from 'next/server';
 import { getGroupFunds } from '@/lib/roblox';
 
+let cachedFunds: number | null = null;
+let lastFetchTime = 0;
+const CACHE_DURATION = 30000; // Cache selama 30 detik
+
 export async function GET() {
   console.log('--- API check-funds dipanggil ---');
+  
+  // Gunakan cache jika masih valid untuk menghemat request ke Roblox
+  const now = Date.now();
+  if (cachedFunds !== null && (now - lastFetchTime < CACHE_DURATION)) {
+    console.log(`Menggunakan cache saldo: ${cachedFunds} Robux`);
+    return NextResponse.json({ success: true, funds: cachedFunds, cached: true });
+  }
+
   try {
     const funds = await getGroupFunds();
+    cachedFunds = funds;
+    lastFetchTime = now;
     console.log(`Saldo berhasil diambil: ${funds} Robux`);
     return NextResponse.json({ success: true, funds });
   } catch (error: any) {

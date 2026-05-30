@@ -61,14 +61,17 @@ export function TopUp() {
     
     try {
       // 1. Panggil API Checkout untuk mendapatkan Token Midtrans Snap
+      const amountValue = parseInt(selectedPackage.name.match(/\d+/)?.[0] || "0");
+      const priceValue = parseInt(selectedPackage.price.replace(/[^0-9]/g, ""));
+
       const response = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           username: orderUsername,
-          amount: parseInt(selectedPackage.name.replace(/[^0-9]/g, '')),
+          amount: amountValue,
           packageName: selectedPackage.name,
-          price: parseInt(selectedPackage.price.replace(/[^0-9]/g, ''))
+          price: priceValue
         })
       })
       

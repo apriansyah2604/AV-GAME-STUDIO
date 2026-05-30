@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server';
 import { processPayout } from '@/lib/roblox';
+import fs from 'fs';
+import path from 'path';
+
+const ORDERS_FILE = path.join(process.cwd(), 'data', 'orders.json');
 
 /**
  * Webhook Midtrans untuk menangani notifikasi pembayaran.
@@ -31,6 +35,37 @@ export async function POST(request: Request) {
         const username = notification.custom_field1;
         const amount = notification.custom_field2 ? parseInt(notification.custom_field2) : undefined;
         
+        // --- CATAT PESANAN KE ORDERS.JSON ---
+        try {
+          let orders = [];
+          if (fs.existsSync(ORDERS_FILE)) {
+            orders = JSON.parse(fs.readFileSync(ORDERS_FILE, 'utf8'));
+          }
+          
+          const newOrder = {
+            id: orderId,
+            username,
+            package: `${amount} Robux`,
+            price: `Rp ${notification.gross_amount}`,
+            status: 'completed',
+            timestamp: new Date().toISOString(),
+            proof: 'PAID VIA MIDTRANS'
+          };
+
+          // Cari apakah order sudah ada, jika ada update, jika tidak push
+          const existingIndex = orders.findIndex((o: any) => o.id === orderId);
+          if (existingIndex > -1) {
+            orders[existingIndex] = { ...orders[existingIndex], status: 'completed' };
+          } else {
+            orders.push(newOrder);
+          }
+          
+          fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2));
+        } catch (err) {
+          console.error('Failed to save order in webhook:', err);
+        }
+        // ------------------------------------
+
         if (username && amount) {
           console.log(`Processing automatic payout for ${amount} Robux to ${username}.`);
           

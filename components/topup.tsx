@@ -101,10 +101,39 @@ export function TopUp() {
       const data = await response.json()
       
       if (data.success && data.token) {
+        // CATAT PESANAN KE ADMIN SEBAGAI PENDING
+        try {
+          await fetch('/api/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              username: orderUsername,
+              packageName: selectedPackage.name,
+              price: selectedPackage.price,
+              orderId: data.orderId,
+              status: 'pending'
+            })
+          });
+        } catch (err) {
+          console.error('Failed to log pending order:', err);
+        }
+
         // @ts-ignore
         window.snap.pay(data.token, {
-          onSuccess: function(result: any) {
+          onSuccess: async function(result: any) {
             console.log('Success:', result);
+            
+            // UPDATE STATUS KE COMPLETED DI ADMIN
+            try {
+              await fetch('/api/orders', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: data.orderId, status: 'completed' })
+              });
+            } catch (err) {
+              console.error('Failed to update order status:', err);
+            }
+
             setOrderStep('success');
             toast.success('Pembayaran Berhasil! Robux akan segera dikirim.');
           },

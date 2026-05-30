@@ -7,7 +7,7 @@ const ORDERS_FILE = path.join(process.cwd(), 'data', 'orders.json');
 export async function POST(request: Request) {
   try {
     const formData = await request.json();
-    const { username, packageName, price, proofBase64 } = formData;
+    const { username, packageName, price, proofBase64, orderId, status } = formData;
 
     if (!username || !packageName || !price) {
       return NextResponse.json({ success: false, message: 'Data tidak lengkap' }, { status: 400 });
@@ -20,13 +20,13 @@ export async function POST(request: Request) {
     }
 
     const newOrder = {
-      id: `ORDER-${Date.now()}`,
+      id: orderId || `ORDER-${Date.now()}`,
       username,
       package: packageName,
       price,
-      status: 'pending',
+      status: status || 'pending',
       timestamp: new Date().toISOString(),
-      proof: proofBase64
+      proof: proofBase64 || 'MIDTRANS'
     };
 
     orders.push(newOrder);

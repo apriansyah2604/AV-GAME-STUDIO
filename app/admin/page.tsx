@@ -49,13 +49,13 @@ export default function AdminDashboard() {
       setOrders(Array.isArray(ordersData) ? [...ordersData].reverse() : [])
 
       // Fetch Content (Pricing & Assets)
-      const contentRes = await fetch('/api/content')
+      const contentRes = await fetch('/api/content', { cache: 'no-store' })
       const contentData = await contentRes.json()
       if (contentData.robux_packages) setPackages(contentData.robux_packages)
       if (contentData.avatar_services) setAvatarServices(contentData.avatar_services)
 
       // Fetch Gallery
-      const galleryRes = await fetch('/api/content?type=gallery')
+      const galleryRes = await fetch('/api/content?type=gallery', { cache: 'no-store' })
       const galleryData = await galleryRes.json()
       if (Array.isArray(galleryData)) setGallery(galleryData)
 
@@ -200,6 +200,7 @@ export default function AdminDashboard() {
       }
       if (res.ok) {
         toast.success('Harga Robux berhasil diperbarui!')
+        fetchData()
       } else {
         toast.error(data?.error || 'Gagal menyimpan harga')
         console.error('Save pricing failed:', data)
@@ -235,6 +236,7 @@ export default function AdminDashboard() {
       }
       if (res.ok) {
         toast.success('Katalog Aset berhasil diperbarui!')
+        fetchData()
       } else {
         toast.error(data?.error || 'Gagal menyimpan aset')
         console.error('Save assets failed:', data)
@@ -270,6 +272,7 @@ export default function AdminDashboard() {
       }
       if (res.ok) {
         toast.success('Galeri berhasil diperbarui!')
+        fetchData()
       } else {
         toast.error(data?.error || 'Gagal menyimpan galeri')
         console.error('Save gallery failed:', data)

@@ -38,7 +38,7 @@ export function TopUp() {
 
   useEffect(() => {
     setIsMounted(true)
-    fetch('/api/content')
+    fetch('/api/content', { cache: 'no-store' })
       .then(res => res.json())
       .then(data => setContent(data))
   }, [])

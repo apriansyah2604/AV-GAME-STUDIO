@@ -1,6 +1,29 @@
 import { NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
+const noStoreHeaders = {
+  'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+  Pragma: 'no-cache',
+  Expires: '0',
+}
+
+function jsonNoStore(body: unknown, init?: ResponseInit) {
+  return NextResponse.json(body, {
+    ...init,
+    headers: {
+      ...noStoreHeaders,
+      ...(init?.headers || {}),
+    },
+  })
+}
+
+function sanitizeRows(rows: any[]) {
+  return rows.map(({ id, created_at, ...row }) => row)
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const type = searchParams.get('type')
@@ -9,7 +32,7 @@ export async function GET(request: Request) {
     if (type === 'gallery') {
       const { data, error } = await supabase.from('gallery').select('*').order('created_at', { ascending: false })
       if (error) throw error
-      return NextResponse.json(data || [])
+      return jsonNoStore(data || [])
     }
     
     // Fetch all content
@@ -18,14 +41,14 @@ export async function GET(request: Request) {
     
     if (pError || aError) throw (pError || aError)
 
-    return NextResponse.json({
+    return jsonNoStore({
       robux_packages: pricing || [],
       avatar_services: assets || [],
       general: {}
     })
   } catch (error: any) {
     console.error('Supabase Fetch Content Error:', error)
-    return NextResponse.json({
+    return jsonNoStore({
       robux_packages: [],
       avatar_services: [],
       general: {}
@@ -49,17 +72,17 @@ export async function POST(request: Request) {
 
     // Protect against accidentally huge payloads
     if (Array.isArray(newData) && newData.length > 500) {
-      return NextResponse.json({ error: 'Payload too large: data array exceeds 500 items' }, { status: 413 })
+      return jsonNoStore({ error: 'Payload too large: data array exceeds 500 items' }, { status: 413 })
     }
 
     if (!type || typeof type !== 'string') {
-      return NextResponse.json({ error: 'Missing or invalid "type" field' }, { status: 400 })
+      return jsonNoStore({ error: 'Missing or invalid "type" field' }, { status: 400 })
     }
 
     // For content types that expect arrays, validate
     const expectsArray = ['gallery', 'pricing', 'assets']
     if (expectsArray.includes(type) && !Array.isArray(newData)) {
-      return NextResponse.json({ error: 'Expected "data" to be an array for type ' + type }, { status: 400 })
+      return jsonNoStore({ error: 'Expected "data" to be an array for type ' + type }, { status: 400 })
     }
 
     if (type === 'gallery') {
@@ -68,15 +91,15 @@ export async function POST(request: Request) {
         console.warn('Failed to clear gallery (will attempt insert anyway):', delRes.error)
       }
 
-      const insertRes = await supabase.from('gallery').insert(newData)
+      const insertRes = await supabase.from('gallery').insert(sanitizeRows(newData))
       if (insertRes.error) {
         console.error('Failed to insert gallery:', insertRes.error)
         // If delete failed and insert also failed, return both messages if possible
         const message = insertRes.error.message || 'Failed to insert gallery'
-        return NextResponse.json({ error: message }, { status: 500 })
+        return jsonNoStore({ error: message }, { status: 500 })
       }
 
-      return NextResponse.json({ success: true, warning: delRes.error?.message })
+      return jsonNoStore({ success: true, warning: delRes.error?.message })
     }
 
     if (type === 'pricing') {
@@ -85,31 +108,31 @@ export async function POST(request: Request) {
         console.warn('Failed to clear pricing (will attempt insert anyway):', delRes.error)
       }
 
-      const insertRes = await supabase.from('pricing').insert(newData)
+      const insertRes = await supabase.from('pricing').insert(sanitizeRows(newData))
       if (insertRes.error) {
         console.error('Failed to insert pricing:', insertRes.error)
-        return NextResponse.json({ error: insertRes.error.message || 'Failed to insert pricing' }, { status: 500 })
+        return jsonNoStore({ error: insertRes.error.message || 'Failed to insert pricing' }, { status: 500 })
       }
 
-      return NextResponse.json({ success: true, warning: delRes.error?.message })
+      return jsonNoStore({ success: true, warning: delRes.error?.message })
     } else if (type === 'assets') {
       const delRes = await supabase.from('assets').delete().neq('id', '00000000-0000-0000-0000-000000000000')
       if (delRes.error) {
         console.warn('Failed to clear assets (will attempt insert anyway):', delRes.error)
       }
 
-      const insertRes = await supabase.from('assets').insert(newData)
+      const insertRes = await supabase.from('assets').insert(sanitizeRows(newData))
       if (insertRes.error) {
         console.error('Failed to insert assets:', insertRes.error)
-        return NextResponse.json({ error: insertRes.error.message || 'Failed to insert assets' }, { status: 500 })
+        return jsonNoStore({ error: insertRes.error.message || 'Failed to insert assets' }, { status: 500 })
       }
 
-      return NextResponse.json({ success: true, warning: delRes.error?.message })
+      return jsonNoStore({ success: true, warning: delRes.error?.message })
     } else {
-      return NextResponse.json({ error: 'Invalid type' }, { status: 400 })
+      return jsonNoStore({ error: 'Invalid type' }, { status: 400 })
     }
   } catch (error: any) {
     console.error('Supabase Update Content Error:', error)
-    return NextResponse.json({ error: (error && error.message) || String(error) || 'Failed to update content' }, { status: 500 })
+    return jsonNoStore({ error: (error && error.message) || String(error) || 'Failed to update content' }, { status: 500 })
   }
 }

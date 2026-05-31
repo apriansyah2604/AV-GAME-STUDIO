@@ -24,22 +24,30 @@ function sanitizeRows(rows: any[]) {
   return rows.map(({ id, created_at, ...row }) => row)
 }
 
+async function fetchContentTable(table: string, ascending = true) {
+  const { data, error } = await supabase.from(table).select('*').order('created_at', { ascending })
+  if (error) {
+    console.warn(`[GET /api/content] Failed to fetch ${table}:`, error.message)
+    return []
+  }
+
+  return data || []
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const type = searchParams.get('type')
 
   try {
     if (type === 'gallery') {
-      const { data, error } = await supabase.from('gallery').select('*').order('created_at', { ascending: false })
-      if (error) throw error
-      return jsonNoStore(data || [])
+      return jsonNoStore(await fetchContentTable('gallery', false))
     }
     
     // Fetch all content
-    const { data: pricing, error: pError } = await supabase.from('pricing').select('*').order('created_at', { ascending: true })
-    const { data: assets, error: aError } = await supabase.from('assets').select('*').order('created_at', { ascending: true })
-    
-    if (pError || aError) throw (pError || aError)
+    const [pricing, assets] = await Promise.all([
+      fetchContentTable('pricing', true),
+      fetchContentTable('assets', true),
+    ])
 
     return jsonNoStore({
       robux_packages: pricing || [],

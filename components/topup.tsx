@@ -200,8 +200,8 @@ export function TopUp() {
     }
   }
 
-  const robuxPackages = content?.robux_packages || t('robux_packages')
-  const avatarServices = content?.avatar_services || t('avatar_services')
+  const robuxPackages = content?.robux_packages?.length ? content.robux_packages : t('robux_packages')
+  const avatarServices = content?.avatar_services?.length ? content.avatar_services : t('avatar_services')
   const marketCategories = t('market_categories')
 
   const marketplaceStats = [

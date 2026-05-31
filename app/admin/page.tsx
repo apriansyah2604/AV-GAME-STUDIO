@@ -47,8 +47,12 @@ export default function AdminDashboard() {
     setLoading(true)
     try {
       // Fetch Orders
-      const ordersRes = await fetch('/api/orders')
+      const ordersRes = await fetch('/api/orders', { cache: 'no-store' })
       const ordersData = await ordersRes.json()
+      if (!ordersRes.ok) {
+        console.error('Fetch orders failed:', ordersData)
+        toast.error(ordersData?.message || 'Gagal mengambil pesanan')
+      }
       setOrders(Array.isArray(ordersData) ? [...ordersData].reverse() : [])
 
       // Fetch Content (Pricing & Assets)

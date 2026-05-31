@@ -1,6 +1,25 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+const noStoreHeaders = {
+  'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+  Pragma: 'no-cache',
+  Expires: '0',
+};
+
+function jsonNoStore(body: unknown, init?: ResponseInit) {
+  return NextResponse.json(body, {
+    ...init,
+    headers: {
+      ...noStoreHeaders,
+      ...(init?.headers || {}),
+    },
+  });
+}
+
 export async function POST(request: Request) {
   try {
     const formData = await request.json();
@@ -20,23 +39,21 @@ export async function POST(request: Request) {
 
     const { data, error } = await supabase
       .from('orders')
-      .insert([
-        { 
-          id: orderId || `ORDER-${Date.now()}`, 
-          username, 
-          package: packageName, 
-          price: normalizedPrice, 
-          status: status || 'pending',
-          proof: 'MIDTRANS'
-        }
-      ]);
+      .upsert({
+        id: orderId || `ORDER-${Date.now()}`,
+        username,
+        package: packageName,
+        price: normalizedPrice,
+        status: status || 'pending',
+        proof: 'MIDTRANS'
+      });
 
     if (error) throw error;
 
-    return NextResponse.json({ success: true, message: 'Pesanan berhasil dicatat di Supabase' });
+    return jsonNoStore({ success: true, message: 'Pesanan berhasil dicatat di Supabase' });
   } catch (error: any) {
     console.error('Supabase Save Order Error:', error);
-    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    return jsonNoStore({ success: false, message: error.message }, { status: 500 });
   }
 }
 
@@ -49,10 +66,10 @@ export async function GET() {
 
     if (error) throw error;
 
-    return NextResponse.json(data || []);
+    return jsonNoStore(data || []);
   } catch (error: any) {
     console.error('Supabase Fetch Orders Error:', error);
-    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    return jsonNoStore({ success: false, message: error.message }, { status: 500 });
   }
 }
 
@@ -67,9 +84,9 @@ export async function PATCH(request: Request) {
 
     if (error) throw error;
 
-    return NextResponse.json({ success: true });
+    return jsonNoStore({ success: true });
   } catch (error: any) {
     console.error('Supabase Update Order Error:', error);
-    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    return jsonNoStore({ success: false, message: error.message }, { status: 500 });
   }
 }

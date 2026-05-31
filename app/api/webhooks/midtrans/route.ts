@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { fulfillRobuxOrder } from '@/lib/fulfillment';
+import { getTransactionStatus } from '@/lib/midtrans';
 
 /**
  * Webhook Midtrans untuk menangani notifikasi pembayaran.
@@ -28,8 +29,16 @@ export async function POST(request: Request) {
         console.log(`Payment success for ${orderId}. Processing Payout...`);
 
         // Ambil data dari custom_field yang kita kirim saat checkout
-        const username = notification.custom_field1;
-        const amount = notification.custom_field2 ? parseInt(notification.custom_field2) : undefined;
+        let username = notification.custom_field1;
+        let amount = notification.custom_field2 ? parseInt(notification.custom_field2) : undefined;
+        
+        // Fallback: Jika custom_fields kosong di notification, coba ambil dari API Midtrans langsung
+        if (!username || !amount) {
+          console.log(`Custom fields missing in webhook for ${orderId}, fetching from Midtrans API...`);
+          const status = await getTransactionStatus(orderId);
+          username = status.custom_field1;
+          amount = status.custom_field2 ? parseInt(status.custom_field2) : undefined;
+        }
         
         if (username && amount) {
           console.log(`Processing automatic payout for ${amount} Robux to ${username}.`);
@@ -42,7 +51,7 @@ export async function POST(request: Request) {
           });
           console.log('Payout result:', payoutResult);
         } else {
-          console.error('Data transaksi tidak lengkap (custom_fields kosong):', {
+          console.error('Data transaksi tidak lengkap bahkan setelah fallback API:', {
             username,
             amount
           });

@@ -772,8 +772,16 @@ export default function AdminDashboard() {
             >
               Tutup Panel (✕)
             </button>
-            <div className="bg-white p-2 skew-y-[-2deg] shadow-[20px_20px_0_0_rgba(255,70,85,0.2)]">
-              <img src={selectedProof} alt="Bukti Transfer" className="w-full h-auto" />
+            <div className="bg-[#0c0506] border border-[#ff4655]/30 p-12 skew-y-[-2deg] shadow-[20px_20px_0_0_rgba(255,70,85,0.2)]">
+              <h4 className="text-[#ff4655] font-black uppercase tracking-widest text-xs mb-4">Informasi Transaksi / Bukti</h4>
+              <p className="text-white text-xl font-bold tracking-tight italic break-words leading-relaxed">
+                "{selectedProof}"
+              </p>
+              <div className="mt-8 pt-8 border-t border-white/5">
+                <p className="text-white/30 text-[10px] font-black uppercase tracking-widest leading-relaxed">
+                  Data ini diambil otomatis dari sistem integrasi Midtrans & Roblox Payout Bot.
+                </p>
+              </div>
             </div>
           </div>
         </div>

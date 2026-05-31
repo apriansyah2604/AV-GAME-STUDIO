@@ -11,16 +11,16 @@ const path = require('path');
  */
 const CONFIG = {
     // Cookie ROBLOSECURITY kamu
-    ROBLOX_COOKIE: "_|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|_CAEaAhADIhwKBGR1aWQSFDE0NDExNDY4MjgwNjcwNzMxMjM3KAM.aysEiBqBTmPi9uSpdJ1RjEEuzy4YBIBLi7lGOXQZLGPMZkXpu7K_ipU5Sb-6zFN0oSrdv-iz1f0ze3-7RouBM3TQK_mBEWU81l6BKsHjGEcv32fEkxTCrPapeTrxQlR6YwqF4MkpuJWK9m-_kbAL-HEnGAXkEAUI89G23u8DQBSOjLW3UXYE0Opg_Uiy2-7F5VAEdMyo9qREmV3tvOnNRh08d_DPwdbQY9yOJoX_mJPgSEqPwHHytYI2SZnqBqZfbtHEfFqiQka6xJ1Gk2uOSJ-VcXVI3MnwMyQlKcfplj7xF-1G9AFEaTQ7srlE_KiVDu_ZTRmtAy4AQtPMfBuWuI5Q8kZuS6o3wAEJTcjI7n7MPhgFwamflWfz8CDnMwC4WQggv3nWcvAsHdlZ90aWv3l9rvEcWC4bvrGWuGlKDtocuCXsW8NK36Q09u9gd4BFK-1mObOYJs2ROlgIYsGVhpGCJ2NtI5Cg7Zd_onKxZtwFZbrJOo8ZLgh-pQNjEFGD1G49vzGfPNVxH1dtrcIYPu5ywrmvS2AC29kE4bnNcuTIaN4meA6rWb70USFcqw_ZhOyywGlDDDn3ZOh6US6XzLEvdSt24fat6U84Ql-_srS0CuRYsjMe0zcN9Esbfiqio4bHxwIh-CkLRFjQSkgznIVufJY6R4xpaPQtWvU7irYarucnYTcmNRyOOmYyNZfvMvB2fExZDv55NJJpNsq4HnoWzJUX1_Q49tVUXGvlfUIl9G_IDbPTJnlXS_BBE_vGzKA_Fy-5T36k5m-UccAdZBQ5C1UoNgukvOvh2Q7k3g01yMwTr2tkX23eR6oah5OjYPd6Bly_NBGbZNS6A4OrjS_GTBzL1LXGvrQTb-SHjUzXdmWXx49qEG_V-6JnCaD6-f89XzMBvFrv8jXBiMWuxvoGHxBlebt_9Un4PmqXu814QFkGzgNJkkcs87Z6BFPgs1NO0A",
+    ROBLOX_COOKIE: process.env.ROBLOX_COOKIE,
     
     // ID Grup Roblox kamu
-    ROBLOX_GROUP_ID: 390244299,
+    ROBLOX_GROUP_ID: Number(process.env.ROBLOX_GROUP_ID) || 390244299,
     
     // Secret Key untuk keamanan API (Harus sama dengan di Next.js)
-    PAYOUT_SECRET_KEY: "av-studio-super-secret-key",
+    PAYOUT_SECRET_KEY: process.env.PAYOUT_SECRET_KEY || "av-studio-default-dev-key",
     
     // Port server berjalan (Otomatis mengikuti environment Hugging Face)
-    PORT: process.env.ROBLOX_SERVER_PORT || process.env.PORT || 7860
+    PORT: process.env.PORT || 7860
 };
 /** ================================================================= */
 
@@ -61,6 +61,10 @@ async function initRoblox() {
     if (!currentCookie) {
         console.error('[Roblox] ERROR: Cookie tidak ditemukan!');
         return;
+    }
+
+    if (CONFIG.PAYOUT_SECRET_KEY === "av-studio-default-dev-key") {
+        console.warn('[Security] WARNING: Menggunakan default secret key. Segera ganti di environment variables!');
     }
 
     try {

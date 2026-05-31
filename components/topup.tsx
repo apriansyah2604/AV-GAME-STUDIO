@@ -121,23 +121,6 @@ export function TopUp() {
       const data = await response.json()
       
       if (data.success && data.token) {
-        // CATAT PESANAN KE ADMIN SEBAGAI PENDING
-        try {
-          await fetch('/api/orders', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              username: orderUsername,
-              packageName: selectedPackage.name,
-              price: selectedPackage.price,
-              orderId: data.orderId,
-              status: 'pending'
-            })
-          });
-        } catch (err) {
-          console.error('Failed to log pending order:', err);
-        }
-
         // @ts-ignore
         window.snap.pay(data.token, {
           onSuccess: async function(result: any) {

@@ -5,6 +5,7 @@ export async function executeRobuxPayout(username: string, amount: number) {
   const secret = process.env.PAYOUT_SECRET_KEY;
 
   if (botUrl && secret) {
+    console.log(`[PAYOUT] Using external bot at ${botUrl}`);
     const cleanBotUrl = botUrl.endsWith('/') ? botUrl.slice(0, -1) : botUrl;
     const response = await fetch(`${cleanBotUrl}/api/payout`, {
       method: 'POST',
@@ -12,10 +13,18 @@ export async function executeRobuxPayout(username: string, amount: number) {
       body: JSON.stringify({ username, amount, secret }),
     });
 
-    const data = await response.json().catch(() => ({
-      success: false,
-      message: 'Bot payout tidak mengembalikan JSON yang valid.',
-    }));
+    const bodyText = await response.text();
+    console.log(`[PAYOUT] Bot response (${response.status}):`, bodyText);
+
+    let data;
+    try {
+      data = JSON.parse(bodyText);
+    } catch (e) {
+      data = {
+        success: false,
+        message: `Bot payout tidak mengembalikan JSON yang valid. Raw: ${bodyText.substring(0, 100)}`,
+      };
+    }
 
     return {
       ...data,
@@ -23,5 +32,6 @@ export async function executeRobuxPayout(username: string, amount: number) {
     };
   }
 
+  console.log(`[PAYOUT] Using local noblox.js`);
   return processPayout(username, amount);
 }

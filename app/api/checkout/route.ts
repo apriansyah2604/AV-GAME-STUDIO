@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createTransaction } from '@/lib/midtrans';
+import { supabase } from '@/lib/supabase';
 
 /**
  * API Endpoint untuk membuat transaksi Midtrans.
@@ -16,6 +17,21 @@ export async function POST(request: Request) {
 
     const orderId = `ROBUX${amount}-${Date.now()}-${username.substring(0, 5)}`;
     
+    // 1. Simpan pesanan ke Supabase sebagai 'pending' sebelum memanggil Midtrans
+    try {
+      await supabase.from('orders').upsert({
+        id: orderId,
+        username,
+        package: packageName,
+        price: price,
+        status: 'pending',
+        proof: 'MIDTRANS (INIT)'
+      });
+    } catch (dbError) {
+      console.error('Gagal mencatat order awal ke Supabase:', dbError);
+      // Tetap lanjut meskipun gagal catat, karena Midtrans lebih kritis
+    }
+
     const itemDetails = [
       {
         id: `ITEM-${amount}`,
@@ -31,7 +47,7 @@ export async function POST(request: Request) {
       phone: '08123456789'
     };
 
-    // Gunakan helper createTransaction yang baru
+    // 2. Gunakan helper createTransaction yang baru
     const transaction = await createTransaction(
       orderId, 
       price, 

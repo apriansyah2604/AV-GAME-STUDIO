@@ -33,6 +33,7 @@ export async function initRoblox() {
 
 export async function getGroupFunds() {
   const GROUP_ID = Number(process.env.ROBLOX_GROUP_ID);
+  console.log(`[ROBLOX] Using Group ID: ${GROUP_ID}`);
   try {
     await initRoblox();
     // Tambahkan timeout atau retry jika perlu di masa depan
@@ -51,6 +52,8 @@ export async function processPayout(username: string, amount: number) {
   
   try {
     await initRoblox();
+    const botUser = await noblox.getCurrentUser();
+    console.log(`[ROBLOX] Bot User: ${botUser.UserName} (${botUser.UserID})`);
 
     // 1. Dapatkan User ID dari Username dengan Retry
     let userId;
@@ -69,9 +72,28 @@ export async function processPayout(username: string, amount: number) {
     // 2. Cek apakah user ada di grup
     let memberInfo;
     try {
-      memberInfo = await noblox.getGroupMemberInfo(GROUP_ID, userId);
-    } catch (e) {
-      throw new Error(`Gagal mengambil data grup. Pastikan ID Grup ${GROUP_ID} benar.`);
+      const targetGroupId = Number(process.env.ROBLOX_GROUP_ID);
+      console.log(`[ROBLOX] Checking membership for UserID: ${userId} in GroupID: ${targetGroupId}`);
+      
+      // Menggunakan getMember sebagai alternatif yang lebih stabil
+      memberInfo = await noblox.getMember(targetGroupId, userId);
+      console.log(`[ROBLOX] Member Info:`, JSON.stringify(memberInfo));
+    } catch (e: any) {
+      console.error(`[ROBLOX] getMember Error:`, e.message);
+      // Fallback: Jika getMember gagal, coba getRankNameInGroup
+      try {
+        const rank = await noblox.getRankInGroup(Number(process.env.ROBLOX_GROUP_ID), userId);
+        if (rank > 0) {
+          console.log(`[ROBLOX] Fallback check: User is in group with rank ${rank}`);
+          memberInfo = { role: 'Member', rank: rank };
+        }
+      } catch (fallbackErr: any) {
+        console.error(`[ROBLOX] Fallback Error:`, fallbackErr.message);
+      }
+      
+      if (!memberInfo) {
+        throw new Error(`Gagal mengambil data grup. Pastikan ID Grup ${process.env.ROBLOX_GROUP_ID} benar. (Detail: ${e.message})`);
+      }
     }
 
     if (!memberInfo) {

@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     const { username, packageName, price, orderId, status } = formData;
 
     if (!username || !packageName || !price) {
-      return NextResponse.json({ success: false, message: 'Data tidak lengkap' }, { status: 400 });
+      return jsonNoStore({ success: false, message: 'Data tidak lengkap' }, { status: 400 });
     }
 
     const normalizedPrice = typeof price === 'string'
@@ -34,13 +34,15 @@ export async function POST(request: Request) {
       : Number(price);
 
     if (Number.isNaN(normalizedPrice)) {
-      return NextResponse.json({ success: false, message: 'Harga tidak valid' }, { status: 400 });
+      return jsonNoStore({ success: false, message: 'Harga tidak valid' }, { status: 400 });
     }
+
+    const generatedId = orderId || `ORDER-${Date.now()}`;
 
     const { data, error } = await supabase
       .from('orders')
       .upsert({
-        id: orderId || `ORDER-${Date.now()}`,
+        id: generatedId,
         username,
         package: packageName,
         price: normalizedPrice,
@@ -50,7 +52,11 @@ export async function POST(request: Request) {
 
     if (error) throw error;
 
-    return jsonNoStore({ success: true, message: 'Pesanan berhasil dicatat di Supabase' });
+    return jsonNoStore({ 
+      success: true, 
+      message: 'Pesanan berhasil dicatat di Supabase',
+      orderId: generatedId 
+    });
   } catch (error: any) {
     console.error('Supabase Save Order Error:', error);
     return jsonNoStore({ success: false, message: error.message }, { status: 500 });
@@ -76,7 +82,13 @@ export async function GET() {
 export async function PATCH(request: Request) {
   try {
     const { id, status } = await request.json();
+
+    const ALLOWED_STATUSES = ['pending', 'success', 'settlement', 'failure', 'expire', 'cancel'];
     
+    if (!id || !status || !ALLOWED_STATUSES.includes(status)) {
+      return jsonNoStore({ success: false, message: 'ID atau Status tidak valid' }, { status: 400 });
+    }
+
     const { error } = await supabase
       .from('orders')
       .update({ status })

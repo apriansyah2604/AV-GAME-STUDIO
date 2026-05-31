@@ -14,9 +14,7 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
-  Upload,
-  QrCode,
-  Smartphone
+  Lock
 } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
 import { useState, useEffect } from 'react'
@@ -28,6 +26,7 @@ export function TopUp() {
   const [robloxUsername, setRobloxUsername] = useState('')
   const [checkStatus, setCheckStatus] = useState<'idle' | 'loading' | 'member' | 'not_member' | 'error'>('idle')
   const [content, setContent] = useState<any>(null)
+  const [availableFunds, setAvailableFunds] = useState<number | null>(null)
   
   // State untuk alur pembayaran baru
   const [isOrdering, setIsOrdering] = useState(false)
@@ -41,11 +40,32 @@ export function TopUp() {
     fetch('/api/content', { cache: 'no-store' })
       .then(res => res.json())
       .then(data => setContent(data))
+
+    fetch('/api/check-funds', { cache: 'no-store' })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && typeof data.funds === 'number') {
+          setAvailableFunds(data.funds)
+        }
+      })
+      .catch(() => setAvailableFunds(null))
   }, [])
 
   if (!isMounted) return null
 
+  const getPackageAmount = (item: any) => parseInt(String(item?.name || '').match(/\d+/)?.[0] || '0')
+  const isPackageLocked = (item: any) => {
+    if (String(item?.stock || '').toLowerCase() === 'out of stock') return true
+    if (availableFunds === null) return false
+    return availableFunds < getPackageAmount(item)
+  }
+
   const handleOrderClick = (item: any) => {
+    if (isPackageLocked(item)) {
+      toast.error('Stok sedang kosong. Paket ini belum bisa dibeli saat ini.')
+      return
+    }
+
     setSelectedPackage(item)
     setOrderUsername(robloxUsername)
     setOrderStep('form')
@@ -72,7 +92,7 @@ export function TopUp() {
       if (fundsData.success) {
         if (fundsData.funds < amountValue) {
           setOrderStep('failed');
-          const msg = `Stok sedang kosong. Saldo grup saat ini (${fundsData.funds}) tidak mencukupi untuk paket ${amountValue} Robux.`;
+          const msg = 'Stok sedang kosong. Paket ini belum bisa dibeli saat ini.';
           setErrorMessage(msg);
           toast.error(msg);
           return;
@@ -317,7 +337,10 @@ export function TopUp() {
             </motion.div>
 
             <div className="space-y-5">
-              {robuxPackages.map((item: any, index: number) => (
+              {robuxPackages.map((item: any, index: number) => {
+                const packageLocked = isPackageLocked(item)
+
+                return (
                 <motion.div
                   key={item.name}
                   initial={{ opacity: 0, y: 30 }}
@@ -369,8 +392,12 @@ export function TopUp() {
                           <span className="rounded-none border border-[#ff4655]/30 px-3 py-1 text-[10px] font-black tracking-normal text-[#ff4655] uppercase">
                             {item.badge}
                           </span>
-                          <span className="rounded-none border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-[10px] font-black tracking-normal text-emerald-400 uppercase">
-                            {item.stock}
+                          <span className={`rounded-none border px-3 py-1 text-[10px] font-black tracking-normal uppercase ${
+                            packageLocked
+                              ? 'border-red-400/20 bg-red-400/10 text-red-400'
+                              : 'border-emerald-400/20 bg-emerald-400/10 text-emerald-400'
+                          }`}>
+                            {packageLocked ? 'Stok Kosong' : item.stock}
                           </span>
                         </div>
                       </div>
@@ -411,23 +438,27 @@ export function TopUp() {
 
                       <motion.button
                         onClick={() => handleOrderClick(item)}
+                        disabled={packageLocked}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         className={`mt-5 flex w-full items-center justify-center gap-2 rounded-none py-4 text-sm font-black uppercase tracking-normal transition-all ${
-                          item.featured
+                          packageLocked
+                            ? 'cursor-not-allowed border-2 border-white/10 bg-white/5 text-white/30'
+                            : item.featured
                             ? 'bg-[#ff4655] text-white skew-x-[-12deg]'
                             : 'border-2 border-white/20 text-white hover:border-[#ff4655] hover:bg-[#ff4655]/5'
                         }`}
                       >
-                        <span className={item.featured ? '-skew-x-[-12deg] inline-block flex items-center gap-2' : 'flex items-center gap-2'}>
-                          {t('topup.order_btn')}
-                          <ArrowRight className="h-4 w-4" />
+                        <span className={item.featured && !packageLocked ? '-skew-x-[-12deg] inline-block flex items-center gap-2' : 'flex items-center gap-2'}>
+                          {packageLocked ? 'Stok Kosong' : t('topup.order_btn')}
+                          {packageLocked ? <Lock className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
                         </span>
                       </motion.button>
                     </div>
                   </div>
                 </motion.div>
-              ))}
+                )
+              })}
             </div>
           </div>
 

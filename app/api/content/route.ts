@@ -58,13 +58,21 @@ function sanitizeRows(table: string, rows: any[]) {
   })
 }
 
-async function saveContentRows(table: string, rows: any[]) {
+async function saveContentRows(table: string, rows: any[], deletedIds: unknown = []) {
+  const validDeletedIds = Array.isArray(deletedIds)
+    ? deletedIds.filter((id): id is string => typeof id === 'string' && uuidPattern.test(id))
+    : []
   const sanitizedRows = sanitizeRows(table, rows)
   const rowsToUpdate = sanitizedRows.filter((row) => row.id)
   const rowsToInsert = sanitizedRows
     .filter((row) => !row.id)
     .map(({ id, ...row }) => row)
     .filter((row) => Object.keys(row).length > 0)
+
+  if (validDeletedIds.length > 0) {
+    const deleteRes = await supabase.from(table).delete().in('id', validDeletedIds)
+    if (deleteRes.error) return deleteRes
+  }
 
   if (rowsToUpdate.length > 0) {
     const updateRes = await supabase.from(table).upsert(rowsToUpdate, { onConflict: 'id' })
@@ -114,6 +122,7 @@ export async function POST(request: Request) {
     const payload = await request.json()
     const type = payload?.type
     const newData = payload?.data
+    const deletedIds = payload?.deletedIds
 
     // Lightweight logging to help debugging in deployment logs
     try {
@@ -139,7 +148,7 @@ export async function POST(request: Request) {
     }
 
     if (type === 'gallery') {
-      const saveRes = await saveContentRows('gallery', newData)
+      const saveRes = await saveContentRows('gallery', newData, deletedIds)
       if (saveRes.error) {
         console.error('Failed to save gallery:', saveRes.error)
         // If delete failed and insert also failed, return both messages if possible
@@ -151,7 +160,7 @@ export async function POST(request: Request) {
     }
 
     if (type === 'pricing') {
-      const saveRes = await saveContentRows('pricing', newData)
+      const saveRes = await saveContentRows('pricing', newData, deletedIds)
       if (saveRes.error) {
         console.error('Failed to save pricing:', saveRes.error)
         return jsonNoStore({ error: saveRes.error.message || 'Failed to save pricing' }, { status: 500 })
@@ -159,7 +168,7 @@ export async function POST(request: Request) {
 
       return jsonNoStore({ success: true })
     } else if (type === 'assets') {
-      const saveRes = await saveContentRows('assets', newData)
+      const saveRes = await saveContentRows('assets', newData, deletedIds)
       if (saveRes.error) {
         console.error('Failed to save assets:', saveRes.error)
         return jsonNoStore({ error: saveRes.error.message || 'Failed to save assets' }, { status: 500 })

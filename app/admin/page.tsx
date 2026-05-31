@@ -38,6 +38,9 @@ export default function AdminDashboard() {
   const [packages, setPackages] = useState<any[]>([])
   const [avatarServices, setAvatarServices] = useState<any[]>([])
   const [gallery, setGallery] = useState<any[]>([])
+  const [deletedPackageIds, setDeletedPackageIds] = useState<string[]>([])
+  const [deletedAssetIds, setDeletedAssetIds] = useState<string[]>([])
+  const [deletedGalleryIds, setDeletedGalleryIds] = useState<string[]>([])
   const [isSaving, setIsSaving] = useState(false)
 
   const fetchData = async () => {
@@ -53,11 +56,14 @@ export default function AdminDashboard() {
       const contentData = await contentRes.json()
       if (contentData.robux_packages) setPackages(contentData.robux_packages)
       if (contentData.avatar_services) setAvatarServices(contentData.avatar_services)
+      setDeletedPackageIds([])
+      setDeletedAssetIds([])
 
       // Fetch Gallery
       const galleryRes = await fetch('/api/content?type=gallery', { cache: 'no-store' })
       const galleryData = await galleryRes.json()
       if (Array.isArray(galleryData)) setGallery(galleryData)
+      setDeletedGalleryIds([])
 
     } catch (err) {
       toast.error('Gagal mengambil data')
@@ -183,13 +189,21 @@ export default function AdminDashboard() {
     setPackages(newPackages)
   }
 
+  const handleDeletePackage = (index: number) => {
+    const item = packages[index]
+    if (typeof item?.id === 'string') {
+      setDeletedPackageIds((ids) => [...ids, item.id])
+    }
+    setPackages(packages.filter((_, i) => i !== index))
+  }
+
   const handleSavePricing = async () => {
     setIsSaving(true)
     try {
       const res = await fetch('/api/content', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'pricing', data: packages })
+        body: JSON.stringify({ type: 'pricing', data: packages, deletedIds: deletedPackageIds })
       })
       let data: any = null
       try {
@@ -219,13 +233,21 @@ export default function AdminDashboard() {
     setAvatarServices(newAssets)
   }
 
+  const handleDeleteAsset = (index: number) => {
+    const item = avatarServices[index]
+    if (typeof item?.id === 'string') {
+      setDeletedAssetIds((ids) => [...ids, item.id])
+    }
+    setAvatarServices(avatarServices.filter((_, i) => i !== index))
+  }
+
   const handleSaveAssets = async () => {
     setIsSaving(true)
     try {
       const res = await fetch('/api/content', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'assets', data: avatarServices })
+        body: JSON.stringify({ type: 'assets', data: avatarServices, deletedIds: deletedAssetIds })
       })
       let data: any = null
       try {
@@ -255,13 +277,21 @@ export default function AdminDashboard() {
     setGallery(newGallery)
   }
 
+  const handleDeleteGallery = (index: number) => {
+    const item = gallery[index]
+    if (typeof item?.id === 'string') {
+      setDeletedGalleryIds((ids) => [...ids, item.id])
+    }
+    setGallery(gallery.filter((_, i) => i !== index))
+  }
+
   const handleSaveGallery = async () => {
     setIsSaving(true)
     try {
       const res = await fetch('/api/content', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'gallery', data: gallery })
+        body: JSON.stringify({ type: 'gallery', data: gallery, deletedIds: deletedGalleryIds })
       })
       let data: any = null
       try {
@@ -550,7 +580,7 @@ export default function AdminDashboard() {
                   </div>
                   <div className="flex items-center gap-4">
                     <button 
-                      onClick={() => setPackages(packages.filter((_, i) => i !== idx))}
+                      onClick={() => handleDeletePackage(idx)}
                       className="flex items-center gap-2 text-[#ff4655] text-[10px] font-black uppercase tracking-widest hover:opacity-70 transition-all"
                     >
                       <Trash2 className="w-3 h-3" /> Hapus Paket
@@ -634,7 +664,7 @@ export default function AdminDashboard() {
                     />
                   </div>
                   <button 
-                    onClick={() => setAvatarServices(avatarServices.filter((_, i) => i !== idx))}
+                    onClick={() => handleDeleteAsset(idx)}
                     className="flex items-center gap-2 text-[#ff4655] text-[10px] font-black uppercase tracking-widest hover:opacity-70 transition-all"
                   >
                     <Trash2 className="w-3 h-3" /> Hapus Layanan
@@ -709,7 +739,7 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                   <button 
-                    onClick={() => setGallery(gallery.filter((_, i) => i !== idx))}
+                    onClick={() => handleDeleteGallery(idx)}
                     className="flex items-center gap-2 text-[#ff4655] text-[10px] font-black uppercase tracking-widest hover:opacity-70 transition-all pt-2"
                   >
                     <Trash2 className="w-3 h-3" /> Hapus Foto

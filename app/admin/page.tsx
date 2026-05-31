@@ -482,7 +482,7 @@ export default function AdminDashboard() {
                     </div>
                     <div>
                       <div className="flex items-center gap-4 mb-1">
-                        <h3 className="text-2xl font-black uppercase italic tracking-tight">{order.username}</h3>
+                        <h3 className="text-2xl font-black italic tracking-tight">{order.username}</h3>
                         <span className="text-[10px] bg-white/5 px-3 py-1 border border-white/10 text-white/40 font-black uppercase tracking-widest">{order.id}</span>
                       </div>
                       <p className="text-sm text-[#ff4655] font-black uppercase tracking-widest">{order.package} • {order.price}</p>

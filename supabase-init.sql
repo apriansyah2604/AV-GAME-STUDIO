@@ -15,6 +15,15 @@ CREATE TABLE IF NOT EXISTS public.pricing (
   created_at timestamptz DEFAULT now()
 );
 
+-- Keep older existing tables compatible with the current admin payload.
+ALTER TABLE public.pricing ADD COLUMN IF NOT EXISTS price text;
+ALTER TABLE public.pricing ADD COLUMN IF NOT EXISTS badge text;
+ALTER TABLE public.pricing ADD COLUMN IF NOT EXISTS meta text;
+ALTER TABLE public.pricing ADD COLUMN IF NOT EXISTS stock text;
+ALTER TABLE public.pricing ADD COLUMN IF NOT EXISTS featured boolean DEFAULT false;
+ALTER TABLE public.pricing ADD COLUMN IF NOT EXISTS description text;
+ALTER TABLE public.pricing ADD COLUMN IF NOT EXISTS created_at timestamptz DEFAULT now();
+
 CREATE TABLE IF NOT EXISTS public.assets (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   title text NOT NULL,

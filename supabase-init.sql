@@ -1,0 +1,33 @@
+-- Supabase table creation script for AV GAME STUDIO
+-- Run this first in SQL Editor before applying access policies.
+
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+CREATE TABLE IF NOT EXISTS public.pricing (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name text NOT NULL,
+  price text,
+  badge text,
+  meta text,
+  stock text,
+  featured boolean DEFAULT false,
+  description text,
+  created_at timestamptz DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS public.assets (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  title text NOT NULL,
+  price text,
+  badge text,
+  description text,
+  created_at timestamptz DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS public.gallery (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  title text,
+  src text,
+  category text,
+  created_at timestamptz DEFAULT now()
+);

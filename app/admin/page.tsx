@@ -191,7 +191,19 @@ export default function AdminDashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'pricing', data: packages })
       })
-      if (res.ok) toast.success('Harga Robux berhasil diperbarui!')
+      let data: any = null
+      try {
+        data = await res.json()
+      } catch (e) {
+        const text = await res.text().catch(() => '')
+        data = { error: text || 'Non-JSON response' }
+      }
+      if (res.ok) {
+        toast.success('Harga Robux berhasil diperbarui!')
+      } else {
+        toast.error(data?.error || 'Gagal menyimpan harga')
+        console.error('Save pricing failed:', data)
+      }
     } catch (err) {
       toast.error('Gagal menyimpan harga')
     } finally {
@@ -214,7 +226,19 @@ export default function AdminDashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'assets', data: avatarServices })
       })
-      if (res.ok) toast.success('Katalog Aset berhasil diperbarui!')
+      let data: any = null
+      try {
+        data = await res.json()
+      } catch (e) {
+        const text = await res.text().catch(() => '')
+        data = { error: text || 'Non-JSON response' }
+      }
+      if (res.ok) {
+        toast.success('Katalog Aset berhasil diperbarui!')
+      } else {
+        toast.error(data?.error || 'Gagal menyimpan aset')
+        console.error('Save assets failed:', data)
+      }
     } catch (err) {
       toast.error('Gagal menyimpan aset')
     } finally {
@@ -237,7 +261,19 @@ export default function AdminDashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'gallery', data: gallery })
       })
-      if (res.ok) toast.success('Galeri berhasil diperbarui!')
+      let data: any = null
+      try {
+        data = await res.json()
+      } catch (e) {
+        const text = await res.text().catch(() => '')
+        data = { error: text || 'Non-JSON response' }
+      }
+      if (res.ok) {
+        toast.success('Galeri berhasil diperbarui!')
+      } else {
+        toast.error(data?.error || 'Gagal menyimpan galeri')
+        console.error('Save gallery failed:', data)
+      }
     } catch (err) {
       toast.error('Gagal menyimpan galeri')
     } finally {

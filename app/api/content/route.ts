@@ -35,33 +35,81 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const { type, data: newData } = await request.json()
+    const payload = await request.json()
+    const type = payload?.type
+    const newData = payload?.data
+
+    // Lightweight logging to help debugging in deployment logs
+    try {
+      const preview = Array.isArray(newData) ? `array(${newData.length})` : typeof newData
+      console.log(`[POST /api/content] type=${type} data=${preview}`)
+    } catch (logErr) {
+      console.warn('Failed to log payload preview', logErr)
+    }
+
+    // Protect against accidentally huge payloads
+    if (Array.isArray(newData) && newData.length > 500) {
+      return NextResponse.json({ error: 'Payload too large: data array exceeds 500 items' }, { status: 413 })
+    }
+
+    if (!type || typeof type !== 'string') {
+      return NextResponse.json({ error: 'Missing or invalid "type" field' }, { status: 400 })
+    }
+
+    // For content types that expect arrays, validate
+    const expectsArray = ['gallery', 'pricing', 'assets']
+    if (expectsArray.includes(type) && !Array.isArray(newData)) {
+      return NextResponse.json({ error: 'Expected "data" to be an array for type ' + type }, { status: 400 })
+    }
 
     if (type === 'gallery') {
-      // Gallery usually is an array of items
-      // We'll delete and re-insert for simplicity in this admin context, 
-      // or handle upserts if data has IDs.
-      await supabase.from('gallery').delete().neq('id', '00000000-0000-0000-0000-000000000000') // Clear all
-      const { error } = await supabase.from('gallery').insert(newData)
-      if (error) throw error
-      return NextResponse.json({ success: true })
+      const delRes = await supabase.from('gallery').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+      if (delRes.error) {
+        console.warn('Failed to clear gallery (will attempt insert anyway):', delRes.error)
+      }
+
+      const insertRes = await supabase.from('gallery').insert(newData)
+      if (insertRes.error) {
+        console.error('Failed to insert gallery:', insertRes.error)
+        // If delete failed and insert also failed, return both messages if possible
+        const message = insertRes.error.message || 'Failed to insert gallery'
+        return NextResponse.json({ error: message }, { status: 500 })
+      }
+
+      return NextResponse.json({ success: true, warning: delRes.error?.message })
     }
 
     if (type === 'pricing') {
-      await supabase.from('pricing').delete().neq('id', '00000000-0000-0000-0000-000000000000')
-      const { error } = await supabase.from('pricing').insert(newData)
-      if (error) throw error
+      const delRes = await supabase.from('pricing').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+      if (delRes.error) {
+        console.warn('Failed to clear pricing (will attempt insert anyway):', delRes.error)
+      }
+
+      const insertRes = await supabase.from('pricing').insert(newData)
+      if (insertRes.error) {
+        console.error('Failed to insert pricing:', insertRes.error)
+        return NextResponse.json({ error: insertRes.error.message || 'Failed to insert pricing' }, { status: 500 })
+      }
+
+      return NextResponse.json({ success: true, warning: delRes.error?.message })
     } else if (type === 'assets') {
-      await supabase.from('assets').delete().neq('id', '00000000-0000-0000-0000-000000000000')
-      const { error } = await supabase.from('assets').insert(newData)
-      if (error) throw error
+      const delRes = await supabase.from('assets').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+      if (delRes.error) {
+        console.warn('Failed to clear assets (will attempt insert anyway):', delRes.error)
+      }
+
+      const insertRes = await supabase.from('assets').insert(newData)
+      if (insertRes.error) {
+        console.error('Failed to insert assets:', insertRes.error)
+        return NextResponse.json({ error: insertRes.error.message || 'Failed to insert assets' }, { status: 500 })
+      }
+
+      return NextResponse.json({ success: true, warning: delRes.error?.message })
     } else {
       return NextResponse.json({ error: 'Invalid type' }, { status: 400 })
     }
-
-    return NextResponse.json({ success: true })
   } catch (error: any) {
     console.error('Supabase Update Content Error:', error)
-    return NextResponse.json({ error: 'Failed to update content' }, { status: 500 })
+    return NextResponse.json({ error: (error && error.message) || String(error) || 'Failed to update content' }, { status: 500 })
   }
 }

@@ -10,6 +10,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, message: 'Data tidak lengkap' }, { status: 400 });
     }
 
+    const normalizedPrice = typeof price === 'string'
+      ? Number(price.toString().replace(/[^0-9]/g, ''))
+      : Number(price);
+
+    if (Number.isNaN(normalizedPrice)) {
+      return NextResponse.json({ success: false, message: 'Harga tidak valid' }, { status: 400 });
+    }
+
     const { data, error } = await supabase
       .from('orders')
       .insert([
@@ -17,7 +25,7 @@ export async function POST(request: Request) {
           id: orderId || `ORDER-${Date.now()}`, 
           username, 
           package: packageName, 
-          price: price.toString(), 
+          price: normalizedPrice, 
           status: status || 'pending',
           proof: 'MIDTRANS'
         }

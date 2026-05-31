@@ -142,20 +142,33 @@ export function TopUp() {
         window.snap.pay(data.token, {
           onSuccess: async function(result: any) {
             console.log('Success:', result);
-            
-            // UPDATE STATUS KE COMPLETED DI ADMIN
-            try {
-              await fetch('/api/orders', {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: data.orderId, status: 'completed' })
-              });
-            } catch (err) {
-              console.error('Failed to update order status:', err);
-            }
+            setOrderStep('processing');
 
-            setOrderStep('success');
-            toast.success('Pembayaran Berhasil! Robux akan segera dikirim.');
+            try {
+              const confirmRes = await fetch('/api/checkout/confirm', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  orderId: data.orderId,
+                  username: orderUsername,
+                  amount: amountValue,
+                  price: priceValue
+                })
+              });
+              const confirmData = await confirmRes.json();
+
+              if (!confirmRes.ok || !confirmData.success) {
+                throw new Error(confirmData.message || 'Payout Robux gagal.');
+              }
+
+              setOrderStep('success');
+              toast.success('Pembayaran Berhasil! Robux sudah diproses.');
+            } catch (err) {
+              console.error('Failed to confirm payout:', err);
+              setOrderStep('failed');
+              setErrorMessage(err instanceof Error ? err.message : 'Pembayaran sukses, tetapi pengiriman Robux gagal. Hubungi Admin.');
+              toast.error('Pembayaran sukses, tetapi pengiriman Robux gagal.');
+            }
           },
           onPending: function(result: any) {
             console.log('Pending:', result);

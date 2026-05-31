@@ -11,6 +11,10 @@ export const snap = new midtransClient.Snap({
   clientKey: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY
 });
 
+export async function getTransactionStatus(orderId: string) {
+  return snap.transaction.status(orderId);
+}
+
 export async function createTransaction(orderId: string, amount: number, itemDetails: any, customerDetails: any, metadata: { username: string, robux_amount: number }) {
   const parameter = {
     transaction_details: {

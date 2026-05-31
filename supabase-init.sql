@@ -40,3 +40,20 @@ CREATE TABLE IF NOT EXISTS public.gallery (
   category text,
   created_at timestamptz DEFAULT now()
 );
+
+CREATE TABLE IF NOT EXISTS public.orders (
+  id text PRIMARY KEY,
+  username text NOT NULL,
+  package text NOT NULL,
+  price integer,
+  status text DEFAULT 'pending',
+  proof text,
+  created_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS username text;
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS package text;
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS price integer;
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS status text DEFAULT 'pending';
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS proof text;
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS created_at timestamptz DEFAULT now();

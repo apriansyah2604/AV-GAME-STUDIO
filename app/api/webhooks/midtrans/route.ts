@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { fulfillRobuxOrder } from '@/lib/fulfillment';
 
 /**
  * Webhook Midtrans untuk menangani notifikasi pembayaran.
@@ -31,54 +31,16 @@ export async function POST(request: Request) {
         const username = notification.custom_field1;
         const amount = notification.custom_field2 ? parseInt(notification.custom_field2) : undefined;
         
-        // --- CATAT/UPDATE PESANAN KE SUPABASE ---
-        try {
-          const { error } = await supabase
-            .from('orders')
-            .upsert({
-              id: orderId,
-              username,
-              package: `${amount} Robux`,
-              price: `Rp ${notification.gross_amount}`,
-              status: 'completed',
-              proof: 'PAID VIA MIDTRANS'
-            });
-            
-          if (error) throw error;
-        } catch (err) {
-          console.error('Failed to update Supabase in webhook:', err);
-        }
-        // ------------------------------------
-
         if (username && amount) {
           console.log(`Processing automatic payout for ${amount} Robux to ${username}.`);
-          
-          const botUrl = process.env.ROBLOX_SERVER_URL;
-          const secret = process.env.PAYOUT_SECRET_KEY;
-          
-          if (!botUrl || !secret) {
-            console.error('Missing Bot URL or Secret in Environment Variables!');
-            return NextResponse.json({ status: 'Error', message: 'Config missing' }, { status: 500 });
-          }
-
-          const cleanBotUrl = botUrl.endsWith('/') ? botUrl.slice(0, -1) : botUrl;
-          
-          try {
-            const payoutResponse = await fetch(`${cleanBotUrl}/api/payout`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                username: username,
-                amount: amount,
-                secret: secret
-              })
-            });
-            
-            const payoutResult = await payoutResponse.json();
-            console.log('Bot Response:', payoutResult);
-          } catch (err: any) {
-            console.error('Failed to contact Hugging Face Bot:', err.message);
-          }
+          const payoutResult = await fulfillRobuxOrder({
+            orderId,
+            username,
+            amount,
+            price: notification.gross_amount,
+            source: 'webhook',
+          });
+          console.log('Payout result:', payoutResult);
         } else {
           console.error('Data transaksi tidak lengkap (custom_fields kosong):', {
             username,

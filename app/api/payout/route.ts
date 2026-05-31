@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { processPayout } from '@/lib/roblox';
+import { executeRobuxPayout } from '@/lib/payout';
 
 /**
  * API Endpoint untuk memproses Payout Robux.
@@ -27,35 +27,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // 3. Eksekusi Payout via VPS Server (Jika ada URL) atau Local
-    const VPS_URL = process.env.ROBLOX_SERVER_URL;
-    
-    if (VPS_URL) {
-      // Pastikan URL tidak berakhir dengan slash
-      const cleanUrl = VPS_URL.endsWith('/') ? VPS_URL.slice(0, -1) : VPS_URL;
-      console.log(`Attempting payout to ${username} for ${amount} Robux via ${cleanUrl}/api/payout`);
-      try {
-        const response = await fetch(`${cleanUrl}/api/payout`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, amount, secret })
-        });
-        
-        const data = await response.json();
-        console.log('Bot Response:', data);
-        return NextResponse.json(data, { status: response.status });
-      } catch (err: any) {
-        console.error('Gagal menghubungi Hugging Face Server:', err.message);
-        return NextResponse.json(
-          { success: false, message: 'Gagal menghubungi Hugging Face Server untuk payout.' },
-          { status: 502 }
-        );
-      }
-    }
-
-    // Fallback ke local payout jika tidak ada VPS_URL (hanya untuk testing/local)
-    console.log(`Memproses payout lokal: ${amount} Robux untuk ${username}`);
-    const result = await processPayout(username, amount);
+    const result = await executeRobuxPayout(username, amount);
 
     if (result.success) {
       return NextResponse.json(result);

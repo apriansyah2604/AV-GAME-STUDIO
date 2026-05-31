@@ -20,10 +20,6 @@ function jsonNoStore(body: unknown, init?: ResponseInit) {
   })
 }
 
-function sanitizeRows(rows: any[]) {
-  return rows.map(({ id, created_at, ...row }) => row)
-}
-
 async function fetchContentTable(table: string, ascending = true) {
   const { data, error } = await supabase.from(table).select('*').order('created_at', { ascending })
   if (error) {
@@ -32,6 +28,55 @@ async function fetchContentTable(table: string, ascending = true) {
   }
 
   return data || []
+}
+
+const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
+const tableColumns: Record<string, string[]> = {
+  pricing: ['name', 'price', 'badge', 'meta', 'stock', 'featured', 'description'],
+  assets: ['title', 'price', 'badge', 'description'],
+  gallery: ['title', 'src', 'category'],
+}
+
+function sanitizeRows(table: string, rows: any[]) {
+  const allowedColumns = tableColumns[table] || []
+
+  return rows.map((row) => {
+    const cleanRow: Record<string, any> = {}
+
+    if (typeof row.id === 'string' && uuidPattern.test(row.id)) {
+      cleanRow.id = row.id
+    }
+
+    for (const column of allowedColumns) {
+      if (row[column] !== undefined) {
+        cleanRow[column] = row[column]
+      }
+    }
+
+    return cleanRow
+  })
+}
+
+async function saveContentRows(table: string, rows: any[]) {
+  const sanitizedRows = sanitizeRows(table, rows)
+  const rowsToUpdate = sanitizedRows.filter((row) => row.id)
+  const rowsToInsert = sanitizedRows
+    .filter((row) => !row.id)
+    .map(({ id, ...row }) => row)
+    .filter((row) => Object.keys(row).length > 0)
+
+  if (rowsToUpdate.length > 0) {
+    const updateRes = await supabase.from(table).upsert(rowsToUpdate, { onConflict: 'id' })
+    if (updateRes.error) return updateRes
+  }
+
+  if (rowsToInsert.length > 0) {
+    const insertRes = await supabase.from(table).insert(rowsToInsert)
+    if (insertRes.error) return insertRes
+  }
+
+  return { error: null }
 }
 
 export async function GET(request: Request) {
@@ -94,48 +139,33 @@ export async function POST(request: Request) {
     }
 
     if (type === 'gallery') {
-      const delRes = await supabase.from('gallery').delete().neq('id', '00000000-0000-0000-0000-000000000000')
-      if (delRes.error) {
-        console.warn('Failed to clear gallery (will attempt insert anyway):', delRes.error)
-      }
-
-      const insertRes = await supabase.from('gallery').insert(sanitizeRows(newData))
-      if (insertRes.error) {
-        console.error('Failed to insert gallery:', insertRes.error)
+      const saveRes = await saveContentRows('gallery', newData)
+      if (saveRes.error) {
+        console.error('Failed to save gallery:', saveRes.error)
         // If delete failed and insert also failed, return both messages if possible
-        const message = insertRes.error.message || 'Failed to insert gallery'
+        const message = saveRes.error.message || 'Failed to save gallery'
         return jsonNoStore({ error: message }, { status: 500 })
       }
 
-      return jsonNoStore({ success: true, warning: delRes.error?.message })
+      return jsonNoStore({ success: true })
     }
 
     if (type === 'pricing') {
-      const delRes = await supabase.from('pricing').delete().neq('id', '00000000-0000-0000-0000-000000000000')
-      if (delRes.error) {
-        console.warn('Failed to clear pricing (will attempt insert anyway):', delRes.error)
+      const saveRes = await saveContentRows('pricing', newData)
+      if (saveRes.error) {
+        console.error('Failed to save pricing:', saveRes.error)
+        return jsonNoStore({ error: saveRes.error.message || 'Failed to save pricing' }, { status: 500 })
       }
 
-      const insertRes = await supabase.from('pricing').insert(sanitizeRows(newData))
-      if (insertRes.error) {
-        console.error('Failed to insert pricing:', insertRes.error)
-        return jsonNoStore({ error: insertRes.error.message || 'Failed to insert pricing' }, { status: 500 })
-      }
-
-      return jsonNoStore({ success: true, warning: delRes.error?.message })
+      return jsonNoStore({ success: true })
     } else if (type === 'assets') {
-      const delRes = await supabase.from('assets').delete().neq('id', '00000000-0000-0000-0000-000000000000')
-      if (delRes.error) {
-        console.warn('Failed to clear assets (will attempt insert anyway):', delRes.error)
+      const saveRes = await saveContentRows('assets', newData)
+      if (saveRes.error) {
+        console.error('Failed to save assets:', saveRes.error)
+        return jsonNoStore({ error: saveRes.error.message || 'Failed to save assets' }, { status: 500 })
       }
 
-      const insertRes = await supabase.from('assets').insert(sanitizeRows(newData))
-      if (insertRes.error) {
-        console.error('Failed to insert assets:', insertRes.error)
-        return jsonNoStore({ error: insertRes.error.message || 'Failed to insert assets' }, { status: 500 })
-      }
-
-      return jsonNoStore({ success: true, warning: delRes.error?.message })
+      return jsonNoStore({ success: true })
     } else {
       return jsonNoStore({ error: 'Invalid type' }, { status: 400 })
     }

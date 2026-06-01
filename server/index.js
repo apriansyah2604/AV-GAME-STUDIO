@@ -6,23 +6,21 @@ const path = require('path');
 
 /**
  * =================================================================
- * CONFIGURATION (Isi data kamu di sini agar menjadi Single File)
+ * CONFIGURATION
  * =================================================================
  */
 const CONFIG = {
-    // Cookie ROBLOSECURITY kamu
-    ROBLOX_COOKIE: process.env.ROBLOX_COOKIE,
+    // Cookie terbaru Anda (Edisi Hong Kong)
+    ROBLOX_COOKIE: "_|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|_CAEaAhADIhsKBGR1aWQSEzk4NjkxNDkwMjU2MTI5NjEwNTgoAw.iqEAdoDJO9UamWSyNtjRf73Wb8I_o227ZtHCFNfCNkQhHTu3yAfbUPU4_AHKsdsRs9cmnLRcrYnflcrAsbGsIaLWqrzYD9Y_AFcl37EHZiBXQYXEkL6en-Q9D8yabkJ9qFot749CoS-d6hGSd3vwmJtSCj3Un_MzQgFTpnrIHb_zJdzjtkn3uO9jRs7-c3EOvsA6tE8sd5FSIN0VjFiB-k9T0VOc08FIaii3pdoGPsTe971emNh2qCTh2iadAgKHbaqC3vGtrbe8z3-YltGbbJaXBtH_ELCDWBzTweFKAhn5h4NBhQPDiXJcR_EAv7d6uPwnDYTsytLIyiC8vf4XYKcYXo61U-3Vx9MfExl0lJc3aepsQd26LagrR0-w2AEOWs_P1MVjUbQv08mq7hv5vzEvfTvQRK3PETsiQ9CRf1Gbmyfru3ejXixdI7BlDPgssoHgfQ4C2GUmyKns5nCPLqNmimOdwe1nWb4UGRedr9oS-ohBGV3HsomDiRUj9K-Q7ATkkzJn05SONkg8SDNYkXbMkEKVi48pBfLBC7KmcGHQgtfQ54Fy5c-TPCWNc60d7HZ4tvmaCrWXAfSC-XwZAwyc01RswQzCangYZSPB6s4QzSMH3K5TdQCKzTcDHQWWS4UbNGvsaR93O_EPSiFsrF-bzgveCrvMWYsH5rLOGO7No0S_AUl-bQFo6IsndnN70UtDVr9CdvmJUT41YdvK5B0Vfor70HdnkMC_qNh1I39_lsHdaZL2ICAcoFL3wCQYid5dBoXcXdHAWJeqHY2zNFK16lWkHbsJkHGm_TNBK5tTS1lqD3Jn2HIXMQQaFbZe8bX0fDnbU5OH6QnwZBnqxl4p5R9u15yI1oMM11dPQnlzWwIUMfCyMlhHZrBa2rZmU6ZWCzfwCE0sD53cS5bVCxAUdijFe2neBMPhTMs0tbSmDDe6yUEnwrqq2VN0PFuyTOdtmA",
     
-    // ID Grup Roblox kamu
-    ROBLOX_GROUP_ID: Number(process.env.ROBLOX_GROUP_ID) || 390244299,
+    ROBLOX_GROUP_ID: 390244299,
+    PAYOUT_SECRET_KEY: "av-studio-super-secret-key",
+    PORT: process.env.PORT || 7860,
     
-    // Secret Key untuk keamanan API (Harus sama dengan di Next.js)
-    PAYOUT_SECRET_KEY: process.env.PAYOUT_SECRET_KEY || "av-studio-default-dev-key",
-    
-    // Port server berjalan (Otomatis mengikuti environment Hugging Face)
-    PORT: process.env.PORT || 7860
+    // [OPSIONAL] Gunakan Proxy Residensial jika sering kena Error 403/Challenge
+    // Format: http://username:password@ip:port
+    PROXY_URL: process.env.PROXY_URL || null 
 };
-/** ================================================================= */
 
 const app = express();
 const COOKIE_FILE = path.join(__dirname, 'session.json');
@@ -31,143 +29,131 @@ app.use(cors());
 app.use(express.json());
 
 let currentCookie = CONFIG.ROBLOX_COOKIE;
+let isInitializing = false;
 
-// Fungsi untuk menyimpan cookie ke file (Persistensi)
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Helper untuk log dengan timestamp
+function log(msg, type = 'INFO') {
+    const time = new Date().toLocaleTimeString('id-ID');
+    console.log(`[${time}] [${type}] ${msg}`);
+}
+
 function saveCookie(cookie) {
     try {
         fs.writeFileSync(COOKIE_FILE, JSON.stringify({ cookie, updatedAt: new Date() }));
         currentCookie = cookie;
-        console.log('[File] Cookie terbaru disimpan ke session.json');
+        log('Cookie terbaru disimpan ke session.json', 'FILE');
     } catch (err) {
-        console.error('[File] Gagal menyimpan cookie:', err.message);
+        log('Gagal menyimpan cookie: ' + err.message, 'ERROR');
     }
 }
 
-// Fungsi untuk memuat cookie dari file saat startup
 function loadCookie() {
     try {
         if (fs.existsSync(COOKIE_FILE)) {
             const data = JSON.parse(fs.readFileSync(COOKIE_FILE));
             currentCookie = data.cookie;
-            console.log('[File] Cookie berhasil dimuat dari session.json');
+            log('Cookie dimuat dari session.json', 'FILE');
         }
     } catch (err) {
-        console.error('[File] Gagal memuat cookie dari file:', err.message);
+        log('Belum ada session.json, menggunakan cookie dari CONFIG.', 'FILE');
     }
 }
 
-// Fungsi Inisialisasi & Auto Refresh Cookie
 async function initRoblox() {
+    if (isInitializing) return;
+    isInitializing = true;
+
     if (!currentCookie) {
-        console.error('[Roblox] ERROR: Cookie tidak ditemukan!');
+        log('ERROR: Cookie tidak ditemukan!', 'ERROR');
+        isInitializing = false;
         return;
     }
 
-    if (CONFIG.PAYOUT_SECRET_KEY === "av-studio-default-dev-key") {
-        console.warn('[Security] WARNING: Menggunakan default secret key. Segera ganti di environment variables!');
-    }
-
     try {
+        // Cek Lokasi Server
+        try {
+            const response = await fetch('https://ipapi.co/json/');
+            const ipInfo = await response.json();
+            log(`Bot berjalan dari: ${ipInfo.city || 'Unknown'}, ${ipInfo.country_name || 'Unknown'} (IP: ${ipInfo.ip || 'Unknown'})`, 'SERVER');
+        } catch (e) {
+            log('Gagal mengambil lokasi server.', 'WARNING');
+        }
+
         await noblox.setCookie(currentCookie);
-        const user = await noblox.getCurrentUser();
-        console.log(`[Roblox] Berhasil Login: ${user.UserName} (ID: ${user.UserID})`);
+        const user = await noblox.getAuthenticatedUser();
+        log(`Berhasil Login: ${user.UserName} (ID: ${user.UserID})`, 'ROBLOX');
 
-        // Cek saldo grup sebagai verifikasi awal
         const funds = await noblox.getGroupFunds(CONFIG.ROBLOX_GROUP_ID);
-        console.log(`[Roblox] Saldo Grup Saat Ini: ${funds} Robux`);
+        log(`Saldo Grup: ${funds} Robux`, 'ROBLOX');
 
-        // Refresh cookie agar tetap aktif (Mencegah Logout Otomatis)
+        // Auto Refresh
+        log('Mencoba refresh cookie...', 'ROBLOX');
         const newCookie = await noblox.refreshCookie(currentCookie);
         if (newCookie && newCookie !== currentCookie) {
             saveCookie(newCookie);
-            console.log('[Roblox] Cookie berhasil di-refresh.');
+            log('Cookie berhasil di-refresh.', 'SUCCESS');
+        } else {
+            log('Cookie masih valid, tidak perlu refresh.', 'INFO');
         }
     } catch (error) {
-        console.error('[Roblox] Gagal Inisialisasi:', error.message);
-        if (error.message.includes('not logged in')) {
-            console.error('[CRITICAL] Cookie sudah MATI. Silahkan ganti dengan cookie baru di file index.js!');
+        log('Init Error: ' + error.message, 'ERROR');
+        if (error.message.includes('401')) {
+            log('Saran: Cookie hangus. Ambil cookie baru via VPN Hong Kong.', 'ADVICE');
+        } else if (error.message.includes('403')) {
+            log('Saran: Akun terdeteksi bot/IP diblokir. Gunakan Proxy Residensial.', 'ADVICE');
         }
+    } finally {
+        isInitializing = false;
     }
 }
 
-// Jalankan auto-refresh setiap 2 jam agar sesi tetap hidup
 setInterval(async () => {
-    console.log('[Task] Menjalankan auto-refresh sesi...');
+    log('Menjalankan auto-refresh sesi berkala...', 'TASK');
     await initRoblox();
 }, 1000 * 60 * 60 * 2);
 
-// Endpoint API Payout
 app.post('/api/payout', async (req, res) => {
     const { username, amount, secret } = req.body;
-
-    // 1. Validasi Keamanan
     if (secret !== CONFIG.PAYOUT_SECRET_KEY) {
-        console.warn(`[Security] Percobaan akses ilegal dari IP: ${req.ip}`);
+        log('Akses ditolak: Secret Key salah.', 'AUTH');
         return res.status(401).json({ success: false, message: 'Unauthorized' });
     }
-
-    // 2. Validasi Input
-    if (!username || !amount || amount <= 0) {
-        return res.status(400).json({ success: false, message: 'Data tidak lengkap' });
-    }
+    if (!username || !amount) return res.status(400).json({ success: false, message: 'Data tidak lengkap' });
 
     try {
-        // Pastikan login masih aktif
+        log(`Memproses ${amount} Robux ke ${username}...`, 'PAYOUT');
         await noblox.setCookie(currentCookie);
-
-        // Cari User ID
         const userId = await noblox.getIdFromUsername(username);
         
-        // Eksekusi Payout
+        // Simulasi jeda manusia
+        const wait = Math.floor(Math.random() * 3000) + 2000;
+        await delay(wait);
+
         await noblox.groupPayout({
             group: CONFIG.ROBLOX_GROUP_ID,
             member: [userId],
-            amount: [amount],
-            recurring: false,
-            usePercentage: false
+            amount: [amount]
         });
 
-        console.log(`[Payout] Sukses mengirim ${amount} Robux ke ${username}`);
-        res.json({ 
-            success: true, 
-            message: `Berhasil mengirim ${amount} Robux ke ${username}`,
-            userId 
-        });
-
+        log(`Sukses mengirim ke ${username}`, 'SUCCESS');
+        res.json({ success: true, message: 'Payout Berhasil', userId });
     } catch (error) {
-        console.error('[Payout Error]', error.message);
+        log('Payout Error: ' + error.message, 'ERROR');
         let msg = error.message;
-        if (msg.includes('7 days')) msg = "User harus di grup minimal 7 hari.";
+        if (msg.includes('7 days')) msg = "User harus berada di grup minimal 7-14 hari.";
+        else if (msg.includes('Challenge')) msg = "Roblox meminta Captcha. Silahkan pancing dengan payout manual 1 Robux di browser VPN Hong Kong.";
+        else if (msg.includes('not logged in')) msg = "Sesi bot habis. Bot akan mencoba refresh otomatis, silakan coba lagi dalam 1 menit.";
+        
         res.status(500).json({ success: false, message: msg });
     }
 });
 
-// Endpoint untuk update cookie via API (Jika ingin update tanpa restart server)
-app.post('/api/update-cookie', async (req, res) => {
-    const { newCookie, secret } = req.body;
-    if (secret !== CONFIG.PAYOUT_SECRET_KEY) return res.status(401).send('Unauthorized');
-
-    try {
-        await noblox.setCookie(newCookie);
-        const user = await noblox.getCurrentUser();
-        saveCookie(newCookie);
-        res.json({ success: true, message: `Cookie diperbarui untuk: ${user.UserName}` });
-    } catch (err) {
-        res.status(400).json({ success: false, message: 'Cookie baru tidak valid' });
-    }
-});
-
-// Health Check
-app.get('/health', (req, res) => {
-    res.json({ 
-        status: 'online', 
-        roblox_group: CONFIG.ROBLOX_GROUP_ID,
-        cookie_active: !!currentCookie 
-    });
-});
-
-// Endpoint untuk cek saldo grup
 app.get('/api/funds', async (req, res) => {
+    const secret = req.query.secret;
+    if (secret !== CONFIG.PAYOUT_SECRET_KEY) return res.status(401).json({ success: false, message: 'Unauthorized' });
+
     try {
         await noblox.setCookie(currentCookie);
         const funds = await noblox.getGroupFunds(CONFIG.ROBLOX_GROUP_ID);
@@ -177,13 +163,10 @@ app.get('/api/funds', async (req, res) => {
     }
 });
 
-// Start Server
+app.get('/', (req, res) => res.send('Roblox Payout Bot is Online!'));
+
 app.listen(CONFIG.PORT, "0.0.0.0", () => {
-    console.log(`================================================`);
-    console.log(`Roblox Payout Server Berjalan di Port ${CONFIG.PORT}`);
-    console.log(`URL API: http://localhost:${CONFIG.PORT}/api/payout`);
-    console.log(`================================================`);
-    
-    loadCookie(); // Muat cookie dari file jika ada
+    console.log(`Server aktif di port ${CONFIG.PORT}`);
+    loadCookie();
     initRoblox().catch(err => console.error('Startup Error:', err.message));
 });

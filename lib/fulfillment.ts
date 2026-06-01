@@ -62,11 +62,17 @@ export async function fulfillRobuxOrder({ orderId, username, amount, price, sour
     return { success: false, message: 'Sistem sedang sibuk memproses pesanan ini.' };
   }
 
-  // Lakukan Payout
+  // Lakukan Payout (Sekarang Manual)
   const payoutResult = await executeRobuxPayout(username, amount);
   console.log(`[PAYOUT] Result for ${username} (${amount} Robux):`, JSON.stringify(payoutResult));
 
   try {
+    // Tentukan status berdasarkan apakah ini manual atau otomatis (sekarang selalu manual)
+    const finalStatus = payoutResult.manual ? 'manual_payout' : (payoutResult.success ? 'completed' : 'payout_failed');
+    const finalProof = payoutResult.manual 
+      ? `WAITING FOR MANUAL PAYOUT (${source})` 
+      : (payoutResult.success ? `PAID VIA MIDTRANS (${source})` : `PAYOUT FAILED: ${payoutResult.message || 'Unknown error'}`);
+
     // Hanya update status jika payout benar-benar dieksekusi atau gagal
     await supabase
       .from('orders')
@@ -75,12 +81,12 @@ export async function fulfillRobuxOrder({ orderId, username, amount, price, sour
         username,
         package: `${amount} Robux`,
         price: typeof price === 'number' ? price : Number(String(price || '').replace(/[^0-9]/g, '')) || null,
-        status: payoutResult.success ? 'completed' : 'payout_failed',
-        proof: payoutResult.success ? `PAID VIA MIDTRANS (${source})` : `PAYOUT FAILED: ${payoutResult.message || 'Unknown error'}`,
+        status: finalStatus,
+        proof: finalProof,
       });
     
     // Logging kegagalan payout agar admin tahu alasannya
-    if (!payoutResult.success) {
+    if (!payoutResult.success && !payoutResult.manual) {
       console.error(`PAYOUT FAILED for ${orderId}:`, payoutResult.message);
     }
   } catch (error) {

@@ -56,7 +56,10 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: payoutResult.alreadyProcessed ? 'Order sudah diproses.' : 'Robux berhasil dikirim.',
+      message: payoutResult.alreadyProcessed 
+        ? 'Order sudah diproses.' 
+        : (payoutResult.manual ? 'Pembayaran sukses! Silakan klaim via WhatsApp.' : 'Robux berhasil dikirim.'),
+      manual: payoutResult.manual
     });
   } catch (error: any) {
     console.error('Confirm Checkout Error:', error);

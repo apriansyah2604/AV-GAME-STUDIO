@@ -79,7 +79,8 @@ export default function AdminDashboard() {
   useEffect(() => {
     const savedKey = sessionStorage.getItem('admin_auth')
     const saved2FA = sessionStorage.getItem('admin_2fa')
-    if (savedKey === 'avgame26' && saved2FA === 'verified') {
+    const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY || 'avgame26'
+    if (savedKey === ADMIN_KEY && saved2FA === 'verified') {
       setIsAuthenticated(true)
       setIs2FAVerified(true)
       fetchData()
@@ -88,7 +89,8 @@ export default function AdminDashboard() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
-    if (adminKey === 'avgame26') {
+    const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY || 'avgame26'
+    if (adminKey === ADMIN_KEY) {
       setIsAuthenticated(true)
       sessionStorage.setItem('admin_auth', adminKey)
       toast.success('Key Valid! Masukkan Kode OTP.')
@@ -103,6 +105,11 @@ export default function AdminDashboard() {
     const newOtp = Math.floor(100000 + Math.random() * 900000).toString()
     setGeneratedOtp(newOtp)
     
+    // In production, you would use Fonnte or similar to send this to ADMIN_WHATSAPP
+    console.log('--- AV STUDIO SECURITY (ADMIN OTP) ---')
+    console.log('KODE OTP ANDA:', newOtp)
+    console.log('-------------------------------------')
+
     try {
       const response = await fetch('/api/send-otp', {
         method: 'POST',
@@ -150,34 +157,23 @@ export default function AdminDashboard() {
   }
 
   const handleApprove = async (order: any) => {
-    if (!confirm(`Konfirmasi kirim ${order.package} ke ${order.username}?`)) return
+    if (!confirm(`Konfirmasi bahwa Robux untuk ${order.username} (${order.package}) sudah Anda kirim secara manual?`)) return
     
     setProcessingId(order.id)
     try {
-      const amount = parseInt(order.package.replace(/[^0-9]/g, ''))
-      const res = await fetch('/api/payout', {
-        method: 'POST',
+      // Sekarang kita langsung update status ke completed tanpa panggil bot otomatis
+      const res = await fetch('/api/orders', {
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          username: order.username,
-          amount: amount,
-          secret: 'av-studio-super-secret-key'
-        })
+        body: JSON.stringify({ id: order.id, status: 'completed' })
       })
 
-      const data = await res.json()
-      if (data.success) {
-        // Update status di orders.json via API
-        await fetch('/api/orders', {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: order.id, status: 'completed' })
-        })
-
-        toast.success(`Berhasil! Robux terkirim ke ${order.username}`)
+      if (res.ok) {
+        toast.success(`Berhasil! Status pesanan ${order.username} diubah ke Selesai.`)
         setOrders(orders.map(o => o.id === order.id ? { ...o, status: 'completed' } : o))
       } else {
-        toast.error(`Gagal: ${data.message}`)
+        const data = await res.json()
+        toast.error(`Gagal: ${data.message || 'Gagal update status'}`)
       }
     } catch (err) {
       toast.error('Terjadi kesalahan sistem')
@@ -476,14 +472,34 @@ export default function AdminDashboard() {
                 <div key={order.id} className="bg-[#0c0506] border border-white/5 p-8 flex flex-wrap items-center justify-between gap-8 group hover:border-[#ff4655]/30 transition-all">
                   <div className="flex items-center gap-8">
                     <div className={`w-16 h-16 flex items-center justify-center skew-x-[-12deg] ${
-                      order.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-yellow-500/20 text-yellow-400'
+                      order.status === 'completed' 
+                        ? 'bg-emerald-500/20 text-emerald-400' 
+                        : order.status === 'manual_payout'
+                        ? 'bg-[#ff4655]/20 text-[#ff4655]'
+                        : order.status === 'payout_failed'
+                        ? 'bg-red-500/20 text-red-400'
+                        : 'bg-yellow-500/20 text-yellow-400'
                     }`}>
-                      {order.status === 'completed' ? <CheckCircle2 className="-skew-x-[-12deg] w-8 h-8" /> : <Clock className="-skew-x-[-12deg] w-8 h-8" />}
+                      {order.status === 'completed' ? (
+                        <CheckCircle2 className="-skew-x-[-12deg] w-8 h-8" />
+                      ) : order.status === 'manual_payout' ? (
+                        <Send className="-skew-x-[-12deg] w-8 h-8" />
+                      ) : order.status === 'payout_failed' ? (
+                        <XCircle className="-skew-x-[-12deg] w-8 h-8" />
+                      ) : (
+                        <Clock className="-skew-x-[-12deg] w-8 h-8" />
+                      )}
                     </div>
                     <div>
                       <div className="flex items-center gap-4 mb-1">
                         <h3 className="text-2xl font-black italic tracking-tight">{order.username}</h3>
-                        <span className="text-[10px] bg-white/5 px-3 py-1 border border-white/10 text-white/40 font-black uppercase tracking-widest">{order.id}</span>
+                        <span className={`text-[10px] px-3 py-1 border font-black uppercase tracking-widest ${
+                          order.status === 'manual_payout' 
+                            ? 'bg-[#ff4655]/10 border-[#ff4655]/30 text-[#ff4655]' 
+                            : 'bg-white/5 border-white/10 text-white/40'
+                        }`}>
+                          {order.status === 'manual_payout' ? 'SIAP DIKIRIM' : order.id}
+                        </span>
                       </div>
                       <p className="text-sm text-[#ff4655] font-black uppercase tracking-widest">{order.package} • {order.price}</p>
                     </div>
@@ -503,8 +519,8 @@ export default function AdminDashboard() {
                         disabled={processingId === order.id}
                         className="flex items-center gap-3 bg-[#ff4655] text-white px-8 py-4 text-[10px] font-black uppercase hover:brightness-110 disabled:opacity-50 transition-all shadow-[4px_4px_0_0_rgba(255,70,85,0.3)]"
                       >
-                        {processingId === order.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-                        Kirim Robux
+                        {processingId === order.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+                        Konfirmasi Manual
                       </button>
                     )}
                   </div>

@@ -83,7 +83,10 @@ export async function PATCH(request: Request) {
   try {
     const { id, status } = await request.json();
 
-    const ALLOWED_STATUSES = ['pending', 'success', 'settlement', 'failure', 'expire', 'cancel'];
+    const ALLOWED_STATUSES = [
+      'pending', 'success', 'settlement', 'failure', 'expire', 'cancel', 
+      'processing', 'completed', 'payout_failed', 'manual_payout'
+    ];
     
     if (!id || !status || !ALLOWED_STATUSES.includes(status)) {
       return jsonNoStore({ success: false, message: 'ID atau Status tidak valid' }, { status: 400 });

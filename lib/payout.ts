@@ -1,37 +1,20 @@
 import { processPayout } from '@/lib/roblox';
 
+/**
+ * Memproses Payout Robux.
+ * SEKARANG: Diubah menjadi MANUAL sesuai permintaan user.
+ * Aliran ini tidak lagi mengirim Robux otomatis via bot, 
+ * melainkan mengembalikan status agar user menghubungi admin via WA.
+ */
 export async function executeRobuxPayout(username: string, amount: number) {
-  const botUrl = process.env.ROBLOX_SERVER_URL;
-  const secret = process.env.PAYOUT_SECRET_KEY;
-
-  if (botUrl && secret) {
-    console.log(`[PAYOUT] Using external bot at ${botUrl}`);
-    const cleanBotUrl = botUrl.endsWith('/') ? botUrl.slice(0, -1) : botUrl;
-    const response = await fetch(`${cleanBotUrl}/api/payout`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, amount, secret }),
-    });
-
-    const bodyText = await response.text();
-    console.log(`[PAYOUT] Bot response (${response.status}):`, bodyText);
-
-    let data;
-    try {
-      data = JSON.parse(bodyText);
-    } catch (e) {
-      data = {
-        success: false,
-        message: `Bot payout tidak mengembalikan JSON yang valid. Raw: ${bodyText.substring(0, 100)}`,
-      };
-    }
-
-    return {
-      ...data,
-      status: response.status,
-    };
-  }
-
-  console.log(`[PAYOUT] Using local noblox.js`);
-  return processPayout(username, amount);
+  console.log(`[PAYOUT] Manual mode active for ${username} (${amount} Robux)`);
+  
+  // Kita anggap "berhasil" di tahap sistem, tapi dengan flag 'manual'
+  return {
+    success: true,
+    manual: true,
+    message: 'Pembayaran diterima. Silakan klik tombol WhatsApp untuk klaim Robux Anda.',
+    username,
+    amount
+  };
 }

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check, Zap, Crown, Rocket } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
+import { ADMIN_WHATSAPP } from '@/lib/utils'
 
 export function Pricing() {
   const { t } = useLanguage()
@@ -156,7 +157,7 @@ export function Pricing() {
 
                 {/* CTA Button */}
                 <motion.a
-                  href={`https://wa.me/62895327025015?text=${encodeURIComponent(
+                  href={`https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(
                     `Halo AV GAME STUDIO, saya tertarik dengan paket ${plan.name} (${plan.price[currency]}). Bisakah kita mendiskusikan proyek saya?`
                   )}`}
                   target="_blank"
@@ -187,7 +188,7 @@ export function Pricing() {
             Need a custom solution? Let&apos;s discuss your project requirements.
           </p>
           <motion.a
-            href={`https://wa.me/62895327025015?text=${encodeURIComponent(
+            href={`https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(
               'Halo AV GAME STUDIO, saya ingin berkonsultasi mengenai proyek kustom saya.'
             )}`}
             target="_blank"

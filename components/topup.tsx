@@ -19,6 +19,7 @@ import {
 import { useLanguage } from '@/context/LanguageContext'
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
+import { ADMIN_WHATSAPP } from '@/lib/utils'
 
 export function TopUp() {
   const { t } = useLanguage()
@@ -82,28 +83,28 @@ export function TopUp() {
     setErrorMessage('')
     
     try {
-      // 1. Cek Saldo Grup Roblox Terlebih Dahulu (Real-time)
+      // 1. Cek Saldo Grup Roblox (Opsional untuk sistem manual)
       const amountValue = parseInt(selectedPackage.name.match(/\d+/)?.[0] || "0");
       const priceValue = parseInt(selectedPackage.price.replace(/[^0-9]/g, ""));
 
-      const fundsRes = await fetch('/api/check-funds');
-      const fundsData = await fundsRes.json();
+      try {
+        const fundsRes = await fetch('/api/check-funds');
+        const fundsData = await fundsRes.json();
 
-      if (fundsData.success) {
-        if (fundsData.funds < amountValue) {
-          setOrderStep('failed');
-          const msg = 'Stok sedang kosong. Paket ini belum bisa dibeli saat ini.';
-          setErrorMessage(msg);
-          toast.error(msg);
-          return;
+        if (fundsData.success) {
+          if (fundsData.funds < amountValue) {
+            setOrderStep('failed');
+            const msg = 'Stok di grup sedang kosong. Silakan hubungi Admin untuk ketersediaan stok manual.';
+            setErrorMessage(msg);
+            toast.error(msg);
+            return;
+          }
         }
-      } else {
-        // JIKA GAGAL CEK SALDO, BLOKIR TRANSAKSI (SANGAT KETAT)
-        setOrderStep('failed');
-        const msg = `Gagal memverifikasi stok Robux. Silakan coba beberapa saat lagi atau hubungi Admin.`;
-        setErrorMessage(msg);
-        toast.error(msg);
-        return;
+        // Jika API gagal (success: false), kita abaikan dan lanjut ke pembayaran
+        // karena sistem sudah beralih ke manual, Admin yang akan cek stok sendiri.
+        console.log('Automated stock check skipped or failed, proceeding with manual flow.');
+      } catch (e) {
+        console.warn('Gagal cek stok otomatis, melanjutkan transaksi manual...');
       }
 
       // 2. Panggil API Checkout untuk mendapatkan Token Midtrans Snap
@@ -411,7 +412,7 @@ export function TopUp() {
                           <div className="text-[10px] font-black text-white/30 uppercase tracking-normal">Flow</div>
                           <div className="mt-2 flex items-center gap-2 text-sm text-white/70 font-black uppercase">
                             <Clock3 className="h-4 w-4 text-[#ff4655]" />
-                            Otomatis
+                            Proses Admin
                           </div>
                         </div>
                       </div>
@@ -575,7 +576,7 @@ export function TopUp() {
                     </div>
                     <p className="mb-4 text-sm leading-relaxed text-white/50 font-medium">{service.description}</p>
                     <motion.a
-                      href={`https://wa.me/62895327025015?text=${encodeURIComponent(service.message)}`}
+                      href={`https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(service.message)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       whileHover={{ scale: 1.01 }}
@@ -669,7 +670,7 @@ export function TopUp() {
                   </div>
 
                   <div className="p-4 bg-white/5 border border-white/5 text-[11px] text-white/50 leading-relaxed font-medium">
-                    <span className="text-[#ff4655] font-black">INFO:</span> Anda akan diarahkan ke jendela pembayaran Midtrans. Silakan pilih metode **GoPay** atau **QRIS** untuk pembayaran instan. Robux akan dikirim otomatis setelah pembayaran berhasil.
+                    <span className="text-[#ff4655] font-black">INFO:</span> Anda akan diarahkan ke jendela pembayaran Midtrans. Silakan pilih metode **GoPay** atau **QRIS** untuk pembayaran instan. Setelah bayar, silakan **Klaim via WhatsApp** untuk pengiriman Robux manual oleh Admin.
                   </div>
 
                   <motion.button
@@ -699,14 +700,35 @@ export function TopUp() {
                 <div className="h-20 w-20 bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-6">
                   <CheckCircle2 className="h-10 w-10 text-emerald-400" />
                 </div>
-                <h3 className="text-2xl font-black text-white uppercase mb-2">Transaksi Berhasil!</h3>
-                <p className="text-white/50 font-medium mb-8">Robux telah dikirim otomatis ke <span className="text-white">{orderUsername}</span>.</p>
-                <button 
-                  onClick={() => setIsOrdering(false)}
-                  className="w-full border border-white/10 bg-white/5 text-white py-4 font-black uppercase"
-                >
-                  Tutup
-                </button>
+                <h3 className="text-2xl font-black text-white uppercase mb-2">Pembayaran Berhasil!</h3>
+                <p className="text-white/50 font-medium mb-6">
+                  Silakan klik tombol di bawah untuk klaim Robux Anda via WhatsApp Admin.
+                </p>
+                
+                <div className="space-y-4">
+                  <motion.a
+                    href={`https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(
+                      `Halo Admin, saya sudah bayar!\n\n` +
+                      `Username: ${orderUsername}\n` +
+                      `Paket: ${selectedPackage?.name}\n` +
+                      `Status: Pembayaran Berhasil\n\n` +
+                      `Mohon segera diproses ya, terima kasih!`
+                    )}`}
+                    target="_blank"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="flex w-full items-center justify-center gap-2 bg-[#25D366] text-white py-4 font-black uppercase tracking-normal skew-x-[-12deg]"
+                  >
+                    <span className="-skew-x-[-12deg] inline-block">Klaim via WhatsApp</span>
+                  </motion.a>
+
+                  <button 
+                    onClick={() => setIsOrdering(false)}
+                    className="w-full border border-white/10 bg-white/5 text-white py-4 font-black uppercase"
+                  >
+                    Tutup
+                  </button>
+                </div>
               </div>
             )}
 
@@ -726,7 +748,7 @@ export function TopUp() {
                     Coba Lagi
                   </button>
                   <a 
-                    href={`https://wa.me/62895327025015?text=Halo%20Admin,%20transaksi%20otomatis%20saya%20gagal.%20Username:%20${orderUsername}`}
+                    href={`https://wa.me/${ADMIN_WHATSAPP}?text=Halo%20Admin,%20transaksi%20otomatis%20saya%20gagal.%20Username:%20${orderUsername}`}
                     target="_blank"
                     className="flex-1 bg-[#ff4655] text-white py-4 font-black uppercase text-center"
                   >

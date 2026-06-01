@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Send, User, Mail, MessageSquare, Gamepad2, CheckCircle, Instagram, Music2 } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
+import { ADMIN_WHATSAPP } from '@/lib/utils'
 
 export function Contact() {
   const { t, language } = useLanguage()
@@ -38,7 +39,7 @@ Project Details: ${formData.details}
 
 Thank you!`
 
-    const waUrl = `https://wa.me/62895327025015?text=${encodeURIComponent(message)}`
+    const waUrl = `https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(message)}`
     
     window.open(waUrl, '_blank')
     setIsSubmitted(true)
@@ -93,7 +94,7 @@ Thank you!`
             {/* Contact Info */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <a 
-                href="https://wa.me/62895327025015"
+                href={`https://wa.me/${ADMIN_WHATSAPP}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-4 hover:opacity-80 transition-opacity group"

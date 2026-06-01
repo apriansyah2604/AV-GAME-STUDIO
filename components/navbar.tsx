@@ -33,6 +33,7 @@ export function Navbar() {
     { name: t('nav.portfolio'), href: '#portfolio' },
     { name: t('nav.gallery'), href: '#gallery' },
     { name: t('nav.assets'), href: '#assets' },
+    { name: t('nav.topup'), href: '#topup' },
     { name: t('nav.pricing'), href: '#pricing' },
     { name: t('nav.contact'), href: '#contact' },
   ]

@@ -43,17 +43,17 @@ const translations = {
       badge: 'LAYANAN TOP UP TERPERCAYA',
       title1: 'TOP UP',
       title2: 'ROBUX',
-      subtitle: 'Layanan pengisian Robux aman dan efisien. Harga kompetitif dengan sistem pengiriman otomatis.',
+      subtitle: 'Layanan pengisian Robux aman dan efisien. Harga kompetitif dengan sistem pengiriman diproses admin.',
       market_badge: 'ROBUX MARKET',
       market_title: 'Dapatkan Robux Secara Instan',
-      market_desc: 'Pilih nominal yang Anda butuhkan dan selesaikan transaksi secara otomatis melalui sistem pembayaran kami.',
+      market_desc: 'Pilih nominal yang Anda butuhkan dan selesaikan transaksi melalui sistem pembayaran kami.',
       search_placeholder: 'Cari nominal atau paket...',
       promo_flow: 'ALUR TRANSAKSI',
       promo_title: 'Aman, Cepat, & Transparan',
-      promo_desc: 'Proses pemesanan otomatis untuk kenyamanan Anda. Pilih, bayar, dan terima Robux secara instan.',
+      promo_desc: 'Proses pemesanan mudah untuk kenyamanan Anda. Pilih, bayar, dan klaim Robux via WhatsApp.',
       stats: {
         fast: 'Layanan Kilat',
-        fast_val: 'Proses Otomatis',
+        fast_val: 'Proses Cepat',
         safe: 'Terjamin',
         safe_val: '100% Keamanan',
         price: 'Efisiensi',
@@ -75,10 +75,10 @@ const translations = {
       },
       info_transaksi: {
         title: 'PANDUAN TRANSAKSI',
-        flow_title: 'Sistem Pembayaran Otomatis',
-        flow_desc: 'Integrasi Midtrans memungkinkan setiap pesanan diproses secara instan segera setelah pembayaran sukses.',
+        flow_title: 'Sistem Pembayaran Terintegrasi',
+        flow_desc: 'Integrasi Midtrans memungkinkan setiap pesanan terkonfirmasi secara instan untuk segera diproses admin.',
         easy_title: 'Kemudahan Pemesanan',
-        easy_desc: 'Cukup masukkan username Roblox Anda, pilih paket, dan selesaikan pembayaran.'
+        easy_desc: 'Cukup masukkan username Roblox Anda, pilih paket, selesaikan pembayaran, dan klaim via WA.'
       },
       community_check: {
         title: 'Verifikasi Anggota Komunitas',
@@ -368,17 +368,17 @@ const translations = {
       badge: 'TRUSTED TOP UP SERVICES',
       title1: 'TOP UP',
       title2: 'ROBUX',
-      subtitle: 'Safe and efficient Robux top up services. Competitive pricing with automated delivery system.',
+      subtitle: 'Safe and efficient Robux top up services. Competitive pricing with manual delivery system.',
       market_badge: 'ROBUX MARKET',
       market_title: 'Get Your Robux Instantly',
-      market_desc: 'Select your desired nominal and complete transactions automatically through our payment system.',
+      market_desc: 'Select your desired nominal and complete transactions through our payment system.',
       search_placeholder: 'Search nominal or package...',
       promo_flow: 'TRANSACTION FLOW',
       promo_title: 'Safe, Fast, & Transparent',
-      promo_desc: 'Automated ordering process for your convenience. Select, pay, and receive your Robux instantly.',
+      promo_desc: 'Easy ordering process for your convenience. Select, pay, and claim your Robux via WhatsApp.',
       stats: {
         fast: 'Express Service',
-        fast_val: 'Automated Process',
+        fast_val: 'Quick Process',
         safe: 'Guaranteed',
         safe_val: '100% Secure',
         price: 'Efficiency',
@@ -400,10 +400,10 @@ const translations = {
       },
       info_transaksi: {
         title: 'TRANSACTION GUIDE',
-        flow_title: 'Automated Payment System',
-        flow_desc: 'Midtrans integration allows every order to be processed instantly as soon as payment is successful.',
+        flow_title: 'Integrated Payment System',
+        flow_desc: 'Midtrans integration allows every order to be confirmed instantly for immediate admin processing.',
         easy_title: 'Ease of Ordering',
-        easy_desc: 'Simply enter your Roblox username, select a package, and complete the payment.'
+        easy_desc: 'Simply enter your Roblox username, select a package, complete payment, and claim via WA.'
       },
       community_check: {
         title: 'Community Member Verification',

@@ -41,7 +41,7 @@ export async function POST(request: Request) {
         }
         
         if (username && amount) {
-          console.log(`Processing automatic payout for ${amount} Robux to ${username}.`);
+          console.log(`Fulfilling order for ${amount} Robux to ${username}.`);
           const payoutResult = await fulfillRobuxOrder({
             orderId,
             username,

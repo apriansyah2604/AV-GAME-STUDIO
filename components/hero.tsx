@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { ChevronDown, Gamepad2, Rocket, ShoppingCart, Users } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
 import { useTransition } from '@/context/TransitionContext'
+import { ADMIN_WHATSAPP } from '@/lib/utils'
 
 export function Hero() {
   const { t } = useLanguage()
@@ -14,23 +15,23 @@ export function Hero() {
   const topUpGames = [
     {
       name: 'Roblox Robux',
-      label: 'Top Up Robux otomatis',
+      label: 'Top Up Robux (Proses Admin)',
       href: '#topup',
     },
     {
       name: 'Mobile Legends',
       label: 'Request top up diamond',
-      href: 'https://wa.me/62895327025015?text=Halo%20AV%20GAME%20STUDIO,%20saya%20ingin%20top%20up%20Mobile%20Legends.',
+      href: `https://wa.me/${ADMIN_WHATSAPP}?text=Halo%20AV%20GAME%20STUDIO,%20saya%20ingin%20top%20up%20Mobile%20Legends.`,
     },
     {
       name: 'Free Fire',
       label: 'Request top up diamond',
-      href: 'https://wa.me/62895327025015?text=Halo%20AV%20GAME%20STUDIO,%20saya%20ingin%20top%20up%20Free%20Fire.',
+      href: `https://wa.me/${ADMIN_WHATSAPP}?text=Halo%20AV%20GAME%20STUDIO,%20saya%20ingin%20top%20up%20Free%20Fire.`,
     },
     {
       name: 'PUBG Mobile',
       label: 'Request top up UC',
-      href: 'https://wa.me/62895327025015?text=Halo%20AV%20GAME%20STUDIO,%20saya%20ingin%20top%20up%20PUBG%20Mobile.',
+      href: `https://wa.me/${ADMIN_WHATSAPP}?text=Halo%20AV%20GAME%20STUDIO,%20saya%20ingin%20top%20up%20PUBG%20Mobile.`,
     },
   ]
 

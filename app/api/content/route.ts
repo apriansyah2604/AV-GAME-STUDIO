@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
+import fs from 'fs'
+import path from 'path'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -92,6 +94,16 @@ export async function GET(request: Request) {
   const type = searchParams.get('type')
 
   try {
+    // Read local site-content.json for game_list and other defaults
+    const jsonPath = path.join(process.cwd(), 'data', 'site-content.json')
+    let siteContent: any = {}
+    try {
+      const fileContent = fs.readFileSync(jsonPath, 'utf8')
+      siteContent = JSON.parse(fileContent)
+    } catch (err) {
+      console.warn('Failed to read site-content.json:', err)
+    }
+
     if (type === 'gallery') {
       return jsonNoStore(await fetchContentTable('gallery', false))
     }
@@ -103,15 +115,17 @@ export async function GET(request: Request) {
     ])
 
     return jsonNoStore({
-      robux_packages: pricing || [],
-      avatar_services: assets || [],
-      general: {}
+      robux_packages: pricing?.length ? pricing : (siteContent.robux_packages || []),
+      avatar_services: assets?.length ? assets : (siteContent.avatar_services || []),
+      game_list: siteContent.game_list || [],
+      general: siteContent.general || {}
     })
   } catch (error: any) {
     console.error('Supabase Fetch Content Error:', error)
     return jsonNoStore({
       robux_packages: [],
       avatar_services: [],
+      game_list: [],
       general: {}
     }, { status: 200 })
   }

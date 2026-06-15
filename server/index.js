@@ -11,7 +11,7 @@ const path = require('path');
  */
 const CONFIG = {
     // Cookie terbaru Anda (Edisi Hong Kong)
-    ROBLOX_COOKIE: "_|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|_CAEaAhADIhsKBGR1aWQSEzk4NjkxNDkwMjU2MTI5NjEwNTgoAw.iqEAdoDJO9UamWSyNtjRf73Wb8I_o227ZtHCFNfCNkQhHTu3yAfbUPU4_AHKsdsRs9cmnLRcrYnflcrAsbGsIaLWqrzYD9Y_AFcl37EHZiBXQYXEkL6en-Q9D8yabkJ9qFot749CoS-d6hGSd3vwmJtSCj3Un_MzQgFTpnrIHb_zJdzjtkn3uO9jRs7-c3EOvsA6tE8sd5FSIN0VjFiB-k9T0VOc08FIaii3pdoGPsTe971emNh2qCTh2iadAgKHbaqC3vGtrbe8z3-YltGbbJaXBtH_ELCDWBzTweFKAhn5h4NBhQPDiXJcR_EAv7d6uPwnDYTsytLIyiC8vf4XYKcYXo61U-3Vx9MfExl0lJc3aepsQd26LagrR0-w2AEOWs_P1MVjUbQv08mq7hv5vzEvfTvQRK3PETsiQ9CRf1Gbmyfru3ejXixdI7BlDPgssoHgfQ4C2GUmyKns5nCPLqNmimOdwe1nWb4UGRedr9oS-ohBGV3HsomDiRUj9K-Q7ATkkzJn05SONkg8SDNYkXbMkEKVi48pBfLBC7KmcGHQgtfQ54Fy5c-TPCWNc60d7HZ4tvmaCrWXAfSC-XwZAwyc01RswQzCangYZSPB6s4QzSMH3K5TdQCKzTcDHQWWS4UbNGvsaR93O_EPSiFsrF-bzgveCrvMWYsH5rLOGO7No0S_AUl-bQFo6IsndnN70UtDVr9CdvmJUT41YdvK5B0Vfor70HdnkMC_qNh1I39_lsHdaZL2ICAcoFL3wCQYid5dBoXcXdHAWJeqHY2zNFK16lWkHbsJkHGm_TNBK5tTS1lqD3Jn2HIXMQQaFbZe8bX0fDnbU5OH6QnwZBnqxl4p5R9u15yI1oMM11dPQnlzWwIUMfCyMlhHZrBa2rZmU6ZWCzfwCE0sD53cS5bVCxAUdijFe2neBMPhTMs0tbSmDDe6yUEnwrqq2VN0PFuyTOdtmA",
+    ROBLOX_COOKIE: "_|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|_CAEaAhADIhwKBGR1aWQSFDE0NDExNDY4MjgwNjcwNzMxMjM3KAM.tbkIIJ-s2p6oSCQsYgqI9Jz3taI8VhMmZfjqDSqJJC_8G2_P5XLytYRa7nProb5IWkoUpqFd4KLxROC-crt5gdMn5Q0XLCdkEfK3qfCD-sCPSHhx9PBuCskHhlVBhm3ZLcDeTrkYEXsVtqnGr98FCoSzqLmulPEvM2Kpt1A-s36Cs3D3N4a4d5vSX_i_X6XaxCppns7FessgIcmVjuIsqM2iFkWTAmqI8j_TrAmeCHzSdyxPlDza5YOI0dP_eTTkt5TmJdifiHEyl-61skOfMT47eJmiNF7iyVuxTUDz-zSuE4h1BHuNsbrWkZOThp5Tau0-SXB4duIADM3vovIHmOZ0y5EFUY4zhZs1MlvqctOgnokhL14uWgru7JVgSnYxfX-dC58fZu_9JCSGgjIW_UloF0G6hujkDOZA6qQnk0dmOWhrle6H6E8IkwezIi5uTa223hKv9mYfRhfPfBYxLSwHoOkVbpoEG06Dyjm1zv1_4nyri4wNC7NskTnstNTlsf7m8hJl1jvuqkCPf2NH6HIU031-4KbjolHIZ3xZyW0UwiaFTbhA9hBQc4zGWd61591COy8NJgTJeskcV_br9CVFC5WRk_rIPFbUSxprbDB4PWarr9ju9E0gYyqumXQk5TbwsDWZcPeMouI-e7-YE4FbbyoYsd_0euG6DP0En5rKsqaokjtLu49FO5bvoeUZLJjf7VcDmf0uaIRJbLDGFXNIqsUN6z5KbRzvlz67O2xOQTgeLjOa7bwhjNqH-pX-1H1hE2xMvAR8BZzLlaXjPPlcfctJhfCak8ckJG3heufGRjX5Qn87DmsUmP_kryZ1R-iBLo-SdyjNAFy_o9JFAUHrDH0lzq9717BimrsTMBL6MsOnZjYwqB9v1jYkadzHMeYx_lsXDHYKWBMlNM-Rt1ArI-fkWT7NzcO0b2vFtAL7MJ0kkF7dO84pzem2haeU_R642w",
     
     ROBLOX_GROUP_ID: 390244299,
     PAYOUT_SECRET_KEY: "av-studio-super-secret-key",
@@ -25,7 +25,10 @@ const CONFIG = {
 const app = express();
 const COOKIE_FILE = path.join(__dirname, 'session.json');
 
-app.use(cors());
+app.use(cors({
+    origin: '*', // Izinkan semua origin untuk pengecekan saldo publik
+    methods: ['GET', 'POST']
+}));
 app.use(express.json());
 
 let currentCookie = CONFIG.ROBLOX_COOKIE;
@@ -152,13 +155,17 @@ app.post('/api/payout', async (req, res) => {
 
 app.get('/api/funds', async (req, res) => {
     const secret = req.query.secret;
-    if (secret !== CONFIG.PAYOUT_SECRET_KEY) return res.status(401).json({ success: false, message: 'Unauthorized' });
+    if (secret !== CONFIG.PAYOUT_SECRET_KEY) {
+        log('Akses ditolak: Secret Key salah untuk cek saldo.', 'AUTH');
+        return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
 
     try {
         await noblox.setCookie(currentCookie);
         const funds = await noblox.getGroupFunds(CONFIG.ROBLOX_GROUP_ID);
         res.json({ success: true, funds });
     } catch (error) {
+        log('Funds Check Error: ' + error.message, 'ERROR');
         res.status(500).json({ success: false, message: error.message });
     }
 });

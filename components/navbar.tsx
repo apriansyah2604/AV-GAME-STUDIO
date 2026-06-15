@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, Globe, ChevronDown, ArrowRight, Instagram, Music2 } from 'lucide-react'
+import { Menu, X, Globe, ChevronDown, ArrowRight, Instagram, Music2, Gamepad2, Search } from 'lucide-react'
 import Image from 'next/image'
 import { useLanguage } from '@/context/LanguageContext'
 import { useTransition } from '@/context/TransitionContext'
+import Link from 'next/link'
 
 export function Navbar() {
   const { language, setLanguage, t } = useLanguage()
@@ -13,29 +14,50 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isLangOpen, setIsLangOpen] = useState(false)
+  const [isGameModalOpen, setIsGameModalOpen] = useState(false)
+  const [gameContent, setGameContent] = useState<any[]>([])
+
+  useEffect(() => {
+    fetch('/api/content')
+      .then(res => res.json())
+      .then(data => {
+        if (data.game_list) setGameContent(data.game_list)
+      })
+  }, [])
 
   const handleNavLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
-    setIsMobileMenuOpen(false);
-    
-    triggerTransition(() => {
-      const element = document.querySelector(href);
-      if (element) {
-        element.scrollIntoView({ behavior: 'auto' }); // behavior auto because animation handles the feel
-      }
-    });
+    // Tentukan apakah ini link internal dengan anchor (#)
+    const isAnchor = href.includes('#');
+    const parts = href.split('#');
+    const targetPath = parts[0] || '/';
+    const anchor = parts[1] ? `#${parts[1]}` : '';
+
+    // Jika link adalah anchor dan kita berada di halaman yang sama (beranda)
+    if (isAnchor && window.location.pathname === targetPath) {
+      e.preventDefault();
+      setIsMobileMenuOpen(false);
+      
+      triggerTransition(() => {
+        const element = document.querySelector(anchor);
+        if (element) {
+          element.scrollIntoView({ behavior: 'auto' });
+        }
+      });
+    } else {
+      // Jika pindah halaman (misal dari /games ke /#projects), biarkan navigasi default browser
+      setIsMobileMenuOpen(false);
+    }
   };
 
   const navLinks = [
-    { name: t('nav.home'), href: '#home' },
-    { name: t('nav.projects'), href: '#projects' },
-    { name: t('nav.services'), href: '#services' },
-    { name: t('nav.portfolio'), href: '#portfolio' },
-    { name: t('nav.gallery'), href: '#gallery' },
-    { name: t('nav.assets'), href: '#assets' },
-    { name: t('nav.topup'), href: '#topup' },
-    { name: t('nav.pricing'), href: '#pricing' },
-    { name: t('nav.contact'), href: '#contact' },
+    { name: t('nav.home'), href: '/#home' },
+    { name: t('nav.projects'), href: '/#projects' },
+    { name: t('nav.services'), href: '/#services' },
+    { name: t('nav.portfolio'), href: '/#portfolio' },
+    { name: t('nav.gallery'), href: '/#gallery' },
+    { name: t('nav.assets'), href: '/#assets' },
+    { name: t('nav.pricing'), href: '/#pricing' },
+    { name: t('nav.contact'), href: '/#contact' },
   ]
 
   useEffect(() => {
@@ -73,8 +95,8 @@ export function Navbar() {
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <motion.a
-               href="#home"
-               onClick={(e) => handleNavLinkClick(e, '#home')}
+               href="/#home"
+               onClick={(e) => handleNavLinkClick(e, '/#home')}
                className="flex items-center gap-3 group"
                whileHover={{ scale: 1.02 }}
              >
@@ -113,18 +135,15 @@ export function Navbar() {
 
             {/* Language Switcher */}
             <div className="hidden lg:flex items-center gap-4">
-              <motion.a
-                href="#topup"
-                onClick={(e) => handleNavLinkClick(e, '#topup')}
+              <Link
+                href="/topup"
                 className="hidden md:flex relative px-6 py-2 rounded-none overflow-hidden group items-center"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
               >
                 <div className="absolute inset-0 bg-[#ff4655] skew-x-[-12deg]" />
                 <span className="relative font-black tracking-normal text-white uppercase text-sm skew-x-[12deg]">
                   {t('nav.topup_btn')}
                 </span>
-              </motion.a>
+              </Link>
 
               {/* Language Selector */}
               <div className="relative">
@@ -234,17 +253,16 @@ export function Navbar() {
               {/* Mobile Footer Area */}
               <div className="mt-auto space-y-8 pt-8 border-t border-[#ff4655]/10">
                 {/* Top Up CTA Mobile */}
-                <motion.a
-                  href="#topup"
-                  onClick={(e) => handleNavLinkClick(e, '#topup')}
+                <Link
+                  href="/topup"
+                  onClick={() => setIsMobileMenuOpen(false)}
                   className="flex relative px-6 py-4 rounded-none overflow-hidden group items-center justify-center w-full"
-                  whileTap={{ scale: 0.98 }}
                 >
                   <div className="absolute inset-0 bg-[#ff4655] skew-x-[-12deg]" />
                   <span className="relative font-black tracking-normal text-white uppercase text-lg skew-x-[12deg]">
                     {t('nav.topup_btn')}
                   </span>
-                </motion.a>
+                </Link>
 
                 {/* Language Switcher */}
                 <div>

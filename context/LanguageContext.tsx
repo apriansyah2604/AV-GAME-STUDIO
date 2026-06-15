@@ -19,7 +19,8 @@ const translations = {
       portfolio: 'Portofolio',
       gallery: 'Galeri',
       assets: 'Aset',
-      topup: 'Top Up',
+      topup: 'Top Up Robux',
+      topgame: 'Top Up Game',
       pricing: 'Harga',
       contact: 'Kontak',
       topup_btn: 'TOP UP SEKARANG'
@@ -65,6 +66,8 @@ const translations = {
       etalase_desc: 'Pilihan paket Robux yang dikurasi khusus untuk memenuhi kebutuhan gaming Anda.',
       ready_stock: 'STOK TERSEDIA',
       hot_item: 'PILIHAN UTAMA',
+      tab_robux: 'Top Up Robux',
+      tab_games: 'Top Up Games',
       final_price: 'Harga Final',
       order_desc: 'Selesaikan pesanan Anda dengan memasukkan username dan melakukan pembayaran.',
       order_btn: 'BELI SEKARANG',
@@ -90,7 +93,8 @@ const translations = {
         status_member: 'TERVERIFIKASI: Layanan dapat diakses.',
         status_not_member: 'BELUM TERDAFTAR: Silakan bergabung dengan grup terlebih dahulu.',
         status_error: 'Identitas tidak ditemukan.',
-        membership_info: 'Pastikan username sesuai dengan data profil Roblox Anda.'
+        membership_info: 'Pastikan username sesuai dengan data profil Roblox Anda.',
+        realtime_stock: 'Stok Real-time Grup'
       }
     },
     featured_maps: {
@@ -198,16 +202,22 @@ const translations = {
         {
           name: 'Starter',
           desc: 'Ideal untuk pengembangan aset spesifik dan proyek skala mikro',
+          price_idr: 'Rp 500rb',
+          price_usd: '$35',
           features: ['Desain Dasar', 'Scripting Inti', 'UI Kit Standar', 'Revisi Terbatas', 'Pengiriman Cepat', 'Dukungan Teknis']
         },
         {
           name: 'Premium',
           desc: 'Solusi lengkap untuk pengembangan map game yang komprehensif',
+          price_idr: 'Rp 1.5Jt',
+          price_usd: '$99',
           features: ['Desain Lingkungan Lanjut', 'Sistem Mekanik Kustom', 'Full UI/UX Design', 'VFX & Atmosfer', 'Revisi Fleksibel', 'Prioritas Pengerjaan', 'Dukungan Eksklusif', 'Aset Mentah']
         },
         {
           name: 'Ultimate Studio',
           desc: 'Standar kualitas industri untuk proyek berskala besar',
+          price_idr: 'Rp 10Jt',
+          price_usd: '$650',
           features: ['Pengembangan Full AAA', 'Sistem AI Kompleks', 'Premium Interface', 'Visual Sinematik', 'Optimasi Menyeluruh', 'Revisi Berkelanjutan', 'Manajemen Proyek', 'Dukungan 24/7', 'Akses Kode Penuh', 'Konsultasi Strategis']
         }
       ]
@@ -334,7 +344,7 @@ const translations = {
         message: 'Halo AV GAME STUDIO, saya ingin memesan jasa pembuatan Item Custom seharga Rp 500.000. Mohon info detailnya ya.'
       }
     ],
-    market_categories: ['Semua', '100 Robux', '300 Robux', '1000 Robux', '2000 Robux']
+    market_categories: ['Semua', 'Mobile', 'PC', 'Roblox']
   },
   en: {
     nav: {
@@ -344,7 +354,8 @@ const translations = {
       portfolio: 'Portfolio',
       gallery: 'Gallery',
       assets: 'Assets',
-      topup: 'Top Up',
+      topup: 'Top Up Robux',
+      topgame: 'Top Up Game',
       pricing: 'Pricing',
       contact: 'Contact',
       topup_btn: 'TOP UP NOW'
@@ -388,8 +399,10 @@ const translations = {
       },
       etalase_title: 'Robux Catalog',
       etalase_desc: 'A curated selection of Robux packages designed to meet your gaming requirements.',
-      ready_stock: 'IN STOCK',
-      hot_item: 'TOP CHOICE',
+      ready_stock: 'READY STOCK',
+      hot_item: 'FEATURED',
+      tab_robux: 'Top Up Robux',
+      tab_games: 'Top Up Games',
       final_price: 'Final Price',
       order_desc: 'Complete your order by entering your username and making a payment.',
       order_btn: 'BUY NOW',
@@ -415,7 +428,8 @@ const translations = {
         status_member: 'VERIFIED: Service accessible.',
         status_not_member: 'NOT REGISTERED: Please join the group first.',
         status_error: 'Identity not found.',
-        membership_info: 'Ensure the username matches your Roblox profile data.'
+        membership_info: 'Ensure the username matches your Roblox profile data.',
+        realtime_stock: 'Real-time Group Stock'
       }
     },
     featured_maps: {
@@ -523,16 +537,22 @@ const translations = {
         {
           name: 'Starter',
           desc: 'Ideal for specific asset development and micro-scale projects',
+          price_idr: 'Rp 500rb',
+          price_usd: '$35',
           features: ['Basic Design', 'Core Scripting', 'Standard UI Kit', 'Limited Revisions', 'Fast Delivery', 'Technical Support']
         },
         {
           name: 'Premium',
           desc: 'Complete solution for comprehensive game map development',
+          price_idr: 'Rp 1.5Jt',
+          price_usd: '$99',
           features: ['Advanced Environment Design', 'Custom Mechanics Systems', 'Full UI/UX Design', 'VFX & Atmosphere', 'Flexible Revisions', 'Priority Processing', 'Exclusive Support', 'Source Assets']
         },
         {
           name: 'Ultimate Studio',
           desc: 'Industry-standard quality for large-scale projects',
+          price_idr: 'Rp 10Jt',
+          price_usd: '$650',
           features: ['Full AAA Development', 'Complex AI Systems', 'Premium Interface', 'Cinematic Visuals', 'Comprehensive Optimization', 'Continuous Revisions', 'Project Management', '24/7 Support', 'Full Code Access', 'Strategic Consultation']
         }
       ]
@@ -659,7 +679,7 @@ const translations = {
         message: 'Hello AV GAME STUDIO, I would like to order Custom Item creation service for Rp 500.000. Please info for details.'
       }
     ],
-    market_categories: ['All', '100 Robux', '300 Robux', '1000 Robux', '2000 Robux']
+    market_categories: ['All', 'Mobile', 'PC', 'Roblox']
   }
 };
 

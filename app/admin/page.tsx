@@ -20,6 +20,7 @@ import {
 import { toast } from 'sonner'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
+import Image from 'next/image'
 
 export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -42,6 +43,7 @@ export default function AdminDashboard() {
   const [deletedAssetIds, setDeletedAssetIds] = useState<string[]>([])
   const [deletedGalleryIds, setDeletedGalleryIds] = useState<string[]>([])
   const [isSaving, setIsSaving] = useState(false)
+  const [adminFunds, setAdminFunds] = useState<number | null>(null)
 
   const fetchData = async () => {
     setLoading(true)
@@ -68,6 +70,17 @@ export default function AdminDashboard() {
       const galleryData = await galleryRes.json()
       if (Array.isArray(galleryData)) setGallery(galleryData)
       setDeletedGalleryIds([])
+
+      // Fetch Roblox Funds
+      try {
+        const fundsRes = await fetch('/api/check-funds', { cache: 'no-store' })
+        const fundsData = await fundsRes.json()
+        if (fundsData.success) {
+          setAdminFunds(fundsData.funds)
+        }
+      } catch (e) {
+        console.error('Failed to fetch funds for admin:', e)
+      }
 
     } catch (err) {
       toast.error('Gagal mengambil data')
@@ -420,7 +433,26 @@ export default function AdminDashboard() {
             </h1>
             <p className="text-white/40 font-bold uppercase text-xs mt-2 tracking-[0.3em]">Content & Payout Management</p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
+            {/* Roblox Funds Display */}
+            <div className="flex items-center gap-4 bg-emerald-500/10 border border-emerald-500/20 px-8 py-4 skew-x-[-12deg]">
+              <div className="flex h-8 w-8 items-center justify-center rounded-none bg-emerald-500/20 -skew-x-[-12deg]">
+                <Image
+                  src="/icon robux.png"
+                  alt="Robux"
+                  width={20}
+                  height={20}
+                  className="h-5 w-5 object-contain"
+                />
+              </div>
+              <div className="-skew-x-[-12deg]">
+                <p className="text-[8px] font-black text-emerald-500 uppercase tracking-widest leading-none mb-1">Group Funds</p>
+                <p className="text-xl font-black text-white italic leading-none">
+                  {adminFunds !== null ? `${adminFunds.toLocaleString()} R$` : '---'}
+                </p>
+              </div>
+            </div>
+
             <button 
               onClick={fetchData} 
               className="flex items-center gap-2 bg-white/5 border border-white/10 px-8 py-4 text-xs font-black uppercase hover:bg-white/10 transition-all active:scale-95"

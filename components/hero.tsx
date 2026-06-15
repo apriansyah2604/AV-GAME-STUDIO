@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, Gamepad2, Rocket, ShoppingCart, Users } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
 import { useTransition } from '@/context/TransitionContext'

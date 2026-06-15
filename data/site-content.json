@@ -52,6 +52,250 @@
       "message": "Halo AV GAME STUDIO, saya ingin top up 5000 Robux dengan harga Rp 725.000. Mohon info proses dan pembayarannya ya."
     }
   ],
+  "game_list": [
+    {
+      "id": 1,
+      "name": "Mobile Legends",
+      "image": "https://images.wallpapersden.com/image/download/mobile-legends-bang-bang-gaming-2023_bW1ubmmUmZqaraWkpJRmbmdlrWZlbWY.jpg",
+      "category": "Mobile",
+      "description": "Top Up Diamond Mobile Legends murah dan cepat.",
+      "packages": [
+        { "id": 1, "name": "5 Diamonds", "price": "Rp 1.500" },
+        { "id": 2, "name": "12 Diamonds", "price": "Rp 3.500" },
+        { "id": 3, "name": "50 Diamonds", "price": "Rp 14.000" },
+        { "id": 4, "name": "150 Diamonds", "price": "Rp 42.000" },
+        { "id": 5, "name": "Starlight Member", "price": "Rp 145.000" }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Free Fire",
+      "image": "https://wallpapers.com/images/featured/free-fire-4k-obod7src8jkhnoo6.jpg",
+      "category": "Mobile",
+      "description": "Top Up Diamond Free Fire harga bersaing.",
+      "packages": [
+        { "id": 1, "name": "5 Diamonds", "price": "Rp 1.000" },
+        { "id": 2, "name": "50 Diamonds", "price": "Rp 8.000" },
+        { "id": 3, "name": "140 Diamonds", "price": "Rp 20.000" },
+        { "id": 4, "name": "355 Diamonds", "price": "Rp 50.000" },
+        { "id": 5, "name": "720 Diamonds", "price": "Rp 100.000" }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Genshin Impact",
+      "image": "https://wallpapers.com/images/featured/genshin-impact-wlq3ykrxbaoadjow.jpg",
+      "category": "PC/Mobile",
+      "description": "Top Up Genesis Crystal Genshin Impact aman.",
+      "packages": [
+        { "id": 1, "name": "60 Genesis Crystals", "price": "Rp 15.000" },
+        { "id": 2, "name": "300 Genesis Crystals", "price": "Rp 75.000" },
+        { "id": 3, "name": "Blessing of the Welkin Moon", "price": "Rp 79.000" }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Valorant",
+      "image": "https://wallpapers.com/images/featured/valorant-305kescxw5dpup7y.jpg",
+      "category": "PC",
+      "description": "Top Up Valorant Points proses kilat.",
+      "packages": [
+        { "id": 1, "name": "125 Points", "price": "Rp 15.000" },
+        { "id": 2, "name": "625 Points", "price": "Rp 75.000" },
+        { "id": 3, "name": "1125 Points", "price": "Rp 135.000" }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "PUBG Mobile",
+      "image": "https://c4.wallpaperflare.com/wallpaper/256/240/14/pubg-wallpaper-preview.jpg",
+      "category": "Mobile",
+      "description": "Top Up UC PUBG Mobile murah.",
+      "packages": [
+        { "id": 1, "name": "60 UC", "price": "Rp 15.000" },
+        { "id": 2, "name": "325 UC", "price": "Rp 75.000" },
+        { "id": 3, "name": "660 UC", "price": "Rp 150.000" },
+        { "id": 4, "name": "1800 UC", "price": "Rp 375.000" }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Honkai: Star Rail",
+      "image": "https://cdn.wallpapersafari.com/58/2/XlN0pi.jpg",
+      "category": "PC/Mobile",
+      "description": "Top Up Oneiric Shard aman.",
+      "packages": [
+        { "id": 1, "name": "60 Oneiric Shards", "price": "Rp 16.000" },
+        { "id": 2, "name": "300 Oneiric Shards", "price": "Rp 79.000" },
+        { "id": 3, "name": "Express Supply Pass", "price": "Rp 79.000" }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Point Blank",
+      "image": "https://wallpaper.forfun.com/fetch/72/72ffff752976d17bb7a7ba61072edeca.jpeg",
+      "category": "PC",
+      "description": "Top Up PB Cash proses instan.",
+      "packages": [
+        { "id": 1, "name": "1.200 PB Cash", "price": "Rp 12.000" },
+        { "id": 2, "name": "2.400 PB Cash", "price": "Rp 24.000" },
+        { "id": 3, "name": "6.000 PB Cash", "price": "Rp 60.000" },
+        { "id": 4, "name": "12.000 PB Cash", "price": "Rp 120.000" }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Call of Duty Mobile",
+      "image": "https://4kwallpapers.com/images/walls/thumbs_2t/25393.jpg",
+      "category": "Mobile",
+      "description": "Top Up CP CODM murah.",
+      "packages": [
+        { "id": 1, "name": "31 CP", "price": "Rp 5.000" },
+        { "id": 2, "name": "63 CP", "price": "Rp 10.000" },
+        { "id": 3, "name": "128 CP", "price": "Rp 20.000" },
+        { "id": 4, "name": "320 CP", "price": "Rp 50.000" },
+        { "id": 5, "name": "645 CP", "price": "Rp 100.000" }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Bloodstrike",
+      "image": "https://wallpaperaccess.com/full/21192066.png",
+      "category": "Mobile",
+      "description": "Top Up Gold Bloodstrike harga termurah.",
+      "packages": [
+        { "id": 1, "name": "100 Gold", "price": "Rp 15.000" },
+        { "id": 2, "name": "500 Gold", "price": "Rp 75.000" },
+        { "id": 3, "name": "1000 Gold", "price": "Rp 145.000" }
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Arena of Valor",
+      "image": "https://i.pinimg.com/736x/54/0b/b1/540bb1cf708776096e2cabf2eac32149.jpg",
+      "category": "Mobile",
+      "description": "Top Up Voucher AOV proses kilat.",
+      "packages": [
+        { "id": 1, "name": "40 Vouchers", "price": "Rp 12.500" },
+        { "id": 2, "name": "90 Vouchers", "price": "Rp 25.000" },
+        { "id": 3, "name": "230 Vouchers", "price": "Rp 62.500" }
+      ]
+    },
+    {
+      "id": 11,
+      "name": "Honor of Kings",
+      "image": "https://i.pinimg.com/originals/b0/31/b1/b031b151ccaf5990d3accbdd6c6e49fd.jpg",
+      "category": "Mobile",
+      "description": "Top Up Token HOK aman dan resmi.",
+      "packages": [
+        { "id": 1, "name": "16 Tokens", "price": "Rp 4.000" },
+        { "id": 2, "name": "80 Tokens", "price": "Rp 18.000" },
+        { "id": 3, "name": "240 Tokens", "price": "Rp 54.000" }
+      ]
+    },
+    {
+      "id": 12,
+      "name": "League of Legends",
+      "image": "https://c4.wallpaperflare.com/wallpaper/211/685/116/arcane-league-of-legends-vi-league-of-legends-hd-wallpaper-preview.jpg",
+      "category": "PC",
+      "description": "Top Up Wild Cores / RP League of Legends.",
+      "packages": [
+        { "id": 1, "name": "625 Wild Cores", "price": "Rp 75.000" },
+        { "id": 2, "name": "1380 RP", "price": "Rp 150.000" }
+      ]
+    },
+    {
+      "id": 13,
+      "name": "EFootball",
+      "image": "https://i.pinimg.com/736x/96/8e/ad/968ead76ff6386de680620d29926acfc.jpg",
+      "category": "Mobile/PC",
+      "description": "Top Up EFootball Coins murah.",
+      "packages": [
+        { "id": 1, "name": "130 Coins", "price": "Rp 19.000" },
+        { "id": 2, "name": "520 Coins", "price": "Rp 75.000" },
+        { "id": 3, "name": "1040 Coins", "price": "Rp 149.000" }
+      ]
+    },
+    
+    {
+      "id": 15,
+      "name": "Clash of Clans",
+      "image": "https://i.pinimg.com/736x/36/55/8d/36558d93c7177ef4e5a7eb832575fc4e.jpg",
+      "category": "Mobile",
+      "description": "Top Up Gems Clash of Clans aman.",
+      "packages": [
+        { "id": 1, "name": "80 Gems", "price": "Rp 15.000" },
+        { "id": 2, "name": "500 Gems", "price": "Rp 75.000" },
+        { "id": 3, "name": "Gold Pass", "price": "Rp 119.000" }
+      ]
+    },
+    {
+      "id": 16,
+      "name": "Clash Royale",
+      "image": "https://i.pinimg.com/originals/db/3f/7a/db3f7a1d65dbeb0cf100b2175bade60c.png",
+      "category": "Mobile",
+      "description": "Top Up Gems Clash Royale murah.",
+      "packages": [
+        { "id": 1, "name": "80 Gems", "price": "Rp 15.000" },
+        { "id": 2, "name": "500 Gems", "price": "Rp 75.000" }
+      ]
+    },
+    {
+      "id": 17,
+      "name": "Brawl Stars",
+      "image": "https://wallpapers.com/images/hd/womens-day-montage-brawl-stars-4k-s286n6ddxmjizuhg.jpg",
+      "category": "Mobile",
+      "description": "Top Up Gems Brawl Stars aman.",
+      "packages": [
+        { "id": 1, "name": "30 Gems", "price": "Rp 35.000" },
+        { "id": 2, "name": "80 Gems", "price": "Rp 85.000" }
+      ]
+    },
+    
+    
+
+    {
+      "id": 21,
+      "name": "Ragnarok Origin",
+      "image": "https://c4.wallpaperflare.com/wallpaper/150/626/423/online-ragnarok-tagme-wallpaper-preview.jpg",
+      "category": "Mobile",
+      "description": "Top Up Ragnarok Origin Nyan Berry.",
+      "packages": [
+        { "id": 1, "name": "50 Nyan Berries", "price": "Rp 15.000" },
+        { "id": 2, "name": "250 Nyan Berries", "price": "Rp 75.000" }
+      ]
+    },
+    {
+      "id": 22,
+      "name": "Apex Legends Mobile",
+      "image": "https://i.pinimg.com/736x/48/0c/28/480c28498f29da06d0e5ca5ac6671b4c.jpg",
+      "category": "Mobile",
+      "description": "Top Up Syndicate Gold Apex Mobile.",
+      "packages": [
+        { "id": 1, "name": "90 Gold", "price": "Rp 15.000" },
+        { "id": 2, "name": "450 Gold", "price": "Rp 75.000" }
+      ]
+    },
+
+
+
+
+
+
+  
+    {
+      "id": 29,
+      "name": "LifeAfter",
+      "image": "https://wallpaperaccess.com/full/3533602.jpg",
+      "category": "Mobile",
+      "description": "Top Up Credit LifeAfter murah.",
+      "packages": [
+        { "id": 1, "name": "60 Credits", "price": "Rp 15.000" },
+        { "id": 2, "name": "300 Credits", "price": "Rp 75.000" }
+      ]
+    }
+
+  ],
   "avatar_services": [
     {
       "id": 1,

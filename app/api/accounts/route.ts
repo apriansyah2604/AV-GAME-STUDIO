@@ -107,16 +107,8 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    // Log current accounts before delete
-    const rawAccountsBefore = require('../../../data/accounts.json');
-    console.log('Accounts before delete:', rawAccountsBefore);
-
     const deletedCount = storage.deleteAccounts(ids);
     
-    // Log current accounts after delete
-    const rawAccountsAfter = require('../../../data/accounts.json');
-    console.log('Accounts after delete:', rawAccountsAfter);
-
     console.log(`Deleted ${deletedCount} accounts`);
 
     return NextResponse.json(

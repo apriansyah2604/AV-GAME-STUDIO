@@ -90,7 +90,7 @@ const PRESENCE_CACHE_MS = 30 * 1000
 const FRIENDS_CACHE_MS = 60 * 1000
 
 // --- Helper functions untuk sistem management ---
-function normalizeAuthToken(input: string) {
+export function normalizeAuthToken(input: string) {
   const raw = String(input || '').trim()
   if (!raw) return raw
   const unquoted = raw.replace(/^"+|"+$/g, '').replace(/^'+|'+$/g, '')
@@ -98,17 +98,51 @@ function normalizeAuthToken(input: string) {
   return withoutPrefix.trim()
 }
 
-function getSecurityCookie(authToken: string) {
+export function getSecurityCookie(authToken: string) {
   return `.ROBLOSECURITY=${normalizeAuthToken(authToken)}`
 }
 
-function chunkArray<T>(arr: T[], size: number) {
+export function chunkArray<T>(arr: T[], size: number) {
   const chunks: T[][] = []
   for (let i = 0; i < arr.length; i += size) chunks.push(arr.slice(i, i + size))
   return chunks
 }
 
-async function getRobloxUsersByIds(userIds: number[]) {
+export async function fetchCsrfToken(authToken: string) {
+  console.log('[fetchCsrfToken] Starting...')
+  const tokenKey = normalizeAuthToken(authToken)
+  
+  // Check cache
+  const cached = csrfTokenCache.get(tokenKey)
+  if (cached && Date.now() - cached.fetchedAt < 10 * 60 * 1000) {
+    console.log('[fetchCsrfToken] Using cached token')
+    return cached.token
+  }
+
+  console.log('[fetchCsrfToken] Fetching new token from Roblox...')
+  const res = await fetch('https://auth.roblox.com/v2/logout', {
+    method: 'POST',
+    headers: {
+      'Cookie': getSecurityCookie(authToken),
+      'Origin': 'https://www.roblox.com',
+      'Referer': 'https://www.roblox.com/',
+    },
+  })
+
+  console.log('[fetchCsrfToken] Roblox response status:', res.status)
+  const token = res.headers.get('x-csrf-token')
+  
+  if (!token) {
+    console.error('[fetchCsrfToken] No X-CSRF-TOKEN header in response')
+    throw new Error('Gagal mengambil token keamanan Roblox. Pastikan auth token valid.')
+  }
+
+  console.log('[fetchCsrfToken] Got new token')
+  csrfTokenCache.set(tokenKey, { token, fetchedAt: Date.now() })
+  return token
+}
+
+export async function getRobloxUsersByIds(userIds: number[]) {
   const uniqueIds = Array.from(new Set(userIds)).filter(n => Number.isFinite(n))
   if (uniqueIds.length === 0) return new Map<number, { name: string; displayName: string }>()
 
@@ -158,14 +192,14 @@ async function getRobloxUsersByIds(userIds: number[]) {
   return result
 }
 
-function mapPresenceType(type: number): 'offline' | 'online' | 'in_game' | 'in_studio' {
+export function mapPresenceType(type: number): 'offline' | 'online' | 'in_game' | 'in_studio' {
   if (type === 1) return 'online'
   if (type === 2) return 'in_game'
   if (type === 3) return 'in_studio'
   return 'offline'
 }
 
-async function getRobloxPresenceByIds(authToken: string, userIds: number[]) {
+export async function getRobloxPresenceByIds(authToken: string, userIds: number[]) {
   const uniqueIds = Array.from(new Set(userIds)).filter(n => Number.isFinite(n))
   const result = new Map<number, {
     isOnline: boolean
@@ -245,40 +279,6 @@ async function getRobloxPresenceByIds(authToken: string, userIds: number[]) {
   }
 
   return result
-}
-
-async function fetchCsrfToken(authToken: string) {
-  console.log('[fetchCsrfToken] Starting...')
-  const tokenKey = normalizeAuthToken(authToken)
-  
-  // Check cache
-  const cached = csrfTokenCache.get(tokenKey)
-  if (cached && Date.now() - cached.fetchedAt < 10 * 60 * 1000) {
-    console.log('[fetchCsrfToken] Using cached token')
-    return cached.token
-  }
-
-  console.log('[fetchCsrfToken] Fetching new token from Roblox...')
-  const res = await fetch('https://auth.roblox.com/v2/logout', {
-    method: 'POST',
-    headers: {
-      'Cookie': getSecurityCookie(authToken),
-      'Origin': 'https://www.roblox.com',
-      'Referer': 'https://www.roblox.com/',
-    },
-  })
-
-  console.log('[fetchCsrfToken] Roblox response status:', res.status)
-  const token = res.headers.get('x-csrf-token')
-  
-  if (!token) {
-    console.error('[fetchCsrfToken] No X-CSRF-TOKEN header in response')
-    throw new Error('Gagal mengambil token keamanan Roblox. Pastikan auth token valid.')
-  }
-
-  console.log('[fetchCsrfToken] Got new token')
-  csrfTokenCache.set(tokenKey, { token, fetchedAt: Date.now() })
-  return token
 }
 
 // --- Exported functions untuk sistem payout ---

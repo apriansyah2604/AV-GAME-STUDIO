@@ -145,6 +145,16 @@ export function Navbar() {
                 </span>
               </Link>
 
+              <Link
+                href="/management"
+                className="hidden md:flex relative px-6 py-2 rounded-none overflow-hidden group items-center"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-[#0066ff] to-[#00a8ff] skew-x-[-12deg]" />
+                <span className="relative font-black tracking-normal text-white uppercase text-sm skew-x-[12deg]">
+                  Roblox Management
+                </span>
+              </Link>
+
               {/* Language Selector */}
               <div className="relative">
                 <button
@@ -261,6 +271,18 @@ export function Navbar() {
                   <div className="absolute inset-0 bg-[#ff4655] skew-x-[-12deg]" />
                   <span className="relative font-black tracking-normal text-white uppercase text-lg skew-x-[12deg]">
                     {t('nav.topup_btn')}
+                  </span>
+                </Link>
+
+                {/* Management CTA Mobile */}
+                <Link
+                  href="/management"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex relative px-6 py-4 rounded-none overflow-hidden group items-center justify-center w-full"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#0066ff] to-[#00a8ff] skew-x-[-12deg]" />
+                  <span className="relative font-black tracking-normal text-white uppercase text-lg skew-x-[12deg]">
+                    Roblox Management
                   </span>
                 </Link>
 

@@ -3,6 +3,9 @@ import { Orbitron, Inter, Plus_Jakarta_Sans, Anton, Barlow_Condensed } from 'nex
 import { Analytics } from '@vercel/analytics/next'
 import { LanguageProvider } from '@/context/LanguageContext'
 import { TransitionProvider } from '@/context/TransitionContext'
+import { ToastProvider } from '@/context/ToastContext'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
+import { ToastDisplay } from '@/components/ToastDisplay'
 import { SceneTransition } from '@/components/scene-transition'
 import Script from 'next/script'
 import './globals.css'
@@ -69,9 +72,14 @@ export default function RootLayout({
         />
         <LanguageProvider>
           <TransitionProvider>
-            <SceneTransition />
-            {children}
-            {process.env.NODE_ENV === 'production' && <Analytics />}
+            <ErrorBoundary>
+              <ToastProvider>
+                <SceneTransition />
+                {children}
+                <ToastDisplay />
+                {process.env.NODE_ENV === 'production' && <Analytics />}
+              </ToastProvider>
+            </ErrorBoundary>
           </TransitionProvider>
         </LanguageProvider>
       </body>

@@ -5,5 +5,4 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-// Konfigurasi WhatsApp Admin
-export const ADMIN_WHATSAPP = process.env.NEXT_PUBLIC_ADMIN_WHATSAPP || '62895327025015';
+export const ADMIN_WHATSAPP = process.env.ADMIN_WHATSAPP || '6281234567890';

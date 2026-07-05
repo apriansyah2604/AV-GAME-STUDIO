@@ -63,6 +63,21 @@ function verifyPassword(password: string, hashedPassword: string): boolean {
   return hashPassword(password) === hashedPassword;
 }
 
+function getSeedAdminCredentials() {
+  const username = process.env.DEFAULT_ADMIN_USERNAME?.trim();
+  const password = process.env.DEFAULT_ADMIN_PASSWORD?.trim();
+
+  if (username && password) {
+    return { username, password };
+  }
+
+  if (process.env.NODE_ENV !== 'production') {
+    return { username: 'admin', password: 'admin123' };
+  }
+
+  return null;
+}
+
 // Type definitions
 export interface Connection {
   id: string;
@@ -130,15 +145,19 @@ export function getUsers(): User[] {
   
   // Initialize default admin user if no users exist
   if (sanitizedUsers.length === 0) {
-    const defaultAdmin: User = {
-      id: randomUUID(),
-      username: 'admin',
-      password: hashPassword('admin123'),
-      role: 'admin',
-      createdAt: new Date().toISOString(),
-    };
-    sanitizedUsers.push(defaultAdmin);
-    needsToSave = true;
+    const seedAdmin = getSeedAdminCredentials();
+
+    if (seedAdmin) {
+      const defaultAdmin: User = {
+        id: randomUUID(),
+        username: seedAdmin.username,
+        password: hashPassword(seedAdmin.password),
+        role: 'admin',
+        createdAt: new Date().toISOString(),
+      };
+      sanitizedUsers.push(defaultAdmin);
+      needsToSave = true;
+    }
   }
   
   if (needsToSave) {

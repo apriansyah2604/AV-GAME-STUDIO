@@ -62,7 +62,6 @@ export function Portfolio() {
   const filteredItems = activeCategory === categories[0]
     ? portfolioItems 
     : portfolioItems.filter(item => {
-        // Map English category names to translated names for filtering
         const catMap: {[key: string]: string} = {
           'Open World': categories[1],
           'Shooter': categories[2],
@@ -75,55 +74,51 @@ export function Portfolio() {
       })
 
   return (
-    <section id="portfolio" className="relative py-20 lg:py-32 overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#030303] via-[#0c0506] to-[#030303]" />
+    <section id="portfolio" className="relative py-24 sm:py-32 overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-b from-[#030303] via-[#08111F] to-[#030303]" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-12"
+          className="text-center mb-10 sm:mb-12"
         >
-          <span className="inline-block px-4 py-1 rounded-none border border-[#ff4655]/30 text-xs tracking-normal text-[#ff4655] font-black uppercase italic mb-4">
+          <span className="inline-block px-4 py-1 rounded-full text-xs tracking-widest text-[#00AFFF] border border-[#00AFFF]/30 mb-4">
             {t('portfolio.badge')}
           </span>
-          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black mb-4 px-2 uppercase tracking-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-4">
             <span className="neon-text">{t('portfolio.title')}</span>
           </h2>
-          <p className="text-white/50 max-w-xl mx-auto font-medium">
+          <p className="text-white/50 max-w-xl mx-auto text-sm sm:text-base">
             {t('portfolio.subtitle')}
           </p>
         </motion.div>
 
-        {/* Category Filter */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="flex flex-wrap justify-center gap-2 mb-12"
+          className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-10 sm:mb-12"
         >
           {categories.map((category: string) => (
             <button
               key={category}
               onClick={() => setActiveCategory(category)}
-              className={`px-6 py-2 rounded-none text-xs font-black transition-all duration-300 uppercase skew-x-[-12deg] ${
+              className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-300 ${
                 activeCategory === category
-                  ? 'bg-[#ff4655] text-white'
-                  : 'glass border border-white/10 text-white/60 hover:text-white hover:border-[#ff4655]/50'
+                  ? 'bg-[#00AFFF] text-[#030303]'
+                  : 'glass border border-[#00AFFF]/20 text-white/60 hover:text-white hover:border-[#00AFFF]/50'
               }`}
             >
-              <span className="skew-x-[12deg] inline-block">{category}</span>
+              {category}
             </button>
           ))}
         </motion.div>
 
-        {/* Portfolio Grid */}
-        <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           <AnimatePresence mode="popLayout">
-            {filteredItems.map((item: any) => (
+            {filteredItems.map((item) => (
               <motion.div
                 key={item.id}
                 layout
@@ -131,7 +126,7 @@ export function Portfolio() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.3 }}
-                className="group relative rounded-none overflow-hidden cursor-pointer border border-white/5"
+                className="group relative rounded-xl overflow-hidden cursor-pointer"
                 onClick={() => setSelectedItem(item)}
               >
                 <div className="relative aspect-video">
@@ -141,53 +136,49 @@ export function Portfolio() {
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#030303] via-[#030303]/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#030303] via-[#030303]/50 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
                   
-                  {/* Overlay */}
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <motion.div
                       whileHover={{ scale: 1.1 }}
-                      className="w-14 h-14 rounded-none bg-[#ff4655]/20 backdrop-blur-sm border border-[#ff4655]/50 flex items-center justify-center skew-x-[-12deg]"
+                      className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#00AFFF]/20 backdrop-blur-sm border border-[#00AFFF]/50 flex items-center justify-center"
                     >
-                      <Eye className="w-6 h-6 text-white -skew-x-[-12deg]" />
+                      <Eye className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                     </motion.div>
                   </div>
                 </div>
 
-                {/* Content */}
-                <div className="absolute bottom-0 left-0 right-0 p-6">
-                  <span className="text-[10px] font-black text-[#ff4655] tracking-normal uppercase italic">{item.category}</span>
-                  <h3 className="text-xl font-black text-white mt-1 uppercase tracking-tight">{item.title}</h3>
+                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
+                  <span className="text-[10px] sm:text-xs text-[#00AFFF] tracking-wider">{item.category}</span>
+                  <h3 className="text-lg sm:text-xl font-bold text-white mt-1">{item.title}</h3>
                 </div>
 
-                {/* Border Glow */}
-                <div className="absolute inset-0 border border-[#ff4655]/0 group-hover:border-[#ff4655]/30 rounded-none transition-colors" />
+                <div className="absolute inset-0 border border-[#00AFFF]/0 group-hover:border-[#00AFFF]/50 rounded-xl transition-colors" />
               </motion.div>
             ))}
           </AnimatePresence>
         </motion.div>
       </div>
 
-      {/* Modal */}
       <AnimatePresence>
         {selectedItem && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#030303]/95 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#030303]/90 backdrop-blur-sm"
             onClick={() => setSelectedItem(null)}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="relative max-w-4xl w-full glass-strong rounded-none border border-white/10 overflow-hidden"
+              className="relative max-w-4xl w-full glass-strong rounded-2xl overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
               <button
                 onClick={() => setSelectedItem(null)}
-                className="absolute top-4 right-4 z-10 p-3 rounded-none glass border border-white/20 hover:border-[#ff4655] transition-colors"
+                className="absolute top-4 right-4 z-10 p-2 rounded-full glass border border-[#00AFFF]/30 hover:border-[#00AFFF] transition-colors"
               >
                 <X className="w-5 h-5 text-white" />
               </button>
@@ -199,24 +190,22 @@ export function Portfolio() {
                   fill
                   className="object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0c0506] to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#08111F] to-transparent" />
               </div>
 
-              <div className="p-8">
-                <span className="text-[10px] font-black text-[#ff4655] tracking-normal uppercase italic">{selectedItem.category}</span>
-                <h3 className="text-3xl font-black text-white mt-2 mb-4 uppercase tracking-tight">{selectedItem.title}</h3>
-                <p className="text-white/60 leading-relaxed mb-8 font-medium">{selectedItem.description}</p>
+              <div className="p-6 sm:p-8">
+                <span className="text-xs sm:text-sm text-[#00AFFF] tracking-wider">{selectedItem.category}</span>
+                <h3 className="text-2xl sm:text-3xl font-bold text-white mt-2 mb-4">{selectedItem.title}</h3>
+                <p className="text-white/60 leading-relaxed mb-6 text-sm sm:text-base">{selectedItem.description}</p>
                 
                 <motion.a
                   href="#"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="inline-flex items-center gap-3 px-8 py-4 rounded-none bg-[#ff4655] text-white font-black uppercase skew-x-[-12deg]"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[#00AFFF] to-[#00E5FF] text-[#030303] font-bold text-sm"
                 >
-                  <span className="skew-x-[12deg] flex items-center gap-2">
-                    <ExternalLink className="w-5 h-5" />
-                    {t('portfolio.view_project')}
-                  </span>
+                  <ExternalLink className="w-4 h-4" />
+                  {t('portfolio.view_project')}
                 </motion.a>
               </div>
             </motion.div>

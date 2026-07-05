@@ -1,6 +1,7 @@
 import Dashboard from '@/components/Dashboard'
 import { ManagementNavbar } from '@/components/ManagementNavbar'
 import { Footer } from '@/components/footer'
+import { ProtectedRoute } from '@/components/ProtectedRoute'
 
 export const metadata = {
   title: 'Roblox Account Manager | AV GAME STUDIO',
@@ -9,12 +10,14 @@ export const metadata = {
 
 export default function Page() {
   return (
-    <div className="min-h-screen bg-[#030303]">
-      <ManagementNavbar />
-      <main className="pt-24 pb-20">
-        <Dashboard />
-      </main>
-      <Footer />
-    </div>
+    <ProtectedRoute>
+      <div className="min-h-screen bg-[#030303]">
+        <ManagementNavbar />
+        <main className="pt-24 pb-20">
+          <Dashboard />
+        </main>
+        <Footer />
+      </div>
+    </ProtectedRoute>
   )
 }

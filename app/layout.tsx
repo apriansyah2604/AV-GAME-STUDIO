@@ -4,6 +4,8 @@ import { Analytics } from '@vercel/analytics/next'
 import { LanguageProvider } from '@/context/LanguageContext'
 import { TransitionProvider } from '@/context/TransitionContext'
 import { ToastProvider } from '@/context/ToastContext'
+import { AuthProvider } from '@/context/AuthContext'
+import { NextAuthSessionProvider } from '@/components/SessionProvider'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { ToastDisplay } from '@/components/ToastDisplay'
 import { SceneTransition } from '@/components/scene-transition'
@@ -70,18 +72,22 @@ export default function RootLayout({
           data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}
           strategy="afterInteractive"
         />
-        <LanguageProvider>
-          <TransitionProvider>
-            <ErrorBoundary>
-              <ToastProvider>
-                <SceneTransition />
-                {children}
-                <ToastDisplay />
-                {process.env.NODE_ENV === 'production' && <Analytics />}
-              </ToastProvider>
-            </ErrorBoundary>
-          </TransitionProvider>
-        </LanguageProvider>
+        <NextAuthSessionProvider>
+          <AuthProvider>
+            <LanguageProvider>
+              <TransitionProvider>
+                <ErrorBoundary>
+                  <ToastProvider>
+                    <SceneTransition />
+                    {children}
+                    <ToastDisplay />
+                    {process.env.NODE_ENV === 'production' && <Analytics />}
+                  </ToastProvider>
+                </ErrorBoundary>
+              </TransitionProvider>
+            </LanguageProvider>
+          </AuthProvider>
+        </NextAuthSessionProvider>
       </body>
     </html>
   )

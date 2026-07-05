@@ -1,16 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as storage from '@/lib/storage';
 import { validators, formatErrorResponse, formatSuccessResponse, safeJsonParse } from '@/lib/validation';
+import { getAuthUser } from '@/lib/serverAuth';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
+    const user = await getAuthUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const connections = storage.getConnections();
-    return NextResponse.json(
-      formatSuccessResponse(connections, 'Connections fetched successfully'),
+    const response = NextResponse.json(
+      formatSuccessResponse(connections, 'Connections retrieved successfully'),
       { status: 200 }
     );
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    response.headers.set('Pragma', 'no-cache');
+    response.headers.set('Expires', '0');
+    return response;
   } catch (error) {
-    console.error('[v0] GET /api/connections error:', error);
+    console.error('GET /api/connections error:', error);
     return NextResponse.json(
       formatErrorResponse(error),
       { status: 500 }
@@ -20,42 +30,39 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = safeJsonParse(await request.text(), {});
-    const { name, robloxUserId, authToken } = body;
-
-    // Validate inputs
-    const validatedName = validators.connectionName(name);
-    const validatedUserId = validators.robloxUserId(robloxUserId);
-    const validatedToken = validators.authToken(authToken);
-
-    // Check for duplicates
-    const existingConnections = storage.getConnections();
-    if (existingConnections.some(c => c.name.toLowerCase() === validatedName.toLowerCase())) {
-      return NextResponse.json(
-        formatErrorResponse(
-          new Error('A connection with this name already exists')
-        ),
-        { status: 409 }
-      );
+    const user = await getAuthUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const body = safeJsonParse(await request.text(), {});
+    
+    // Validate required fields
+    validators.connectionName(body.name);
+    validators.robloxUserId(body.robloxUserId);
+    validators.authToken(body.authToken);
+
     const connection = storage.createConnection({
-      name: validatedName,
-      robloxUserId: validatedUserId,
-      authToken: validatedToken,
+      name: body.name,
+      robloxUserId: body.robloxUserId,
+      authToken: body.authToken,
       status: 'disconnected',
       lastConnected: new Date().toISOString(),
     });
 
-    return NextResponse.json(
+    const response = NextResponse.json(
       formatSuccessResponse(connection, 'Connection created successfully'),
       { status: 201 }
     );
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    response.headers.set('Pragma', 'no-cache');
+    response.headers.set('Expires', '0');
+    return response;
   } catch (error) {
-    console.error('[v0] POST /api/connections error:', error);
+    console.error('POST /api/connections error:', error);
     return NextResponse.json(
       formatErrorResponse(error),
-      { status: error instanceof Error && error.message.includes('required') ? 400 : 500 }
+      { status: error instanceof Error && error.name === 'ValidationError' ? 400 : 500 }
     );
   }
 }

@@ -2,15 +2,19 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, Globe, ChevronDown, ArrowRight, Instagram, Music2, Gamepad2, Search } from 'lucide-react'
+import { Menu, X, Globe, ChevronDown, ArrowRight, Instagram, Music2, Gamepad2, Search, User, LogOut } from 'lucide-react'
 import Image from 'next/image'
 import { useLanguage } from '@/context/LanguageContext'
 import { useTransition } from '@/context/TransitionContext'
+import { useAuth } from '@/context/AuthContext'
+import { useToast } from '@/context/ToastContext'
 import Link from 'next/link'
 
 export function Navbar() {
   const { language, setLanguage, t } = useLanguage()
   const { triggerTransition } = useTransition()
+  const { user, logout } = useAuth()
+  const { addToast } = useToast()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isLangOpen, setIsLangOpen] = useState(false)
@@ -133,7 +137,7 @@ export function Navbar() {
               ))}
             </div>
 
-            {/* Language Switcher */}
+            {/* Language Switcher & User Menu */}
             <div className="hidden lg:flex items-center gap-4">
               <Link
                 href="/topup"
@@ -196,6 +200,36 @@ export function Navbar() {
                   )}
                 </AnimatePresence>
               </div>
+
+              {/* User Profile/Login */}
+              {user ? (
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-none border border-white/20 bg-white/5">
+                    <User className="w-4 h-4 text-[#00AFFF]" />
+                    <span className="text-xs font-black text-white/80">
+                      {user.username}
+                    </span>
+                  </div>
+                  <button
+                    onClick={async () => {
+                      await logout();
+                      addToast('Logged out successfully!', 'success');
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 rounded-none border border-[#ff4655]/30 hover:bg-[#ff4655]/10 transition-colors"
+                  >
+                    <LogOut className="w-4 h-4 text-[#ff4655]" />
+                    <span className="text-xs font-black text-[#ff4655]">Logout</span>
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  className="flex items-center gap-2 px-4 py-2 rounded-none border border-white/20 hover:border-[#00AFFF]/50 hover:bg-[#00AFFF]/5 transition-all"
+                >
+                  <User className="w-4 h-4 text-[#00AFFF]" />
+                  <span className="text-xs font-black text-white/80">Login</span>
+                </Link>
+              )}
             </div>
 
             {/* Mobile Menu Button */}
@@ -285,6 +319,42 @@ export function Navbar() {
                     Roblox Management
                   </span>
                 </Link>
+
+                {/* User Info / Login on Mobile */}
+                <div className="space-y-3">
+                  {user ? (
+                    <>
+                      <div className="flex items-center justify-between px-4 py-3 rounded-none border border-white/20 bg-white/5">
+                        <div className="flex items-center gap-3">
+                          <User className="w-5 h-5 text-[#00AFFF]" />
+                          <span className="text-sm font-black text-white/80">
+                            {user.username}
+                          </span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={async () => {
+                          await logout();
+                          setIsMobileMenuOpen(false);
+                          addToast('Logged out successfully!', 'success');
+                        }}
+                        className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-none border border-[#ff4655]/30 hover:bg-[#ff4655]/10 transition-colors"
+                      >
+                        <LogOut className="w-5 h-5 text-[#ff4655]" />
+                        <span className="text-sm font-black text-[#ff4655]">Logout</span>
+                      </button>
+                    </>
+                  ) : (
+                    <Link
+                      href="/login"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex items-center justify-center gap-2 px-6 py-4 rounded-none border border-white/20 hover:border-[#00AFFF]/50 hover:bg-[#00AFFF]/5 transition-all"
+                    >
+                      <User className="w-5 h-5 text-[#00AFFF]" />
+                      <span className="text-sm font-black text-white/80">Login</span>
+                    </Link>
+                  )}
+                </div>
 
                 {/* Language Switcher */}
                 <div>

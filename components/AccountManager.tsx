@@ -81,40 +81,62 @@ export default function AccountManager({
   };
 
   const toggleSelectAll = () => {
+    console.log('===== toggleSelectAll() called =====');
+    console.log('Current selectedIds.size:', selectedIds.size);
+    console.log('accounts.length:', accounts.length);
+    
     if (selectedIds.size === accounts.length) {
+      console.log('Deselecting all');
       setSelectedIds(new Set());
     } else {
+      console.log('Selecting all:', accounts.map(a => ({ id: a.id, username: a.username })));
       setSelectedIds(new Set(accounts.map(a => a.id)));
     }
   };
 
   const toggleSelect = (id: string) => {
+    console.log('===== toggleSelect() called =====');
+    console.log('ID to toggle:', id);
     const newSelected = new Set(selectedIds);
     if (newSelected.has(id)) {
+      console.log('Removing ID:', id);
       newSelected.delete(id);
     } else {
+      console.log('Adding ID:', id);
       newSelected.add(id);
     }
+    console.log('New selectedIds:', Array.from(newSelected));
     setSelectedIds(newSelected);
   };
 
   const deleteSelected = async () => {
+    console.log('===== deleteSelected() called =====');
+    console.log('selectedIds:', selectedIds);
+    console.log('selectedIds.size:', selectedIds.size);
+    const idsToDelete = Array.from(selectedIds);
+    console.log('Array from selectedIds (sorted):', idsToDelete.sort());
+    console.log('Current accounts (with IDs):', accounts.map(a => ({ id: a.id, username: a.username })));
+    
     if (selectedIds.size === 0) return;
     if (!confirm(`Delete ${selectedIds.size} selected accounts? All associated activity will also be deleted.`)) return;
 
     setDeleting(true);
 
     try {
+      console.log('Sending DELETE request with ids:', idsToDelete);
+      
       const res = await fetch('/api/accounts', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ids: Array.from(selectedIds) }),
+        body: JSON.stringify({ ids: idsToDelete }),
+        cache: 'no-store'
       });
 
       const data = await res.json();
+      console.log('Response from API:', data);
 
       if (res.ok) {
-        addToast(data.message || 'Accounts deleted successfully!', 'success');
+        addToast(data.message || `${data.deletedCount || selectedIds.size} accounts deleted successfully!`, 'success');
         setSelectedIds(new Set());
         onAccountsUpdate();
       } else {

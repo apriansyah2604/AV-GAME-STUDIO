@@ -31,10 +31,11 @@ export default function AccountItem({
     );
   }
 
-  console.log('===== AccountItem Debug =====');
-  console.log('Full account object:', account);
-  console.log('account.username:', account.username);
-  console.log('Type of username:', typeof account.username);
+  // console.log('===== AccountItem Debug =====');
+  // console.log('Full account object:', account);
+  // console.log('account.id:', account.id);
+  // console.log('account.username:', account.username);
+  // console.log('isSelected:', isSelected);
 
   // Extract values with clear fallbacks
   let displayName = 'No Name';

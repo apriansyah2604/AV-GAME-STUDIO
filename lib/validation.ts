@@ -56,6 +56,15 @@ export const validators = {
     return token.trim();
   },
 
+  status: (status: string) => {
+    const validStatuses = ['connected', 'disconnected', 'error'];
+    const strStatus = String(status || '').trim();
+    if (!validStatuses.includes(strStatus)) {
+      throw new ValidationError('status', `Status must be one of: ${validStatuses.join(', ')}`);
+    }
+    return strStatus as any;
+  },
+
   // Account validators
   username: (username: string) => {
     if (!username || typeof username !== 'string') {
@@ -84,16 +93,33 @@ export const validators = {
     return password;
   },
 
-  // ID validators
+  accountStatus: (status: string) => {
+    const validStatuses = ['ready', 'working', 'error'];
+    const strStatus = String(status || '').trim();
+    if (!validStatuses.includes(strStatus)) {
+      throw new ValidationError('status', `Status must be one of: ${validStatuses.join(', ')}`);
+    }
+    return strStatus as any;
+  },
+
+  // ID validators (support both legacy and UUID)
   connectionId: (id: string) => {
-    if (!id || typeof id !== 'string' || !id.startsWith('conn_')) {
+    if (!id || typeof id !== 'string') {
+      throw new ValidationError('connectionId', 'Invalid connection ID');
+    }
+    // Support both legacy conn_ format and UUID
+    if (!id.startsWith('conn_') && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
       throw new ValidationError('connectionId', 'Invalid connection ID');
     }
     return id;
   },
 
   accountId: (id: string) => {
-    if (!id || typeof id !== 'string' || !id.startsWith('acc_')) {
+    if (!id || typeof id !== 'string') {
+      throw new ValidationError('accountId', 'Invalid account ID');
+    }
+    // Support both legacy acc_ format and UUID
+    if (!id.startsWith('acc_') && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
       throw new ValidationError('accountId', 'Invalid account ID');
     }
     return id;
@@ -114,7 +140,6 @@ export function safeJsonParse<T>(json: string, fallback: T): T {
   try {
     return JSON.parse(json) as T;
   } catch (error) {
-    console.error('[v0] JSON parse error:', error);
     return fallback;
   }
 }

@@ -39,7 +39,7 @@ export default function Dashboard() {
 
   const fetchConnections = async () => {
     try {
-      const res = await fetch('/api/connections');
+      const res = await fetch('/api/connections', { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         setConnections(data.data || data);
@@ -54,7 +54,7 @@ export default function Dashboard() {
 
   const fetchAccounts = async (connectionId: string) => {
     try {
-      const res = await fetch(`/api/accounts?connectionId=${connectionId}`);
+      const res = await fetch(`/api/accounts?connectionId=${connectionId}`, { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         console.log('[Dashboard.fetchAccounts] Response from API:', data);

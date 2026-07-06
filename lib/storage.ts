@@ -414,10 +414,15 @@ export function getAccountsByConnection(connectionId: string, ownerUserId?: stri
 }
 
 export function createAccount(data: Omit<Account, 'id' | 'createdAt'>): Account {
-  const connection = getConnection(data.connectionId);
+  // Verify connection exists and belongs to the owner
+  const connection = getConnection(data.connectionId, data.ownerUserId);
+  if (!connection) {
+    throw new Error('Connection not found or you don\'t have permission to use it');
+  }
+
   const account: Account = {
     ...data,
-    ownerUserId: normalizeOwnerUserId(data.ownerUserId) || connection?.ownerUserId,
+    ownerUserId: normalizeOwnerUserId(data.ownerUserId),
     id: randomUUID(),
     createdAt: new Date().toISOString(),
   };

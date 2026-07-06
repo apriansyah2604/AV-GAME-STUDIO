@@ -53,11 +53,14 @@ export default function AccountManager({
         addToast('Account added successfully!', 'success');
         onAccountsUpdate();
       } else {
-        addToast(data.error?.message || 'Failed to add account!', 'error');
+        // Show detailed error message
+        const errorMsg = data?.error?.message || data?.error || 'Failed to add account!';
+        console.error('Add account error:', data);
+        addToast(errorMsg, 'error');
       }
     } catch (error) {
       console.error('Error adding account:', error);
-      addToast('An error occurred while adding the account!', 'error');
+      addToast('An unexpected error occurred!', 'error');
     }
   };
 

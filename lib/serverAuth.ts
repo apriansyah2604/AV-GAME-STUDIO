@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/auth'
-import { getUserById } from './storage'
+import { getUserById } from './supabase-storage'
 
 export async function getAuthUser() {
   const session = await getServerSession(authOptions)
@@ -23,7 +23,7 @@ export async function getAuthUser() {
     return null
   }
 
-  const user = getUserById(sessionId.value)
+  const user = await getUserById(sessionId.value)
   if (!user) {
     return null
   }

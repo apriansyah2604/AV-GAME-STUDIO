@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { randomUUID, createHash } from 'crypto';
+import { randomUUID } from 'crypto';
+import { hashPassword, verifyPassword, normalizeOwnerUserId, getSeedAdminCredentials } from './authUtils';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 const CONNECTIONS_FILE = path.join(DATA_DIR, 'connections.json');
@@ -51,36 +52,6 @@ function writeJsonFile(filePath: string, data: any) {
   }
   
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
-}
-
-// Hash password
-function hashPassword(password: string): string {
-  return createHash('sha256').update(password).digest('hex');
-}
-
-// Verify password
-function verifyPassword(password: string, hashedPassword: string): boolean {
-  return hashPassword(password) === hashedPassword;
-}
-
-function normalizeOwnerUserId(value: unknown): string | undefined {
-  const normalized = String(value ?? '').trim();
-  return normalized || undefined;
-}
-
-function getSeedAdminCredentials() {
-  const username = process.env.DEFAULT_ADMIN_USERNAME?.trim();
-  const password = process.env.DEFAULT_ADMIN_PASSWORD?.trim();
-
-  if (username && password) {
-    return { username, password };
-  }
-
-  if (process.env.NODE_ENV !== 'production') {
-    return { username: 'admin', password: 'admin123' };
-  }
-
-  return null;
 }
 
 // Type definitions

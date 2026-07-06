@@ -1,11 +1,12 @@
 import { LoginPageClient } from '@/components/LoginPageClient'
-import { getUsers } from '@/lib/storage'
+import { getUsers } from '@/lib/supabase-storage'
 
-export default function LoginPage() {
+export default async function LoginPage() {
   const hasGoogleAuth = Boolean(
     process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET
   )
-  const hasLocalAuth = getUsers().length > 0
+  const users = await getUsers()
+  const hasLocalAuth = users.length > 0
 
   return (
     <LoginPageClient

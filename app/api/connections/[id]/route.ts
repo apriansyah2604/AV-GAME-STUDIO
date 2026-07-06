@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import * as storage from '@/lib/storage';
+import * as storage from '@/lib/supabase-storage';
 import { validators, formatErrorResponse, formatSuccessResponse, safeJsonParse } from '@/lib/validation';
 import { getAuthUser } from '@/lib/serverAuth';
 
@@ -14,7 +14,7 @@ export async function GET(
     }
 
     const { id } = await params;
-    const connection = storage.getConnection(id, user.id);
+    const connection = await storage.getConnection(id, user.id);
 
     if (!connection) {
       return NextResponse.json({ error: 'Connection not found' }, { status: 404 });
@@ -70,7 +70,7 @@ export async function PUT(
       updateData.lastConnected = body.lastConnected;
     }
 
-    const updated = storage.updateConnection(id, updateData, user.id);
+    const updated = await storage.updateConnection(id, updateData, user.id);
     if (!updated) {
       return NextResponse.json(formatErrorResponse(new Error('Connection not found')), { status: 404 });
     }
@@ -98,7 +98,7 @@ export async function DELETE(
 
     const { id } = await params;
     validators.connectionId(id);
-    const deleted = storage.deleteConnection(id, user.id);
+    const deleted = await storage.deleteConnection(id, user.id);
 
     if (!deleted) {
       return NextResponse.json(formatErrorResponse(new Error('Connection not found')), { status: 404 });

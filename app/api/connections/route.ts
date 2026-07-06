@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import * as storage from '@/lib/storage';
+import * as storage from '@/lib/supabase-storage';
 import { validators, formatErrorResponse, formatSuccessResponse, safeJsonParse } from '@/lib/validation';
 import { getAuthUser } from '@/lib/serverAuth';
 
@@ -10,7 +10,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const connections = storage.getConnectionsByOwner(user.id);
+    const connections = await storage.getConnectionsByOwner(user.id);
     const response = NextResponse.json(
       formatSuccessResponse(connections, 'Connections retrieved successfully'),
       { status: 200 }
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     validators.robloxUserId(body.robloxUserId);
     validators.authToken(body.authToken);
 
-    const connection = storage.createConnection({
+    const connection = await storage.createConnection({
       ownerUserId: user.id,
       name: body.name,
       robloxUserId: body.robloxUserId,

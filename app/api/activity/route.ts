@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import * as storage from '@/lib/storage';
+import * as storage from '@/lib/supabase-storage';
 import { getAuthUser } from '@/lib/serverAuth';
 
 export async function GET(request: NextRequest) {
@@ -13,16 +13,14 @@ export async function GET(request: NextRequest) {
     const accountId = searchParams.get('accountId');
     const connectionId = searchParams.get('connectionId');
 
-    let activity = storage.getActivityByOwner(user.id);
-
+    let activity;
     if (accountId) {
-      activity = activity.filter(a => a.accountId === accountId);
+      activity = await storage.getActivityForAccount(accountId, 100, user.id);
     } else if (connectionId) {
-      activity = activity.filter(a => a.connectionId === connectionId);
+      activity = await storage.getActivityForConnection(connectionId, 100, user.id);
+    } else {
+      activity = await storage.getActivityByOwner(user.id);
     }
-
-    activity = activity
-      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
     return NextResponse.json(activity);
   } catch (error) {
@@ -48,7 +46,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const activity = storage.addActivity({
+    const activity = await storage.addActivity({
       ownerUserId: user.id,
       accountId,
       connectionId,
@@ -81,7 +79,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const deletedCount = storage.deleteActivities(ids, user.id);
+    const deletedCount = await storage.deleteActivities(ids, user.id);
 
     return NextResponse.json({ 
       success: true, 

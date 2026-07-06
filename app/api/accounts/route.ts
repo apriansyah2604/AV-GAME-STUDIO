@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import * as storage from '@/lib/storage';
+import * as storage from '@/lib/supabase-storage';
 import { validators, formatErrorResponse, formatSuccessResponse, safeJsonParse } from '@/lib/validation';
 import { getAuthUser } from '@/lib/serverAuth';
 
@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const connectionId = searchParams.get('connectionId');
 
-    let accounts = storage.getAccountsByOwner(user.id);
+    let accounts = await storage.getAccountsByOwner(user.id);
     
     if (connectionId) {
       // Don't validate connectionId for GET requests - just filter
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     validators.username(body.username);
     validators.password(body.password);
 
-    const account = storage.createAccount({
+    const account = await storage.createAccount({
       ownerUserId: user.id,
       connectionId: body.connectionId,
       username: body.username,
@@ -94,7 +94,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const deletedCount = storage.deleteAccounts(ids, user.id);
+    const deletedCount = await storage.deleteAccounts(ids, user.id);
     
     const response = NextResponse.json(
       formatSuccessResponse({ deletedCount }, `Successfully deleted ${deletedCount} account(s)`),

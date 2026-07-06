@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { loginUser } from '@/lib/storage';
+import { loginUser } from '@/lib/supabase-storage';
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Username and password are required' }, { status: 400 });
     }
 
-    const user = loginUser(username, password);
+    const user = await loginUser(username, password);
 
     if (!user) {
       return NextResponse.json({ error: 'Invalid username or password' }, { status: 401 });

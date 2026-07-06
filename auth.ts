@@ -21,12 +21,15 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token, user }) {
       if (session.user) {
-        ;(session.user as { id?: string }).id =
-          token.sub || session.user.email || session.user.name || 'google-user'
+        // Pastikan user ID selalu sama untuk user yang sama
+        // Gunakan token.sub (Google's unique user ID) jika tersedia, fallback ke email
+        const userId = token.sub || (session.user.email ? `google-${session.user.email}` : 'google-user')
+        ;(session.user as { id?: string }).id = userId
       }
       return session
     },
     async jwt({ token, user, account, profile, isNewUser }) {
+      // Pastikan token.sub selalu tersedia
       return token
     },
   },

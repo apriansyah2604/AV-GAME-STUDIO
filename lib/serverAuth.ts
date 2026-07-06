@@ -6,8 +6,10 @@ import { getUserById } from './storage'
 export async function getAuthUser() {
   const session = await getServerSession(authOptions)
   if (session?.user) {
+    // Gunakan user ID yang sudah di-set di callback session auth.ts
+    const userId = (session.user as { id?: string }).id || (session.user.email ? `google-${session.user.email}` : 'google-user')
     return {
-      id: (session.user as { id?: string }).id || session.user.email || session.user.name || 'google-user',
+      id: userId,
       username: session.user.name || session.user.email || 'Google User',
       email: session.user.email,
       role: 'admin' as const,

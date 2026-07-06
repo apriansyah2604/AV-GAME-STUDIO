@@ -1,13 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as storage from '@/lib/storage';
+import { getAuthUser } from '@/lib/serverAuth';
 
 export async function GET(request: NextRequest) {
   try {
+    const user = await getAuthUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
     const accountId = searchParams.get('accountId');
     const connectionId = searchParams.get('connectionId');
 
-    let activity = storage.getActivity();
+    let activity = storage.getActivityByOwner(user.id);
 
     if (accountId) {
       activity = activity.filter(a => a.accountId === accountId);
@@ -27,6 +33,11 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const user = await getAuthUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body = await request.json();
     const { accountId, connectionId, action, details, status } = body;
 
@@ -38,6 +49,7 @@ export async function POST(request: NextRequest) {
     }
 
     const activity = storage.addActivity({
+      ownerUserId: user.id,
       accountId,
       connectionId,
       action,
@@ -54,6 +66,11 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
+    const user = await getAuthUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body = await request.json();
     const { ids } = body;
 
@@ -64,7 +81,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const deletedCount = storage.deleteActivities(ids);
+    const deletedCount = storage.deleteActivities(ids, user.id);
 
     return NextResponse.json({ 
       success: true, 

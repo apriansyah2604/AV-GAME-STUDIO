@@ -63,6 +63,11 @@ function verifyPassword(password: string, hashedPassword: string): boolean {
   return hashPassword(password) === hashedPassword;
 }
 
+function normalizeOwnerUserId(value: unknown): string | undefined {
+  const normalized = String(value ?? '').trim();
+  return normalized || undefined;
+}
+
 function getSeedAdminCredentials() {
   const username = process.env.DEFAULT_ADMIN_USERNAME?.trim();
   const password = process.env.DEFAULT_ADMIN_PASSWORD?.trim();
@@ -81,6 +86,7 @@ function getSeedAdminCredentials() {
 // Type definitions
 export interface Connection {
   id: string;
+  ownerUserId?: string;
   name: string;
   robloxUserId: string;
   authToken: string;
@@ -91,6 +97,7 @@ export interface Connection {
 
 export interface Account {
   id: string;
+  ownerUserId?: string;
   connectionId: string;
   username: string;
   password: string;
@@ -101,6 +108,7 @@ export interface Account {
 
 export interface Activity {
   id: string;
+  ownerUserId?: string;
   accountId: string;
   connectionId: string;
   action: string;
@@ -254,6 +262,7 @@ export function getConnections(): Connection[] {
     
     return {
       id: existingId || randomUUID(),
+      ownerUserId: normalizeOwnerUserId(conn.ownerUserId),
       name: conn.name || `Connection ${index + 1}`,
       robloxUserId: conn.robloxUserId || '',
       authToken: conn.authToken || '',
@@ -270,18 +279,29 @@ export function getConnections(): Connection[] {
   return sanitizedConnections;
 }
 
+export function getConnectionsByOwner(ownerUserId: string): Connection[] {
+  const normalizedOwnerUserId = normalizeOwnerUserId(ownerUserId);
+  if (!normalizedOwnerUserId) {
+    return [];
+  }
+
+  const connections = getConnections();
+  return connections.filter(connection => connection.ownerUserId === normalizedOwnerUserId);
+}
+
 export function saveConnections(connections: Connection[]): void {
   writeJsonFile(CONNECTIONS_FILE, connections);
 }
 
-export function getConnection(id: string): Connection | null {
-  const connections = getConnections();
+export function getConnection(id: string, ownerUserId?: string): Connection | null {
+  const connections = ownerUserId ? getConnectionsByOwner(ownerUserId) : getConnections();
   return connections.find(c => c.id === id) || null;
 }
 
 export function createConnection(data: Omit<Connection, 'id' | 'createdAt'>): Connection {
   const connection: Connection = {
     ...data,
+    ownerUserId: normalizeOwnerUserId(data.ownerUserId),
     id: randomUUID(),
     createdAt: new Date().toISOString(),
   };
@@ -291,37 +311,41 @@ export function createConnection(data: Omit<Connection, 'id' | 'createdAt'>): Co
   return connection;
 }
 
-export function updateConnection(id: string, data: Partial<Connection>): Connection | null {
+export function updateConnection(id: string, data: Partial<Connection>, ownerUserId?: string): Connection | null {
   const connections = getConnections();
   const index = connections.findIndex(c => c.id === id);
   if (index === -1) return null;
+  if (ownerUserId && connections[index].ownerUserId !== ownerUserId) return null;
   
   // Prevent overriding id and createdAt
   const sanitizedData = { ...data };
   delete sanitizedData.id;
   delete sanitizedData.createdAt;
+  delete sanitizedData.ownerUserId;
   
   connections[index] = { ...connections[index], ...sanitizedData };
   saveConnections(connections);
   return connections[index];
 }
 
-export function deleteConnection(id: string): boolean {
-  let connections = getConnections();
+export function deleteConnection(id: string, ownerUserId?: string): boolean {
+  const connections = getConnections();
+  const targetConnection = connections.find(c => c.id === id);
+  if (!targetConnection) return false;
+  if (ownerUserId && targetConnection.ownerUserId !== ownerUserId) return false;
+
   const initialLength = connections.length;
-  connections = connections.filter(c => c.id !== id);
+  const remainingConnections = connections.filter(c => c.id !== id);
   
-  if (connections.length === initialLength) return false;
-  saveConnections(connections);
+  if (remainingConnections.length === initialLength) return false;
+  saveConnections(remainingConnections);
   
   // Delete all associated accounts
-  let accounts = getAccounts();
-  accounts = accounts.filter(a => a.connectionId !== id);
+  const accounts = getAccounts().filter(a => a.connectionId !== id);
   saveAccounts(accounts);
   
   // Delete all associated activities
-  let activities = getActivity();
-  activities = activities.filter(a => a.connectionId !== id);
+  const activities = getActivity().filter(a => a.connectionId !== id);
   saveActivity(activities);
   
   return true;
@@ -330,6 +354,7 @@ export function deleteConnection(id: string): boolean {
 // Accounts operations
 export function getAccounts(): Account[] {
   const rawAccounts = readJsonFile(ACCOUNTS_FILE);
+  const connectionsById = new Map(getConnections().map(connection => [connection.id, connection]));
   
   // Sanitize accounts to ensure all required fields exist
   // BUT ONLY GENERATE NEW ID IF ACCOUNT DOESN'T HAVE ONE
@@ -346,6 +371,7 @@ export function getAccounts(): Account[] {
 
     const sanitized = {
       id: existingId || randomUUID(),
+      ownerUserId: normalizeOwnerUserId(account.ownerUserId) || connectionsById.get(account.connectionId)?.ownerUserId,
       connectionId: account.connectionId,
       username: account.username || `Account ${index + 1}`,
       password: account.password || '',
@@ -363,23 +389,35 @@ export function getAccounts(): Account[] {
   return sanitizedAccounts;
 }
 
+export function getAccountsByOwner(ownerUserId: string): Account[] {
+  const normalizedOwnerUserId = normalizeOwnerUserId(ownerUserId);
+  if (!normalizedOwnerUserId) {
+    return [];
+  }
+
+  const accounts = getAccounts();
+  return accounts.filter(account => account.ownerUserId === normalizedOwnerUserId);
+}
+
 export function saveAccounts(accounts: Account[]): void {
   writeJsonFile(ACCOUNTS_FILE, accounts);
 }
 
-export function getAccount(id: string): Account | null {
-  const accounts = getAccounts();
+export function getAccount(id: string, ownerUserId?: string): Account | null {
+  const accounts = ownerUserId ? getAccountsByOwner(ownerUserId) : getAccounts();
   return accounts.find(a => a.id === id) || null;
 }
 
-export function getAccountsByConnection(connectionId: string): Account[] {
-  const accounts = getAccounts();
+export function getAccountsByConnection(connectionId: string, ownerUserId?: string): Account[] {
+  const accounts = ownerUserId ? getAccountsByOwner(ownerUserId) : getAccounts();
   return accounts.filter(a => a.connectionId === connectionId);
 }
 
 export function createAccount(data: Omit<Account, 'id' | 'createdAt'>): Account {
+  const connection = getConnection(data.connectionId);
   const account: Account = {
     ...data,
+    ownerUserId: normalizeOwnerUserId(data.ownerUserId) || connection?.ownerUserId,
     id: randomUUID(),
     createdAt: new Date().toISOString(),
   };
@@ -389,23 +427,28 @@ export function createAccount(data: Omit<Account, 'id' | 'createdAt'>): Account 
   return account;
 }
 
-export function updateAccount(id: string, data: Partial<Account>): Account | null {
+export function updateAccount(id: string, data: Partial<Account>, ownerUserId?: string): Account | null {
   const accounts = getAccounts();
   const index = accounts.findIndex(a => a.id === id);
   if (index === -1) return null;
+  if (ownerUserId && accounts[index].ownerUserId !== ownerUserId) return null;
   
   // Prevent overriding id and createdAt
   const sanitizedData = { ...data };
   delete sanitizedData.id;
   delete sanitizedData.createdAt;
+  delete sanitizedData.ownerUserId;
   
   accounts[index] = { ...accounts[index], ...sanitizedData };
   saveAccounts(accounts);
   return accounts[index];
 }
 
-export function deleteAccount(id: string): boolean {
+export function deleteAccount(id: string, ownerUserId?: string): boolean {
   const rawAccounts = readJsonFile(ACCOUNTS_FILE);
+  const targetAccount = getAccount(id);
+  if (!targetAccount) return false;
+  if (ownerUserId && targetAccount.ownerUserId !== ownerUserId) return false;
   const initialLength = rawAccounts.length;
   const remainingAccounts = rawAccounts.filter((a: any) => a.id !== id);
 
@@ -421,16 +464,32 @@ export function deleteAccount(id: string): boolean {
   return true;
 }
 
-export function deleteAccounts(ids: string[]): number {
+export function deleteAccounts(ids: string[], ownerUserId?: string): number {
   const idsSet = new Set(ids);
-  const rawAccounts = readJsonFile(ACCOUNTS_FILE);
+  const rawAccounts = getAccounts();
+  const allowedIds = ownerUserId
+    ? new Set(rawAccounts.filter(account => account.ownerUserId === ownerUserId).map(account => account.id))
+    : null;
+
   const remainingAccounts = rawAccounts.filter((a: any) => !idsSet.has(a.id));
-  const deletedCount = rawAccounts.length - remainingAccounts.length;
+  const deletedCount = rawAccounts.filter((a: any) => idsSet.has(a.id) && (!allowedIds || allowedIds.has(a.id))).length;
+
+  const filteredRemainingAccounts = rawAccounts.filter((a: any) => {
+    if (!idsSet.has(a.id)) {
+      return true;
+    }
+
+    if (!allowedIds) {
+      return false;
+    }
+
+    return !allowedIds.has(a.id);
+  });
 
   if (deletedCount > 0) {
-    writeJsonFile(ACCOUNTS_FILE, remainingAccounts);
-    const rawActivities = readJsonFile(ACTIVITY_FILE);
-    const remainingActivities = rawActivities.filter((a: any) => !idsSet.has(a.accountId));
+    writeJsonFile(ACCOUNTS_FILE, filteredRemainingAccounts);
+    const rawActivities = getActivity();
+    const remainingActivities = rawActivities.filter((a: any) => !idsSet.has(a.accountId) || (ownerUserId && a.ownerUserId !== ownerUserId));
     writeJsonFile(ACTIVITY_FILE, remainingActivities);
   }
 
@@ -440,6 +499,8 @@ export function deleteAccounts(ids: string[]): number {
 // Activity operations
 export function getActivity(): Activity[] {
   const rawActivities = readJsonFile(ACTIVITY_FILE);
+  const connectionsById = new Map(getConnections().map(connection => [connection.id, connection]));
+  const accountsById = new Map(getAccounts().map(account => [account.id, account]));
   
   // Sanitize activities
   let needsToSave = false;
@@ -454,6 +515,10 @@ export function getActivity(): Activity[] {
     
     return {
       id: existingId || randomUUID(),
+      ownerUserId:
+        normalizeOwnerUserId(act.ownerUserId) ||
+        accountsById.get(act.accountId)?.ownerUserId ||
+        connectionsById.get(act.connectionId)?.ownerUserId,
       accountId: act.accountId || '',
       connectionId: act.connectionId || '',
       action: act.action || 'unknown',
@@ -470,20 +535,30 @@ export function getActivity(): Activity[] {
   return sanitizedActivities;
 }
 
+export function getActivityByOwner(ownerUserId: string): Activity[] {
+  const normalizedOwnerUserId = normalizeOwnerUserId(ownerUserId);
+  if (!normalizedOwnerUserId) {
+    return [];
+  }
+
+  const activity = getActivity();
+  return activity.filter(entry => entry.ownerUserId === normalizedOwnerUserId);
+}
+
 export function saveActivity(activity: Activity[]): void {
   writeJsonFile(ACTIVITY_FILE, activity);
 }
 
-export function getActivityForAccount(accountId: string, limit = 50): Activity[] {
-  const activity = getActivity();
+export function getActivityForAccount(accountId: string, limit = 50, ownerUserId?: string): Activity[] {
+  const activity = ownerUserId ? getActivityByOwner(ownerUserId) : getActivity();
   return activity
     .filter(a => a.accountId === accountId)
     .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
     .slice(0, limit);
 }
 
-export function getActivityForConnection(connectionId: string, limit = 100): Activity[] {
-  const activity = getActivity();
+export function getActivityForConnection(connectionId: string, limit = 100, ownerUserId?: string): Activity[] {
+  const activity = ownerUserId ? getActivityByOwner(ownerUserId) : getActivity();
   return activity
     .filter(a => a.connectionId === connectionId)
     .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
@@ -491,8 +566,14 @@ export function getActivityForConnection(connectionId: string, limit = 100): Act
 }
 
 export function addActivity(data: Omit<Activity, 'id' | 'timestamp'>): Activity {
+  const relatedAccount = getAccount(data.accountId);
+  const relatedConnection = getConnection(data.connectionId);
   const activityEntry: Activity = {
     ...data,
+    ownerUserId:
+      normalizeOwnerUserId(data.ownerUserId) ||
+      relatedAccount?.ownerUserId ||
+      relatedConnection?.ownerUserId,
     id: randomUUID(),
     timestamp: new Date().toISOString(),
   };
@@ -502,23 +583,28 @@ export function addActivity(data: Omit<Activity, 'id' | 'timestamp'>): Activity 
   return activityEntry;
 }
 
-export function updateActivity(id: string, data: Partial<Activity>): Activity | null {
+export function updateActivity(id: string, data: Partial<Activity>, ownerUserId?: string): Activity | null {
   const activity = getActivity();
   const index = activity.findIndex(a => a.id === id);
   if (index === -1) return null;
+  if (ownerUserId && activity[index].ownerUserId !== ownerUserId) return null;
   
   // Prevent overriding id and timestamp
   const sanitizedData = { ...data };
   delete sanitizedData.id;
   delete sanitizedData.timestamp;
+  delete sanitizedData.ownerUserId;
   
   activity[index] = { ...activity[index], ...sanitizedData };
   saveActivity(activity);
   return activity[index];
 }
 
-export function deleteActivity(id: string): boolean {
+export function deleteActivity(id: string, ownerUserId?: string): boolean {
   const activity = getActivity();
+  const targetActivity = activity.find(a => a.id === id);
+  if (!targetActivity) return false;
+  if (ownerUserId && targetActivity.ownerUserId !== ownerUserId) return false;
   const initialLength = activity.length;
   const filtered = activity.filter(a => a.id !== id);
   if (filtered.length === initialLength) return false;
@@ -526,12 +612,11 @@ export function deleteActivity(id: string): boolean {
   return true;
 }
 
-export function deleteActivities(ids: string[]): number {
+export function deleteActivities(ids: string[], ownerUserId?: string): number {
   const activity = getActivity();
-  const initialLength = activity.length;
   const idsSet = new Set(ids);
-  const filtered = activity.filter(a => !idsSet.has(a.id));
-  const deletedCount = initialLength - filtered.length;
+  const filtered = activity.filter(a => !idsSet.has(a.id) || (ownerUserId && a.ownerUserId !== ownerUserId));
+  const deletedCount = activity.filter(a => idsSet.has(a.id) && (!ownerUserId || a.ownerUserId === ownerUserId)).length;
   if (deletedCount > 0) {
     saveActivity(filtered);
   }

@@ -14,7 +14,7 @@ export async function GET(
     }
 
     const { id } = await params;
-    const account = storage.getAccount(id);
+    const account = storage.getAccount(id, user.id);
 
     if (!account) {
       return NextResponse.json({ error: 'Account not found' }, { status: 404 });
@@ -66,7 +66,7 @@ export async function PUT(
       updateData.lastActivity = body.lastActivity;
     }
 
-    const updated = storage.updateAccount(id, updateData);
+    const updated = storage.updateAccount(id, updateData, user.id);
     if (!updated) {
       return NextResponse.json(formatErrorResponse(new Error('Account not found')), { status: 404 });
     }
@@ -94,7 +94,7 @@ export async function DELETE(
 
     const { id } = await params;
     validators.accountId(id);
-    const deleted = storage.deleteAccount(id);
+    const deleted = storage.deleteAccount(id, user.id);
 
     if (!deleted) {
       return NextResponse.json(formatErrorResponse(new Error('Account not found')), { status: 404 });

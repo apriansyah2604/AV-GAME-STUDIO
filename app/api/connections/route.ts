@@ -10,7 +10,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const connections = storage.getConnections();
+    const connections = storage.getConnectionsByOwner(user.id);
     const response = NextResponse.json(
       formatSuccessResponse(connections, 'Connections retrieved successfully'),
       { status: 200 }
@@ -43,6 +43,7 @@ export async function POST(request: NextRequest) {
     validators.authToken(body.authToken);
 
     const connection = storage.createConnection({
+      ownerUserId: user.id,
       name: body.name,
       robloxUserId: body.robloxUserId,
       authToken: body.authToken,

@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const connectionId = searchParams.get('connectionId');
 
-    let accounts = storage.getAccounts();
+    let accounts = storage.getAccountsByOwner(user.id);
     
     if (connectionId) {
       // Don't validate connectionId for GET requests - just filter
@@ -52,6 +52,7 @@ export async function POST(request: NextRequest) {
     validators.password(body.password);
 
     const account = storage.createAccount({
+      ownerUserId: user.id,
       connectionId: body.connectionId,
       username: body.username,
       password: body.password,
@@ -93,7 +94,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const deletedCount = storage.deleteAccounts(ids);
+    const deletedCount = storage.deleteAccounts(ids, user.id);
     
     const response = NextResponse.json(
       formatSuccessResponse({ deletedCount }, `Successfully deleted ${deletedCount} account(s)`),

@@ -14,7 +14,7 @@ export async function GET(
     }
 
     const { id } = await params;
-    const connection = storage.getConnection(id);
+    const connection = storage.getConnection(id, user.id);
 
     if (!connection) {
       return NextResponse.json({ error: 'Connection not found' }, { status: 404 });
@@ -70,7 +70,7 @@ export async function PUT(
       updateData.lastConnected = body.lastConnected;
     }
 
-    const updated = storage.updateConnection(id, updateData);
+    const updated = storage.updateConnection(id, updateData, user.id);
     if (!updated) {
       return NextResponse.json(formatErrorResponse(new Error('Connection not found')), { status: 404 });
     }
@@ -98,7 +98,7 @@ export async function DELETE(
 
     const { id } = await params;
     validators.connectionId(id);
-    const deleted = storage.deleteConnection(id);
+    const deleted = storage.deleteConnection(id, user.id);
 
     if (!deleted) {
       return NextResponse.json(formatErrorResponse(new Error('Connection not found')), { status: 404 });

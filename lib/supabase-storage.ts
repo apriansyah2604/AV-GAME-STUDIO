@@ -78,7 +78,7 @@ export async function getUsers(): Promise<User[]> {
 export async function getUserById(id: string): Promise<User | null> {
   const { data, error } = await supabase.from('users').select('*').eq('id', id).single()
   if (error) {
-    if (error.code === 'PGRST116') return null // Not found
+    if (error.code === 'PGRST116') return null
     throw error
   }
   return data ? {
@@ -90,7 +90,7 @@ export async function getUserById(id: string): Promise<User | null> {
 export async function getUserByUsername(username: string): Promise<User | null> {
   const { data, error } = await supabase.from('users').select('*').eq('username', username).single()
   if (error) {
-    if (error.code === 'PGRST116') return null // Not found
+    if (error.code === 'PGRST116') return null
     throw error
   }
   return data ? {
@@ -154,6 +154,7 @@ export async function loginUser(username: string, password: string): Promise<Use
     const { password: _, ...userWithoutPassword } = user
     return userWithoutPassword as User
   }
+  
   return null
 }
 
@@ -166,8 +167,10 @@ export async function getConnections(): Promise<Connection[]> {
   if (error) throw error
   return data.map(conn => ({
     ...conn,
-    created_at: conn.created_at || new Date().toISOString(),
-    last_connected: conn.last_connected || new Date().toISOString(),
+    ownerUserId: conn.owner_user_id,
+    robloxUserId: conn.roblox_user_id,
+    lastConnected: conn.last_connected || new Date().toISOString(),
+    createdAt: conn.created_at || new Date().toISOString(),
   })) as Connection[]
 }
 
@@ -278,8 +281,10 @@ export async function getAccounts(): Promise<Account[]> {
   if (error) throw error
   return data.map(acc => ({
     ...acc,
-    created_at: acc.created_at || new Date().toISOString(),
-    last_activity: acc.last_activity || new Date().toISOString(),
+    ownerUserId: acc.owner_user_id,
+    connectionId: acc.connection_id,
+    lastActivity: acc.last_activity || new Date().toISOString(),
+    createdAt: acc.created_at || new Date().toISOString(),
   })) as Account[]
 }
 

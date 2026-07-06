@@ -50,29 +50,41 @@ export interface User {
 // ============================================
 
 export async function getUsers(): Promise<User[]> {
-  const { data, error } = await supabase.from('users').select('*')
-  if (error) throw error
-  
-  let users = data.map(user => ({
-    ...user,
-    created_at: user.created_at || new Date().toISOString(),
-  })) as User[]
-  
-  // Seed admin user if none exists
-  const needsAdminSeed = users.length === 0
-  if (needsAdminSeed) {
-    const seedCredentials = getSeedAdminCredentials()
-    if (seedCredentials) {
-      const adminUser = await createUser({
-        username: seedCredentials.username,
-        password: seedCredentials.password,
-        role: 'admin'
-      })
-      users = [adminUser]
+  try {
+    const { data, error } = await supabase.from('users').select('*')
+    if (error) {
+      console.error('Error fetching users:', error)
+      return []
     }
+    
+    let users = data.map(user => ({
+      ...user,
+      created_at: user.created_at || new Date().toISOString(),
+    })) as User[]
+    
+    // Seed admin user if none exists
+    const needsAdminSeed = users.length === 0
+    if (needsAdminSeed) {
+      const seedCredentials = getSeedAdminCredentials()
+      if (seedCredentials) {
+        try {
+          const adminUser = await createUser({
+            username: seedCredentials.username,
+            password: seedCredentials.password,
+            role: 'admin'
+          })
+          users = [adminUser]
+        } catch (seedError) {
+          console.error('Error seeding admin user:', seedError)
+        }
+      }
+    }
+    
+    return users
+  } catch (error) {
+    console.error('Error in getUsers:', error)
+    return []
   }
-  
-  return users
 }
 
 export async function getUserById(id: string): Promise<User | null> {

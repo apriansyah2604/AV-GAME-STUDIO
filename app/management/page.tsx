@@ -8,6 +8,9 @@ export const metadata = {
   description: 'Manage your Roblox accounts and control bot operations',
 }
 
+// Force dynamic rendering to prevent build errors
+export const dynamic = 'force-dynamic'
+
 export default function Page() {
   return (
     <ProtectedRoute>

@@ -12,6 +12,9 @@ import { Contact } from '@/components/contact'
 import { Footer } from '@/components/footer'
 import { Particles } from '@/components/particles'
 
+// Force dynamic rendering to prevent build errors
+export const dynamic = 'force-dynamic'
+
 export default function Home() {
   return (
     <main className="relative min-h-screen bg-[#030303]" suppressHydrationWarning>

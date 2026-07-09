@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { getUserById } from '@/lib/storage';
+import { getUserById } from '@/lib/supabase-storage';
 
 export async function GET() {
   try {
@@ -11,7 +11,7 @@ export async function GET() {
       return NextResponse.json({ user: null }, { status: 200 });
     }
 
-    const user = getUserById(sessionId.value);
+    const user = await getUserById(sessionId.value);
 
     if (!user) {
       cookieStore.delete('session_id');

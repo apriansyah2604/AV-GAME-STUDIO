@@ -6,19 +6,22 @@ import { getAuthUser } from '@/lib/serverAuth';
 export async function GET(request: NextRequest) {
   try {
     const user = await getAuthUser();
+    console.log('GET /api/accounts - User:', user);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
     const connectionId = searchParams.get('connectionId');
+    console.log('GET /api/accounts - connectionId:', connectionId);
 
-    let accounts = await storage.getAccountsByOwner(user.id);
-    
+    let accounts;
     if (connectionId) {
-      // Don't validate connectionId for GET requests - just filter
-      accounts = accounts.filter(a => a.connectionId === connectionId);
+      accounts = await storage.getAccountsByConnection(connectionId, user.id);
+    } else {
+      accounts = await storage.getAccountsByOwner(user.id);
     }
+    console.log('GET /api/accounts - Found accounts:', accounts.length);
 
     const response = NextResponse.json(
       formatSuccessResponse(accounts, 'Accounts retrieved successfully'),
@@ -40,17 +43,20 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const user = await getAuthUser();
+    console.log('POST /api/accounts - User:', user);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = safeJsonParse(await request.text(), {});
+    console.log('POST /api/accounts - Request body:', body);
     
     // Validate required fields
     validators.connectionId(body.connectionId);
     validators.username(body.username);
     validators.password(body.password);
 
+    console.log('POST /api/accounts - Creating account...');
     const account = await storage.createAccount({
       ownerUserId: user.id,
       connectionId: body.connectionId,
@@ -59,6 +65,7 @@ export async function POST(request: NextRequest) {
       status: 'ready',
       lastActivity: new Date().toISOString(),
     });
+    console.log('POST /api/accounts - Account created:', account);
 
     const response = NextResponse.json(
       formatSuccessResponse(account, 'Account created successfully'),

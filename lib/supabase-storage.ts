@@ -352,8 +352,12 @@ export async function getAccountsByConnection(connectionId: string, ownerUserId?
 }
 
 export async function createAccount(data: Omit<Account, 'id' | 'createdAt'>): Promise<Account> {
+  console.log('createAccount called with:', data)
+  
   // Verify connection exists and belongs to the owner
+  console.log('Checking connection:', data.connectionId, 'for owner:', data.ownerUserId)
   const connection = await getConnection(data.connectionId, data.ownerUserId)
+  console.log('Connection found:', !!connection)
   if (!connection) {
     throw new Error('Connection not found or you don\'t have permission to use it')
   }
@@ -364,6 +368,7 @@ export async function createAccount(data: Omit<Account, 'id' | 'createdAt'>): Pr
     createdAt: new Date().toISOString(),
   }
   
+  console.log('Inserting account into database...')
   const { data: result, error } = await supabase.from('accounts').insert([{
     id: account.id,
     owner_user_id: normalizeOwnerUserId(account.ownerUserId),
@@ -375,6 +380,7 @@ export async function createAccount(data: Omit<Account, 'id' | 'createdAt'>): Pr
     created_at: account.createdAt,
   }]).select().single()
   
+  console.log('Insert result:', result, 'Error:', error)
   if (error) throw error
   
   return {

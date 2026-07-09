@@ -111,13 +111,15 @@ export async function getUserByUsername(username: string): Promise<User | null> 
   } as User : null
 }
 
-export async function createUser(data: Omit<User, 'id' | 'createdAt'>): Promise<User> {
+export async function createUser(data: Omit<User, 'createdAt'> & { id?: string }): Promise<User> {
   const user: User = {
     ...data,
-    id: randomUUID(),
+    id: data.id || randomUUID(),
     password: hashPassword(data.password),
     createdAt: new Date().toISOString(),
   }
+  
+  console.log('Creating user in Supabase:', user);
   
   const { data: result, error } = await supabase.from('users').insert([{
     id: user.id,
@@ -128,6 +130,7 @@ export async function createUser(data: Omit<User, 'id' | 'createdAt'>): Promise<
     created_at: user.createdAt,
   }]).select().single()
   
+  console.log('Create user result:', result, 'Error:', error);
   if (error) throw error
   return result as User
 }

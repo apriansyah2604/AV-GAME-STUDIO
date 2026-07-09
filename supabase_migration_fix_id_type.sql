@@ -1,5 +1,15 @@
--- Buat Tabel Users
-CREATE TABLE IF NOT EXISTS users (
+-- Migrasi untuk mengubah tipe kolom UUID menjadi TEXT (untuk mendukung Google Auth)
+-- Perintah ini aman jika Anda belum punya data, atau ingin menghapus data lama untuk mulai baru
+-- Jika Anda punya data penting, backup terlebih dahulu!
+
+-- Hapus tabel lama (dengan UUID) dan buat baru (dengan TEXT)
+DROP TABLE IF EXISTS activity CASCADE;
+DROP TABLE IF EXISTS accounts CASCADE;
+DROP TABLE IF EXISTS connections CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+
+-- Buat Tabel Users (id TEXT)
+CREATE TABLE users (
   id TEXT PRIMARY KEY,
   username TEXT UNIQUE NOT NULL,
   email TEXT UNIQUE,
@@ -8,8 +18,8 @@ CREATE TABLE IF NOT EXISTS users (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Buat Tabel Connections
-CREATE TABLE IF NOT EXISTS connections (
+-- Buat Tabel Connections (id TEXT, owner_user_id TEXT)
+CREATE TABLE connections (
   id TEXT PRIMARY KEY,
   owner_user_id TEXT REFERENCES users(id) ON DELETE CASCADE NOT NULL,
   name TEXT NOT NULL,
@@ -21,7 +31,7 @@ CREATE TABLE IF NOT EXISTS connections (
 );
 
 -- Buat Tabel Accounts
-CREATE TABLE IF NOT EXISTS accounts (
+CREATE TABLE accounts (
   id TEXT PRIMARY KEY,
   owner_user_id TEXT REFERENCES users(id) ON DELETE CASCADE NOT NULL,
   connection_id TEXT REFERENCES connections(id) ON DELETE CASCADE NOT NULL,
@@ -33,7 +43,7 @@ CREATE TABLE IF NOT EXISTS accounts (
 );
 
 -- Buat Tabel Activity
-CREATE TABLE IF NOT EXISTS activity (
+CREATE TABLE activity (
   id TEXT PRIMARY KEY,
   owner_user_id TEXT REFERENCES users(id) ON DELETE CASCADE NOT NULL,
   account_id TEXT REFERENCES accounts(id) ON DELETE CASCADE NOT NULL,
@@ -50,7 +60,7 @@ ALTER TABLE connections ENABLE ROW LEVEL SECURITY;
 ALTER TABLE accounts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE activity ENABLE ROW LEVEL SECURITY;
 
--- Buat Kebijakan RLS (izinkan semua akses untuk saat ini, sesuaikan nanti)
+-- Buat Kebijakan RLS
 CREATE POLICY "Enable all access for users" ON users FOR ALL USING (true);
 CREATE POLICY "Enable all access for connections" ON connections FOR ALL USING (true);
 CREATE POLICY "Enable all access for accounts" ON accounts FOR ALL USING (true);

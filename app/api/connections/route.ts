@@ -6,11 +6,13 @@ import { getAuthUser } from '@/lib/serverAuth';
 export async function GET() {
   try {
     const user = await getAuthUser();
+    console.log('GET /api/connections - User:', user);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const connections = await storage.getConnectionsByOwner(user.id);
+    console.log('GET /api/connections - Found connections:', connections.length);
     const response = NextResponse.json(
       formatSuccessResponse(connections, 'Connections retrieved successfully'),
       { status: 200 }
@@ -31,17 +33,20 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const user = await getAuthUser();
+    console.log('POST /api/connections - User:', user);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = safeJsonParse(await request.text(), {});
+    console.log('POST /api/connections - Request body:', body);
     
     // Validate required fields
     validators.connectionName(body.name);
     validators.robloxUserId(body.robloxUserId);
     validators.authToken(body.authToken);
 
+    console.log('POST /api/connections - Creating connection...');
     const connection = await storage.createConnection({
       ownerUserId: user.id,
       name: body.name,
@@ -50,6 +55,7 @@ export async function POST(request: NextRequest) {
       status: 'disconnected',
       lastConnected: new Date().toISOString(),
     });
+    console.log('POST /api/connections - Connection created:', connection);
 
     const response = NextResponse.json(
       formatSuccessResponse(connection, 'Connection created successfully'),

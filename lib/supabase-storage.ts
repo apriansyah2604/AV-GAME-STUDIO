@@ -222,12 +222,14 @@ export async function getConnection(id: string, ownerUserId?: string): Promise<C
 }
 
 export async function createConnection(data: Omit<Connection, 'id' | 'createdAt'>): Promise<Connection> {
+  console.log('createConnection called with:', data);
   const connection: Connection = {
     ...data,
     id: randomUUID(),
     createdAt: new Date().toISOString(),
   }
   
+  console.log('Inserting connection into database...');
   const { data: result, error } = await supabase.from('connections').insert([{
     id: connection.id,
     owner_user_id: normalizeOwnerUserId(connection.ownerUserId),
@@ -239,6 +241,7 @@ export async function createConnection(data: Omit<Connection, 'id' | 'createdAt'
     created_at: connection.createdAt,
   }]).select().single()
   
+  console.log('Insert result:', result, 'Error:', error);
   if (error) throw error
   
   return {

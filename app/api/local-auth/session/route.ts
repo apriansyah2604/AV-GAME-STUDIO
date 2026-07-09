@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { getUserById } from '@/lib/supabase-storage';
+import { getUserById } from '@/lib/storage';
 
 export async function GET() {
   try {

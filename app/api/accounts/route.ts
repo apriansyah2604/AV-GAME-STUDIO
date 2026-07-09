@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import * as storage from '@/lib/supabase-storage';
+import * as storage from '@/lib/storage';
 import { validators, formatErrorResponse, formatSuccessResponse, safeJsonParse } from '@/lib/validation';
 import { getAuthUser } from '@/lib/serverAuth';
 

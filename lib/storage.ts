@@ -98,7 +98,7 @@ export interface User {
 }
 
 // Users operations
-export function getUsers(): User[] {
+export async function getUsers(): Promise<User[]> {
   const rawUsers = readJsonFile(USERS_FILE);
   
   // Sanitize users
@@ -150,31 +150,33 @@ export function saveUsers(users: User[]): void {
   writeJsonFile(USERS_FILE, users);
 }
 
-export function getUserById(id: string): User | null {
-  const users = getUsers();
+export async function getUserById(id: string): Promise<User | null> {
+  const users = await getUsers();
   return users.find(u => u.id === id) || null;
 }
 
-export function getUserByUsername(username: string): User | null {
-  const users = getUsers();
+export async function getUserByUsername(username: string): Promise<User | null> {
+  const users = await getUsers();
   return users.find(u => u.username === username) || null;
 }
 
-export function createUser(data: Omit<User, 'id' | 'createdAt'>): User {
+export async function createUser(data: Omit<User, 'id' | 'createdAt'>): Promise<User> {
   const user: User = {
     ...data,
-    id: randomUUID(),
+    id: data.id || randomUUID(),
     password: hashPassword(data.password),
     createdAt: new Date().toISOString(),
   };
-  const users = getUsers();
+  console.log('[storage.createUser] Creating user:', user);
+  const users = await getUsers();
   users.push(user);
   saveUsers(users);
+  console.log('[storage.createUser] User created');
   return user;
 }
 
-export function updateUser(id: string, data: Partial<User>): User | null {
-  const users = getUsers();
+export async function updateUser(id: string, data: Partial<User>): Promise<User | null> {
+  const users = await getUsers();
   const index = users.findIndex(u => u.id === id);
   if (index === -1) return null;
   
@@ -193,8 +195,8 @@ export function updateUser(id: string, data: Partial<User>): User | null {
   return users[index];
 }
 
-export function deleteUser(id: string): boolean {
-  let users = getUsers();
+export async function deleteUser(id: string): Promise<boolean> {
+  let users = await getUsers();
   const initialLength = users.length;
   users = users.filter(u => u.id !== id);
   
@@ -203,8 +205,8 @@ export function deleteUser(id: string): boolean {
   return true;
 }
 
-export function loginUser(username: string, password: string): User | null {
-  const user = getUserByUsername(username);
+export async function loginUser(username: string, password: string): Promise<User | null> {
+  const user = await getUserByUsername(username);
   if (!user) return null;
   
   if (verifyPassword(password, user.password)) {
@@ -217,7 +219,7 @@ export function loginUser(username: string, password: string): User | null {
 }
 
 // Connections operations
-export function getConnections(): Connection[] {
+export async function getConnections(): Promise<Connection[]> {
   const rawConnections = readJsonFile(CONNECTIONS_FILE);
   
   // Sanitize connections to ensure all required fields exist
@@ -250,13 +252,13 @@ export function getConnections(): Connection[] {
   return sanitizedConnections;
 }
 
-export function getConnectionsByOwner(ownerUserId: string): Connection[] {
+export async function getConnectionsByOwner(ownerUserId: string): Promise<Connection[]> {
   const normalizedOwnerUserId = normalizeOwnerUserId(ownerUserId);
   if (!normalizedOwnerUserId) {
     return [];
   }
 
-  const connections = getConnections();
+  const connections = await getConnections();
   return connections.filter(connection => connection.ownerUserId === normalizedOwnerUserId);
 }
 
@@ -264,26 +266,28 @@ export function saveConnections(connections: Connection[]): void {
   writeJsonFile(CONNECTIONS_FILE, connections);
 }
 
-export function getConnection(id: string, ownerUserId?: string): Connection | null {
-  const connections = ownerUserId ? getConnectionsByOwner(ownerUserId) : getConnections();
+export async function getConnection(id: string, ownerUserId?: string): Promise<Connection | null> {
+  const connections = ownerUserId ? await getConnectionsByOwner(ownerUserId) : await getConnections();
   return connections.find(c => c.id === id) || null;
 }
 
-export function createConnection(data: Omit<Connection, 'id' | 'createdAt'>): Connection {
+export async function createConnection(data: Omit<Connection, 'id' | 'createdAt'>): Promise<Connection> {
+  console.log('[storage.createConnection] Creating connection:', data);
   const connection: Connection = {
     ...data,
     ownerUserId: normalizeOwnerUserId(data.ownerUserId),
     id: randomUUID(),
     createdAt: new Date().toISOString(),
   };
-  const connections = getConnections();
+  const connections = await getConnections();
   connections.push(connection);
   saveConnections(connections);
+  console.log('[storage.createConnection] Connection created');
   return connection;
 }
 
-export function updateConnection(id: string, data: Partial<Connection>, ownerUserId?: string): Connection | null {
-  const connections = getConnections();
+export async function updateConnection(id: string, data: Partial<Connection>, ownerUserId?: string): Promise<Connection | null> {
+  const connections = await getConnections();
   const index = connections.findIndex(c => c.id === id);
   if (index === -1) return null;
   if (ownerUserId && connections[index].ownerUserId !== ownerUserId) return null;
@@ -299,8 +303,8 @@ export function updateConnection(id: string, data: Partial<Connection>, ownerUse
   return connections[index];
 }
 
-export function deleteConnection(id: string, ownerUserId?: string): boolean {
-  const connections = getConnections();
+export async function deleteConnection(id: string, ownerUserId?: string): Promise<boolean> {
+  const connections = await getConnections();
   const targetConnection = connections.find(c => c.id === id);
   if (!targetConnection) return false;
   if (ownerUserId && targetConnection.ownerUserId !== ownerUserId) return false;
@@ -312,20 +316,20 @@ export function deleteConnection(id: string, ownerUserId?: string): boolean {
   saveConnections(remainingConnections);
   
   // Delete all associated accounts
-  const accounts = getAccounts().filter(a => a.connectionId !== id);
+  const accounts = (await getAccounts()).filter(a => a.connectionId !== id);
   saveAccounts(accounts);
   
   // Delete all associated activities
-  const activities = getActivity().filter(a => a.connectionId !== id);
+  const activities = (await getActivity()).filter(a => a.connectionId !== id);
   saveActivity(activities);
   
   return true;
 }
 
 // Accounts operations
-export function getAccounts(): Account[] {
+export async function getAccounts(): Promise<Account[]> {
   const rawAccounts = readJsonFile(ACCOUNTS_FILE);
-  const connectionsById = new Map(getConnections().map(connection => [connection.id, connection]));
+  const connectionsById = new Map((await getConnections()).map(connection => [connection.id, connection]));
   
   // Sanitize accounts to ensure all required fields exist
   // BUT ONLY GENERATE NEW ID IF ACCOUNT DOESN'T HAVE ONE
@@ -360,33 +364,33 @@ export function getAccounts(): Account[] {
   return sanitizedAccounts;
 }
 
-export function getAccountsByOwner(ownerUserId: string): Account[] {
+export async function getAccountsByOwner(ownerUserId: string): Promise<Account[]> {
   const normalizedOwnerUserId = normalizeOwnerUserId(ownerUserId);
   if (!normalizedOwnerUserId) {
     return [];
   }
 
-  const accounts = getAccounts();
+  const accounts = await getAccounts();
   return accounts.filter(account => account.ownerUserId === normalizedOwnerUserId);
+}
+
+export async function getAccountsByConnection(connectionId: string, ownerUserId?: string): Promise<Account[]> {
+  const accounts = ownerUserId ? await getAccountsByOwner(ownerUserId) : await getAccounts();
+  return accounts.filter(a => a.connectionId === connectionId);
 }
 
 export function saveAccounts(accounts: Account[]): void {
   writeJsonFile(ACCOUNTS_FILE, accounts);
 }
 
-export function getAccount(id: string, ownerUserId?: string): Account | null {
-  const accounts = ownerUserId ? getAccountsByOwner(ownerUserId) : getAccounts();
+export async function getAccount(id: string, ownerUserId?: string): Promise<Account | null> {
+  const accounts = ownerUserId ? await getAccountsByOwner(ownerUserId) : await getAccounts();
   return accounts.find(a => a.id === id) || null;
 }
 
-export function getAccountsByConnection(connectionId: string, ownerUserId?: string): Account[] {
-  const accounts = ownerUserId ? getAccountsByOwner(ownerUserId) : getAccounts();
-  return accounts.filter(a => a.connectionId === connectionId);
-}
-
-export function createAccount(data: Omit<Account, 'id' | 'createdAt'>): Account {
+export async function createAccount(data: Omit<Account, 'id' | 'createdAt'>): Promise<Account> {
   // Verify connection exists and belongs to the owner
-  const connection = getConnection(data.connectionId, data.ownerUserId);
+  const connection = await getConnection(data.connectionId, data.ownerUserId);
   if (!connection) {
     throw new Error('Connection not found or you don\'t have permission to use it');
   }
@@ -403,8 +407,8 @@ export function createAccount(data: Omit<Account, 'id' | 'createdAt'>): Account 
   return account;
 }
 
-export function updateAccount(id: string, data: Partial<Account>, ownerUserId?: string): Account | null {
-  const accounts = getAccounts();
+export async function updateAccount(id: string, data: Partial<Account>, ownerUserId?: string): Promise<Account | null> {
+  const accounts = await getAccounts();
   const index = accounts.findIndex(a => a.id === id);
   if (index === -1) return null;
   if (ownerUserId && accounts[index].ownerUserId !== ownerUserId) return null;
@@ -420,9 +424,9 @@ export function updateAccount(id: string, data: Partial<Account>, ownerUserId?: 
   return accounts[index];
 }
 
-export function deleteAccount(id: string, ownerUserId?: string): boolean {
+export async function deleteAccount(id: string, ownerUserId?: string): Promise<boolean> {
   const rawAccounts = readJsonFile(ACCOUNTS_FILE);
-  const targetAccount = getAccount(id);
+  const targetAccount = await getAccount(id);
   if (!targetAccount) return false;
   if (ownerUserId && targetAccount.ownerUserId !== ownerUserId) return false;
   const initialLength = rawAccounts.length;
@@ -440,9 +444,9 @@ export function deleteAccount(id: string, ownerUserId?: string): boolean {
   return true;
 }
 
-export function deleteAccounts(ids: string[], ownerUserId?: string): number {
+export async function deleteAccounts(ids: string[], ownerUserId?: string): Promise<number> {
   const idsSet = new Set(ids);
-  const rawAccounts = getAccounts();
+  const rawAccounts = await getAccounts();
   const allowedIds = ownerUserId
     ? new Set(rawAccounts.filter(account => account.ownerUserId === ownerUserId).map(account => account.id))
     : null;
@@ -464,7 +468,7 @@ export function deleteAccounts(ids: string[], ownerUserId?: string): number {
 
   if (deletedCount > 0) {
     writeJsonFile(ACCOUNTS_FILE, filteredRemainingAccounts);
-    const rawActivities = getActivity();
+    const rawActivities = await getActivity();
     const remainingActivities = rawActivities.filter((a: any) => !idsSet.has(a.accountId) || (ownerUserId && a.ownerUserId !== ownerUserId));
     writeJsonFile(ACTIVITY_FILE, remainingActivities);
   }
@@ -473,10 +477,10 @@ export function deleteAccounts(ids: string[], ownerUserId?: string): number {
 }
 
 // Activity operations
-export function getActivity(): Activity[] {
+export async function getActivity(): Promise<Activity[]> {
   const rawActivities = readJsonFile(ACTIVITY_FILE);
-  const connectionsById = new Map(getConnections().map(connection => [connection.id, connection]));
-  const accountsById = new Map(getAccounts().map(account => [account.id, account]));
+  const connectionsById = new Map((await getConnections()).map(connection => [connection.id, connection]));
+  const accountsById = new Map((await getAccounts()).map(account => [account.id, account]));
   
   // Sanitize activities
   let needsToSave = false;
@@ -511,13 +515,13 @@ export function getActivity(): Activity[] {
   return sanitizedActivities;
 }
 
-export function getActivityByOwner(ownerUserId: string): Activity[] {
+export async function getActivityByOwner(ownerUserId: string): Promise<Activity[]> {
   const normalizedOwnerUserId = normalizeOwnerUserId(ownerUserId);
   if (!normalizedOwnerUserId) {
     return [];
   }
 
-  const activity = getActivity();
+  const activity = await getActivity();
   return activity.filter(entry => entry.ownerUserId === normalizedOwnerUserId);
 }
 
@@ -525,25 +529,25 @@ export function saveActivity(activity: Activity[]): void {
   writeJsonFile(ACTIVITY_FILE, activity);
 }
 
-export function getActivityForAccount(accountId: string, limit = 50, ownerUserId?: string): Activity[] {
-  const activity = ownerUserId ? getActivityByOwner(ownerUserId) : getActivity();
+export async function getActivityForAccount(accountId: string, limit = 50, ownerUserId?: string): Promise<Activity[]> {
+  const activity = ownerUserId ? await getActivityByOwner(ownerUserId) : await getActivity();
   return activity
     .filter(a => a.accountId === accountId)
     .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
     .slice(0, limit);
 }
 
-export function getActivityForConnection(connectionId: string, limit = 100, ownerUserId?: string): Activity[] {
-  const activity = ownerUserId ? getActivityByOwner(ownerUserId) : getActivity();
+export async function getActivityForConnection(connectionId: string, limit = 100, ownerUserId?: string): Promise<Activity[]> {
+  const activity = ownerUserId ? await getActivityByOwner(ownerUserId) : await getActivity();
   return activity
     .filter(a => a.connectionId === connectionId)
     .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
     .slice(0, limit);
 }
 
-export function addActivity(data: Omit<Activity, 'id' | 'timestamp'>): Activity {
-  const relatedAccount = getAccount(data.accountId);
-  const relatedConnection = getConnection(data.connectionId);
+export async function addActivity(data: Omit<Activity, 'id' | 'timestamp'>): Promise<Activity> {
+  const relatedAccount = await getAccount(data.accountId);
+  const relatedConnection = await getConnection(data.connectionId);
   const activityEntry: Activity = {
     ...data,
     ownerUserId:
@@ -553,14 +557,14 @@ export function addActivity(data: Omit<Activity, 'id' | 'timestamp'>): Activity 
     id: randomUUID(),
     timestamp: new Date().toISOString(),
   };
-  const activity = getActivity();
+  const activity = await getActivity();
   activity.push(activityEntry);
   saveActivity(activity);
   return activityEntry;
 }
 
-export function updateActivity(id: string, data: Partial<Activity>, ownerUserId?: string): Activity | null {
-  const activity = getActivity();
+export async function updateActivity(id: string, data: Partial<Activity>, ownerUserId?: string): Promise<Activity | null> {
+  const activity = await getActivity();
   const index = activity.findIndex(a => a.id === id);
   if (index === -1) return null;
   if (ownerUserId && activity[index].ownerUserId !== ownerUserId) return null;
@@ -576,8 +580,8 @@ export function updateActivity(id: string, data: Partial<Activity>, ownerUserId?
   return activity[index];
 }
 
-export function deleteActivity(id: string, ownerUserId?: string): boolean {
-  const activity = getActivity();
+export async function deleteActivity(id: string, ownerUserId?: string): Promise<boolean> {
+  const activity = await getActivity();
   const targetActivity = activity.find(a => a.id === id);
   if (!targetActivity) return false;
   if (ownerUserId && targetActivity.ownerUserId !== ownerUserId) return false;
@@ -588,8 +592,8 @@ export function deleteActivity(id: string, ownerUserId?: string): boolean {
   return true;
 }
 
-export function deleteActivities(ids: string[], ownerUserId?: string): number {
-  const activity = getActivity();
+export async function deleteActivities(ids: string[], ownerUserId?: string): Promise<number> {
+  const activity = await getActivity();
   const idsSet = new Set(ids);
   const filtered = activity.filter(a => !idsSet.has(a.id) || (ownerUserId && a.ownerUserId !== ownerUserId));
   const deletedCount = activity.filter(a => idsSet.has(a.id) && (!ownerUserId || a.ownerUserId === ownerUserId)).length;

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { loginUser } from '@/lib/supabase-storage';
+import { loginUser } from '@/lib/storage';
 
 export async function POST(request: NextRequest) {
   try {

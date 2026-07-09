@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/auth'
-import { getUserById, getUserByUsername, createUser } from './supabase-storage'
+import { getUserById, getUserByUsername, createUser } from './storage'
 
 export async function getAuthUser() {
   const session = await getServerSession(authOptions)
@@ -12,7 +12,7 @@ export async function getAuthUser() {
 
     console.log('Google auth - checking user:', googleUserId);
 
-    // Cek apakah user sudah ada di Supabase
+    // Cek apakah user sudah ada di storage lokal
     let existingUser = await getUserById(googleUserId)
     
     // Jika tidak ada, buat baru

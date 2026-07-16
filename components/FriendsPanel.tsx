@@ -388,55 +388,53 @@ export default function FriendsPanel({ connectionId }: { connectionId: string })
         </Button>
       </div>
 
-      <div className="mb-6 p-4 rounded-lg border border-blue-400 bg-blue-50 space-y-3">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <h3 className="font-semibold text-blue-800">💬 Kirim Pesan Otomatis</h3>
-            <p className="text-sm text-blue-700">
-              Kirim pesan secara otomatis ke semua teman yang dipilih.
-            </p>
-          </div>
-          <span className="text-sm text-blue-700">
-            Penerima: {selectedFriends.length}
-          </span>
+      <div className="mb-6 p-4 rounded-lg border border-green-400 bg-green-50 space-y-3">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <h3 className="font-semibold text-green-800">💬 Kirim Pesan (Cepat)</h3>
+          <p className="text-sm text-green-700">
+            Kirim pesan ke semua teman yang dipilih dengan cepat! (Manual untuk menghindari blokir Roblox)
+          </p>
         </div>
-        
-        <textarea
-          value={messageBody}
-          onChange={(e) => setMessageBody(e.target.value)}
-          placeholder="Tulis isi pesan di sini..."
-          maxLength={1000}
-          rows={5}
-          disabled={sendingMessages}
-          className="w-full px-3 py-2 border border-blue-300 rounded-md bg-white text-foreground resize-y disabled:opacity-50"
-        />
-        
-        {sendingMessages && (
-          <div className="space-y-2">
-            <div className="h-2 bg-blue-200 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-blue-600 transition-all duration-300"
-                style={{ width: `${(sendProgress.current / sendProgress.total) * 100}%` }}
-              />
-            </div>
-            <p className="text-sm text-blue-700 text-center">
-              Mengirim pesan... {sendProgress.current}/{sendProgress.total}
-            </p>
-          </div>
-        )}
-        
-        {selectedFriends.length > 0 && messageBody.trim() && !sendingMessages && (
+        <span className="text-sm text-green-700">
+          Penerima: {selectedFriends.length}
+        </span>
+      </div>
+      
+      <textarea
+        value={messageBody}
+        onChange={(e) => setMessageBody(e.target.value)}
+        placeholder="Tulis isi pesan di sini..."
+        maxLength={1000}
+        rows={5}
+        className="w-full px-3 py-2 border border-green-300 rounded-md bg-white text-foreground resize-y"
+      />
+      
+      {selectedFriends.length > 0 && messageBody.trim() && (
+        <div className="space-y-3">
+          <Button
+            onClick={() => {
+              // Copy message first
+              navigator.clipboard.writeText(messageBody);
+              
+              // Open all profiles with a small delay between each to avoid browser blocking
+              selectedFriends.forEach((friend, index) => {
+                setTimeout(() => {
+                  const profileUrl = `https://www.roblox.com/users/${friend.id}/profile`;
+                  window.open(profileUrl, '_blank');
+                  addToast(`Membuka profil ${friend.displayName || friend.name}... (${index + 1}/${selectedFriends.length})`, 'info');
+                }, index * 800); // 800ms delay between tabs
+              });
+              
+              addToast(`Pesan disalin! ${selectedFriends.length} tab profil dibuka!`, 'success');
+            }}
+            className="gap-2 bg-green-600 hover:bg-green-700 w-full"
+          >
+            <ExternalLink className="w-4 h-4" />
+            Salin Pesan & Buka Semua {selectedFriends.length} Profil Teman
+          </Button>
+          
           <div className="flex gap-2 flex-wrap">
-            <Button
-              onClick={sendMassMessage}
-              className="gap-2 bg-blue-600 hover:bg-blue-700"
-            >
-              <Send className="w-4 h-4" />
-              Kirim Pesan ke {selectedFriends.length} Teman
-            </Button>
-            
-            <div className="flex-1" />
-            
             {selectedFriends.map((friend) => (
               <Button
                 key={friend.id}
@@ -455,14 +453,15 @@ export default function FriendsPanel({ connectionId }: { connectionId: string })
               </Button>
             ))}
           </div>
-        )}
-        
-        {selectedFriends.length === 0 && (
-          <p className="text-xs text-blue-600">
-            Centang teman di bawah untuk mengirim pesan.
-          </p>
-        )}
-      </div>
+        </div>
+      )}
+      
+      {selectedFriends.length === 0 && (
+        <p className="text-xs text-green-600">
+          Centang teman di bawah untuk mengirim pesan.
+        </p>
+      )}
+    </div>
 
       {loading ? (
         <p className="text-muted-foreground text-sm">Loading...</p>

@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
       ? body.targetUserIds.map((id: unknown) => validators.robloxUserId(String(id)))
       : [validators.robloxUserId(String(body.targetUserId || ''))]
 
-    const connection = storage.getConnection(connectionId)
+    const connection = await storage.getConnection(connectionId)
     if (!connection) {
       return NextResponse.json(
         formatErrorResponse(new Error('Connection not found')),

@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
       throw new ValidationError('recipientIds', 'Pilih minimal satu penerima')
     }
 
-    const connection = storage.getConnection(connectionId)
+    const connection = await storage.getConnection(connectionId)
     if (!connection) {
       console.log('[message API] Connection not found:', connectionId)
       return NextResponse.json(

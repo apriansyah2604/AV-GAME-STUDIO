@@ -551,112 +551,31 @@ export async function sendRobloxPrivateMessage(params: {
   subject: string
   body: string
 }) {
-  console.log('[sendRobloxPrivateMessage] Starting with:', {
+  console.log('[sendRobloxPrivateMessage] Starting with noblox.js:', {
     senderUserId: params.senderUserId,
     recipientId: params.recipientId,
     subjectLength: params.subject.length,
     bodyLength: params.body.length,
   })
 
-  // Coba beberapa kemungkinan endpoint
-  const possibleUrls = [
-    'https://privatemessages.roblox.com/v1/messages/send',
-    'https://privatemessages.roblox.com/v2/messages/send',
-    'https://chat.roblox.com/v2/send-message',
-    'https://apis.roblox.com/messaging-service/v1/send',
-  ]
-
-  // Format request sesuai Roblox API (multiple variations)
-  const requestVariations = [
-    // Variasi 1: Hanya recipientId, subject, body
-    {
-      recipientId: Number(params.recipientId),
-      subject: params.subject,
-      body: params.body,
-    },
-    // Variasi 2: Lengkap dengan userId
-    {
-      userId: Number(params.senderUserId),
-      recipientId: Number(params.recipientId),
-      subject: params.subject,
-      body: params.body,
-    },
-    // Variasi 3: Chat style
-    {
-      message: params.body,
-      targetUserId: Number(params.recipientId),
-    },
-  ]
-
-  const tokenKey = normalizeAuthToken(params.authToken)
-
-  // Get CSRF token
-  let csrfToken: string
   try {
-    csrfToken = await fetchCsrfToken(params.authToken)
-    console.log('[sendRobloxPrivateMessage] Got initial CSRF token')
+    // Set cookie for noblox.js
+    await noblox.setCookie(`.ROBLOSECURITY=${normalizeAuthToken(params.authToken)}`);
+    console.log('[sendRobloxPrivateMessage] Successfully set cookie with noblox.js');
+
+    // Send message using noblox.js's message function
+    const result = await noblox.message(
+      Number(params.recipientId),
+      params.subject,
+      params.body
+    );
+
+    console.log('[sendRobloxPrivateMessage] SUCCESS sending message with noblox.js:', result);
+    return result;
   } catch (error) {
-    console.error('[sendRobloxPrivateMessage] Failed to get initial CSRF token:', error)
-    throw new Error('Gagal mendapatkan token keamanan Roblox. Pastikan auth token valid.')
+    console.error('[sendRobloxPrivateMessage] Failed to send message with noblox.js:', error);
+    throw error instanceof Error ? error : new Error(String(error));
   }
-
-  // Coba setiap kombinasi endpoint dan request format
-  let lastError: Error | null = null
-  
-  for (const url of possibleUrls) {
-    for (const requestData of requestVariations) {
-      console.log(`[sendRobloxPrivateMessage] Trying: ${url} with:`, Object.keys(requestData))
-      
-      const attempt = async (currentCsrfToken: string) => {
-        return fetch(url, {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json, text/plain, */*',
-            'Cookie': getSecurityCookie(params.authToken),
-            'Content-Type': 'application/json;charset=UTF-8',
-            'X-CSRF-TOKEN': currentCsrfToken,
-            'Origin': 'https://www.roblox.com',
-            'Referer': `https://www.roblox.com/users/${params.recipientId}/profile`,
-          },
-          body: JSON.stringify(requestData),
-          cache: 'no-store',
-        })
-      }
-
-      try {
-        let res = await attempt(csrfToken)
-        
-        // Refresh CSRF if 403
-        if (res.status === 403) {
-          const refreshed = res.headers.get('x-csrf-token')
-          if (refreshed) {
-            csrfTokenCache.set(tokenKey, { token: refreshed, fetchedAt: Date.now() })
-            res = await attempt(refreshed)
-          }
-        }
-
-        if (res.ok) {
-          console.log('[sendRobloxPrivateMessage] SUCCESS with:', url)
-          let result = {}
-          try {
-            const responseText = await res.text()
-            if (responseText) result = JSON.parse(responseText)
-          } catch (e) {}
-          return result
-        } else {
-          const errorText = await res.text().catch(() => '')
-          console.log(`[sendRobloxPrivateMessage] Failed (${res.status}):`, errorText)
-          lastError = new Error(`Gagal mengirim pesan (HTTP ${res.status})`)
-        }
-      } catch (error) {
-        console.log(`[sendRobloxPrivateMessage] Exception:`, error)
-        lastError = error instanceof Error ? error : new Error(String(error))
-      }
-    }
-  }
-
-  // Semua kombinasi gagal
-  throw lastError || new Error('Gagal mengirim pesan. Semua endpoint Roblox gagal.')
 }
 
 export async function searchRobloxUsers(query: string, limit: number = 20) {

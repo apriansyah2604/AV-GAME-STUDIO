@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     const limitParam = searchParams.get('limit')
     const limit = limitParam ? Number(limitParam) : 1000
 
-    const connection = storage.getConnection(connectionId)
+    const connection = await storage.getConnection(connectionId)
     if (!connection) {
       return NextResponse.json(
         formatErrorResponse(new Error('Connection not found')),

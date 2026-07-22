@@ -1,11 +1,16 @@
 import type { NextAuthOptions } from 'next-auth'
-import GoogleProvider from 'next-auth/providers/google'
+import DiscordProvider from 'next-auth/providers/discord'
 
 export const authOptions: NextAuthOptions = {
   providers: [
-    GoogleProvider({
-      clientId: process.env.AUTH_GOOGLE_ID || '',
-      clientSecret: process.env.AUTH_GOOGLE_SECRET || '',
+    DiscordProvider({
+      clientId: process.env.AUTH_DISCORD_ID || '',
+      clientSecret: process.env.AUTH_DISCORD_SECRET || '',
+      authorization: {
+        params: {
+          scope: 'identify email guilds',
+        },
+      },
     }),
   ],
   secret: process.env.AUTH_SECRET,
@@ -13,23 +18,54 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt',
   },
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
-      return true
+    async signIn({ user, account, profile }) {
+      // Check if user is a member of the required Discord server
+      const requiredGuildId = process.env.REQUIRED_DISCORD_SERVER_ID
+      if (!requiredGuildId) {
+        console.error('REQUIRED_DISCORD_SERVER_ID is not set in environment variables')
+        return false // If no server ID is set, block login
+      }
+
+      // Fetch the user's guilds from Discord API
+      try {
+        const response = await fetch('https://discord.com/api/users/@me/guilds', {
+          headers: {
+            Authorization: `Bearer ${account?.access_token}`,
+          },
+        })
+
+        if (!response.ok) {
+          console.error('Failed to fetch user guilds from Discord')
+          return false
+        }
+
+        const guilds = await response.json()
+        const isMember = guilds.some((guild: any) => guild.id === requiredGuildId)
+
+        if (!isMember) {
+          console.error(`User ${user.id} is not a member of the required Discord server`)
+          // Return false to block login, or you could redirect to an error page
+          return false
+        }
+
+        return true
+      } catch (error) {
+        console.error('Error checking Discord server membership:', error)
+        return false
+      }
     },
     async redirect({ url, baseUrl }) {
       return baseUrl
     },
-    async session({ session, token, user }) {
+    async session({ session, token }) {
       if (session.user) {
-        // Pastikan user ID selalu sama untuk user yang sama
-        // Gunakan token.sub (Google's unique user ID) jika tersedia, fallback ke email
-        const userId = token.sub || (session.user.email ? `google-${session.user.email}` : 'google-user')
+        // Use Discord's unique user ID
+        const userId = token.sub || (session.user.email ? `discord-${session.user.email}` : 'discord-user')
         ;(session.user as { id?: string }).id = userId
       }
       return session
     },
-    async jwt({ token, user, account, profile, isNewUser }) {
-      // Pastikan token.sub selalu tersedia
+    async jwt({ token, user, account }) {
       return token
     },
   },

@@ -15,7 +15,7 @@ interface AuthContextType {
   loading: boolean
   login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>
   logout: () => Promise<void>
-  signInWithGoogle: () => Promise<void>
+  signInWithDiscord: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -39,13 +39,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Handle session from NextAuth
   useEffect(() => {
     if (status === 'authenticated' && session?.user) {
-      const googleUser: User = {
-        id: session.user.id || 'google-user-' + Date.now(),
-        username: session.user.name || session.user.email || 'Google User',
+      const discordUser: User = {
+        id: session.user.id || 'discord-user-' + Date.now(),
+        username: session.user.name || session.user.email || 'Discord User',
         email: session.user.email,
-        role: 'admin', // Default to admin for Google users
+        role: 'admin', // Default to admin for Discord users
       }
-      setUser(googleUser)
+      setUser(discordUser)
       setLoading(false)
     } else if (status === 'unauthenticated') {
       // Check our custom session
@@ -119,12 +119,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null)
   }
 
-  const signInWithGoogle = async () => {
-    await signIn('google')
+  const signInWithDiscord = async () => {
+    await signIn('discord')
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, signInWithGoogle }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, signInWithDiscord }}>
       {children}
     </AuthContext.Provider>
   )

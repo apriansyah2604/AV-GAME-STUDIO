@@ -60,7 +60,7 @@ export function TopUp() {
         }
       }, 1000)
     }
-  }
+  };
 
   const robuxPackages = t('robux_packages')
   const avatarServices = t('avatar_services')
@@ -72,8 +72,9 @@ export function TopUp() {
     { label: t('topup.stats.price'), value: t('topup.stats.price_val') },
     { label: t('topup.stats.fit'), value: t('topup.stats.fit_val') },
   ]
+  
   return (
-    <section id="topup" className="relative overflow-hidden py-24 sm:py-32">
+    <section id="topup" className="relative overflow-hidden py-20 sm:py-32">
       <div className="absolute inset-0 bg-gradient-to-b from-[#030303] via-[#07101d] to-[#030303]" />
       <div className="absolute left-1/2 top-24 h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-[#00AFFF]/10 blur-3xl" />
       <div className="absolute right-10 top-20 h-48 w-48 rounded-full bg-[#00E5FF]/10 blur-3xl" />
@@ -88,10 +89,9 @@ export function TopUp() {
           <span className="mb-4 inline-block rounded-full border border-[#00AFFF]/30 px-4 py-1 text-xs tracking-widest text-[#00AFFF]">
             {t('topup.badge')}
           </span>
-          <h2 className="mb-4 text-3xl font-black sm:text-4xl lg:text-5xl">
+          <h2 className="mb-4 text-3xl sm:text-4xl lg:text-5xl font-black">
             <span className="text-white">{t('topup.title1')}</span>{' '}
-            <span className="neon-text">{t('topup.title2')}
-            </span>
+            <span className="neon-text">{t('topup.title2')}</span>
           </h2>
           <p className="text-white/55 text-sm sm:text-base">
             {t('topup.subtitle')}
@@ -102,7 +102,7 @@ export function TopUp() {
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mb-8 overflow-hidden rounded-[2rem] border border-[#00AFFF]/15 bg-[#08111F]/75 backdrop-blur-xl"
+            className="mb-8 overflow-hidden rounded-2xl border border-[#00AFFF]/15 bg-[#08111F]/75 backdrop-blur-xl"
           >
             <div className="grid gap-6 p-4 sm:p-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:p-8">
               <div>
@@ -132,7 +132,7 @@ export function TopUp() {
                 </div>
               </div>
 
-              <div className="space-y-4 rounded-[1.5rem] border border-[#00AFFF]/15 bg-[#0b1421]/70 p-4 sm:p-5">
+              <div className="space-y-4 rounded-2xl border border-[#00AFFF]/15 bg-[#0b1421]/70 p-4 sm:p-5">
                 <div className="flex items-center gap-3 rounded-2xl border border-[#1e293b] bg-[#09111c] px-3 py-3">
                   <Search className="h-4 w-4 text-[#00AFFF]" />
                   <span className="text-xs sm:text-sm text-white/45">{t('topup.search_placeholder') || '...'}</span>
@@ -160,7 +160,7 @@ export function TopUp() {
             </div>
           </motion.div>
 
-        <div className="grid gap-8 xl:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)]">
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(280px,0.8fr)]">
           <div>
             <motion.div
               initial={{ opacity: 0, y: 24 }}
@@ -187,7 +187,7 @@ export function TopUp() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.08 }}
-                  className={`relative overflow-hidden rounded-3xl border ${
+                  className={`relative overflow-hidden rounded-2xl border ${
                     item.featured
                       ? 'border-[#00AFFF]/35 bg-[#08111F]/92'
                       : 'border-[#1e293b] bg-[#09111c]/88'
@@ -299,7 +299,7 @@ export function TopUp() {
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="glass-strong rounded-3xl border border-[#00AFFF]/20 p-6 sm:p-8"
+              className="glass-strong rounded-2xl border border-[#00AFFF]/20 p-6 sm:p-8"
             >
               <div className="mb-6">
                 <div className="mb-4 flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#00AFFF] to-[#00E5FF]">
@@ -382,7 +382,7 @@ export function TopUp() {
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="glass-strong rounded-3xl border border-[#00AFFF]/20 p-6 sm:p-8"
+              className="glass-strong rounded-2xl border border-[#00AFFF]/20 p-6 sm:p-8"
             >
               <div className="mb-6 sm:mb-8">
                 <div className="mb-4 flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#00AFFF] to-[#00E5FF]">
@@ -430,7 +430,7 @@ export function TopUp() {
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="rounded-3xl border border-[#00AFFF]/15 bg-[#08111F]/85 p-5 sm:p-6"
+              className="rounded-2xl border border-[#00AFFF]/15 bg-[#08111F]/85 p-5 sm:p-6"
             >
               <div className="mb-5 flex items-center gap-3">
                 <ShieldCheck className="h-4 w-4 sm:h-5 sm:w-5 text-[#00E5FF]" />

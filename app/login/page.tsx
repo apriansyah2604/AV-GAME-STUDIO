@@ -1,12 +1,12 @@
 import { LoginPageClient } from '@/components/LoginPageClient'
-import { getUsers } from '@/lib/supabase-storage'
+import { getUsers } from '@/lib/storage'
 
 // Force dynamic rendering to avoid build errors
 export const dynamic = 'force-dynamic'
 
 export default async function LoginPage() {
-  const hasGoogleAuth = Boolean(
-    process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET
+  const hasDiscordAuth = Boolean(
+    process.env.AUTH_DISCORD_ID && process.env.AUTH_DISCORD_SECRET
   )
   
   let hasLocalAuth = false
@@ -19,7 +19,7 @@ export default async function LoginPage() {
 
   return (
     <LoginPageClient
-      hasGoogleAuth={hasGoogleAuth}
+      hasDiscordAuth={hasDiscordAuth}
       hasLocalAuth={hasLocalAuth}
     />
   )

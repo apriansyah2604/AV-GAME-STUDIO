@@ -48,7 +48,7 @@ export function FeaturedMaps() {
       rating: '4.8',
       status: t('featured_maps.status.popular'),
       description: t('featured_maps.maps.2.desc'),
-      robloxUrl: 'https://www.roblox.com/join/b5nby',
+      robloxUrl: 'https://www.roblox.com/join/cj06x',
     },
     {
       id: 4,
@@ -104,6 +104,28 @@ export function FeaturedMaps() {
       status: t('featured_maps.status.new'),
       description: t('featured_maps.maps.7.desc'),
       robloxUrl: 'https://www.roblox.com/join/fs97x',
+    },
+    {
+      id: 9,
+      title: t('featured_maps.maps.8.title'),
+      category: t('featured_maps.categories.adventure'),
+      image: '/maps/bali-paradise.png',
+      players: '100K+',
+      rating: '4.8',
+      status: t('featured_maps.status.new'),
+      description: t('featured_maps.maps.8.desc'),
+      robloxUrl: 'https://www.roblox.com/join/y3m9f',
+    },
+    {
+      id: 10,
+      title: t('featured_maps.maps.9.title'),
+      category: t('featured_maps.categories.adventure'),
+      image: '/maps/surga-dunia.jpg',
+      players: '85K+',
+      rating: '4.9',
+      status: t('featured_maps.status.new'),
+      description: t('featured_maps.maps.9.desc'),
+      robloxUrl: 'https://www.roblox.com/join/0iar5',
     },
   ]
 

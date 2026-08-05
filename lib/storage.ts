@@ -1,57 +1,43 @@
-import fs from 'fs';
-import path from 'path';
 import { randomUUID } from 'crypto';
 import { hashPassword, verifyPassword, normalizeOwnerUserId, getSeedAdminCredentials } from './authUtils';
+import { supabase } from './supabase';
 
-const DATA_DIR = path.join(process.cwd(), 'data');
-const CONNECTIONS_FILE = path.join(DATA_DIR, 'connections.json');
-const ACCOUNTS_FILE = path.join(DATA_DIR, 'accounts.json');
-const ACTIVITY_FILE = path.join(DATA_DIR, 'activity.json');
-const USERS_FILE = path.join(DATA_DIR, 'users.json');
-
-// Ensure data directory exists
-function ensureDataDir() {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  }
+// Helper to convert snake_case to camelCase
+function snakeToCamel(str: string): string {
+  return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
 }
 
-// Helper to read file directly with backup
-function readJsonFile(filePath: string) {
-  ensureDataDir();
-  try {
-    if (fs.existsSync(filePath)) {
-      const content = fs.readFileSync(filePath, 'utf-8')
-      return JSON.parse(content);
-    }
-  } catch (error) {
-    console.error(`Error reading ${filePath}:`, error);
-    // Try to recover from backup
-    const backupPath = `${filePath}.bak`
-    if (fs.existsSync(backupPath)) {
-      try {
-        console.log(`Recovering from backup: ${backupPath}`);
-        const backupContent = fs.readFileSync(backupPath, 'utf-8');
-        return JSON.parse(backupContent);
-      } catch (backupError) {
-        console.error(`Failed to recover from backup:`, backupError);
-      }
-    }
-  }
-  return [];
+// Helper to convert camelCase to snake_case
+function camelToSnake(str: string): string {
+  return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
 }
 
-// Helper to write file directly with backup
-function writeJsonFile(filePath: string, data: any) {
-  ensureDataDir();
-  
-  // Create backup of existing file
-  if (fs.existsSync(filePath)) {
-    const backupPath = `${filePath}.bak`;
-    fs.copyFileSync(filePath, backupPath);
+// Helper to convert object keys from snake_case to camelCase
+function convertToCamelCase(obj: any): any {
+  if (Array.isArray(obj)) {
+    return obj.map(convertToCamelCase);
+  } else if (obj !== null && obj.constructor === Object) {
+    return Object.keys(obj).reduce((result, key) => {
+      const camelKey = snakeToCamel(key);
+      result[camelKey] = convertToCamelCase(obj[key]);
+      return result;
+    }, {} as any);
   }
-  
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+  return obj;
+}
+
+// Helper to convert object keys from camelCase to snake_case
+function convertToSnakeCase(obj: any): any {
+  if (Array.isArray(obj)) {
+    return obj.map(convertToSnakeCase);
+  } else if (obj !== null && obj.constructor === Object) {
+    return Object.keys(obj).reduce((result, key) => {
+      const snakeKey = camelToSnake(key);
+      result[snakeKey] = convertToSnakeCase(obj[key]);
+      return result;
+    }, {} as any);
+  }
+  return obj;
 }
 
 // Type definitions
@@ -99,33 +85,16 @@ export interface User {
 
 // Users operations
 export async function getUsers(): Promise<User[]> {
-  const rawUsers = readJsonFile(USERS_FILE);
-  
-  // Sanitize users
-  let needsToSave = false;
-  const sanitizedUsers = rawUsers.map((user: any, index: number) => {
-    const existingId = user.id;
-    const needsId = !existingId;
-    const needsOtherFields = !user.username || !user.password || !user.role;
-    
-    if (needsId || needsOtherFields) {
-      needsToSave = true;
-    }
-    
-    return {
-      id: existingId || randomUUID(),
-      username: user.username || `user${index + 1}`,
-      password: user.password || hashPassword('default'),
-      email: user.email,
-      role: user.role || 'user',
-      createdAt: user.createdAt || new Date().toISOString(),
-    };
-  });
+  const { data, error } = await supabase.from('users').select('*');
+  if (error) {
+    console.error('Error fetching users:', error);
+    return [];
+  }
+  const users = convertToCamelCase(data) as User[];
   
   // Initialize default admin user if no users exist
-  if (sanitizedUsers.length === 0) {
+  if (users.length === 0) {
     const seedAdmin = getSeedAdminCredentials();
-
     if (seedAdmin) {
       const defaultAdmin: User = {
         id: randomUUID(),
@@ -134,30 +103,30 @@ export async function getUsers(): Promise<User[]> {
         role: 'admin',
         createdAt: new Date().toISOString(),
       };
-      sanitizedUsers.push(defaultAdmin);
-      needsToSave = true;
+      await createUser(defaultAdmin);
+      return [defaultAdmin];
     }
   }
   
-  if (needsToSave) {
-    saveUsers(sanitizedUsers);
-  }
-  
-  return sanitizedUsers;
-}
-
-export function saveUsers(users: User[]): void {
-  writeJsonFile(USERS_FILE, users);
+  return users;
 }
 
 export async function getUserById(id: string): Promise<User | null> {
-  const users = await getUsers();
-  return users.find(u => u.id === id) || null;
+  const { data, error } = await supabase.from('users').select('*').eq('id', id).single();
+  if (error || !data) {
+    console.error('Error fetching user:', error);
+    return null;
+  }
+  return convertToCamelCase(data) as User;
 }
 
 export async function getUserByUsername(username: string): Promise<User | null> {
-  const users = await getUsers();
-  return users.find(u => u.username === username) || null;
+  const { data, error } = await supabase.from('users').select('*').eq('username', username).single();
+  if (error || !data) {
+    console.error('Error fetching user by username:', error);
+    return null;
+  }
+  return convertToCamelCase(data) as User;
 }
 
 export async function createUser(data: Omit<User, 'id' | 'createdAt'>): Promise<User> {
@@ -168,18 +137,18 @@ export async function createUser(data: Omit<User, 'id' | 'createdAt'>): Promise<
     createdAt: new Date().toISOString(),
   };
   console.log('[storage.createUser] Creating user:', user);
-  const users = await getUsers();
-  users.push(user);
-  saveUsers(users);
+  
+  const { error } = await supabase.from('users').insert(convertToSnakeCase(user));
+  if (error) {
+    console.error('Error creating user:', error);
+    throw error;
+  }
+  
   console.log('[storage.createUser] User created');
   return user;
 }
 
 export async function updateUser(id: string, data: Partial<User>): Promise<User | null> {
-  const users = await getUsers();
-  const index = users.findIndex(u => u.id === id);
-  if (index === -1) return null;
-  
   // Prevent overriding id and createdAt
   const sanitizedData = { ...data };
   delete sanitizedData.id;
@@ -190,18 +159,27 @@ export async function updateUser(id: string, data: Partial<User>): Promise<User 
     sanitizedData.password = hashPassword(sanitizedData.password);
   }
   
-  users[index] = { ...users[index], ...sanitizedData };
-  saveUsers(users);
-  return users[index];
+  const { data: updatedUser, error } = await supabase
+    .from('users')
+    .update(convertToSnakeCase(sanitizedData))
+    .eq('id', id)
+    .select()
+    .single();
+    
+  if (error || !updatedUser) {
+    console.error('Error updating user:', error);
+    return null;
+  }
+  
+  return convertToCamelCase(updatedUser) as User;
 }
 
 export async function deleteUser(id: string): Promise<boolean> {
-  let users = await getUsers();
-  const initialLength = users.length;
-  users = users.filter(u => u.id !== id);
-  
-  if (users.length === initialLength) return false;
-  saveUsers(users);
+  const { error } = await supabase.from('users').delete().eq('id', id);
+  if (error) {
+    console.error('Error deleting user:', error);
+    return false;
+  }
   return true;
 }
 
@@ -220,36 +198,12 @@ export async function loginUser(username: string, password: string): Promise<Use
 
 // Connections operations
 export async function getConnections(): Promise<Connection[]> {
-  const rawConnections = readJsonFile(CONNECTIONS_FILE);
-  
-  // Sanitize connections to ensure all required fields exist
-  let needsToSave = false;
-  const sanitizedConnections = rawConnections.map((conn: any, index: number) => {
-    const existingId = conn.id;
-    const needsId = !existingId;
-    const needsOtherFields = !conn.name || !conn.robloxUserId || !conn.authToken || !conn.status || !conn.lastConnected || !conn.createdAt;
-    
-    if (needsId || needsOtherFields) {
-      needsToSave = true;
-    }
-    
-    return {
-      id: existingId || randomUUID(),
-      ownerUserId: normalizeOwnerUserId(conn.ownerUserId),
-      name: conn.name || `Connection ${index + 1}`,
-      robloxUserId: conn.robloxUserId || '',
-      authToken: conn.authToken || '',
-      status: conn.status || 'disconnected',
-      lastConnected: conn.lastConnected || new Date().toISOString(),
-      createdAt: conn.createdAt || new Date().toISOString(),
-    };
-  });
-  
-  if (needsToSave) {
-    saveConnections(sanitizedConnections);
+  const { data, error } = await supabase.from('connections').select('*');
+  if (error) {
+    console.error('Error fetching connections:', error);
+    return [];
   }
-  
-  return sanitizedConnections;
+  return convertToCamelCase(data) as Connection[];
 }
 
 export async function getConnectionsByOwner(ownerUserId: string): Promise<Connection[]> {
@@ -258,17 +212,26 @@ export async function getConnectionsByOwner(ownerUserId: string): Promise<Connec
     return [];
   }
 
-  const connections = await getConnections();
-  return connections.filter(connection => connection.ownerUserId === normalizedOwnerUserId);
-}
-
-export function saveConnections(connections: Connection[]): void {
-  writeJsonFile(CONNECTIONS_FILE, connections);
+  const { data, error } = await supabase.from('connections').select('*').eq('owner_user_id', normalizedOwnerUserId);
+  if (error) {
+    console.error('Error fetching connections by owner:', error);
+    return [];
+  }
+  return convertToCamelCase(data) as Connection[];
 }
 
 export async function getConnection(id: string, ownerUserId?: string): Promise<Connection | null> {
-  const connections = ownerUserId ? await getConnectionsByOwner(ownerUserId) : await getConnections();
-  return connections.find(c => c.id === id) || null;
+  let query = supabase.from('connections').select('*').eq('id', id);
+  if (ownerUserId) {
+    query = query.eq('owner_user_id', ownerUserId);
+  }
+  
+  const { data, error } = await query.single();
+  if (error || !data) {
+    console.error('Error fetching connection:', error);
+    return null;
+  }
+  return convertToCamelCase(data) as Connection;
 }
 
 export async function createConnection(data: Omit<Connection, 'id' | 'createdAt'>): Promise<Connection> {
@@ -279,89 +242,62 @@ export async function createConnection(data: Omit<Connection, 'id' | 'createdAt'
     id: randomUUID(),
     createdAt: new Date().toISOString(),
   };
-  const connections = await getConnections();
-  connections.push(connection);
-  saveConnections(connections);
+  
+  const { error } = await supabase.from('connections').insert(convertToSnakeCase(connection));
+  if (error) {
+    console.error('Error creating connection:', error);
+    throw error;
+  }
+  
   console.log('[storage.createConnection] Connection created');
   return connection;
 }
 
 export async function updateConnection(id: string, data: Partial<Connection>, ownerUserId?: string): Promise<Connection | null> {
-  const connections = await getConnections();
-  const index = connections.findIndex(c => c.id === id);
-  if (index === -1) return null;
-  if (ownerUserId && connections[index].ownerUserId !== ownerUserId) return null;
-  
   // Prevent overriding id and createdAt
   const sanitizedData = { ...data };
   delete sanitizedData.id;
   delete sanitizedData.createdAt;
   delete sanitizedData.ownerUserId;
   
-  connections[index] = { ...connections[index], ...sanitizedData };
-  saveConnections(connections);
-  return connections[index];
+  let query = supabase.from('connections').update(convertToSnakeCase(sanitizedData)).eq('id', id);
+  if (ownerUserId) {
+    query = query.eq('owner_user_id', ownerUserId);
+  }
+  
+  const { data: updatedConnection, error } = await query.select().single();
+  if (error || !updatedConnection) {
+    console.error('Error updating connection:', error);
+    return null;
+  }
+  
+  return convertToCamelCase(updatedConnection) as Connection;
 }
 
 export async function deleteConnection(id: string, ownerUserId?: string): Promise<boolean> {
-  const connections = await getConnections();
-  const targetConnection = connections.find(c => c.id === id);
-  if (!targetConnection) return false;
-  if (ownerUserId && targetConnection.ownerUserId !== ownerUserId) return false;
-
-  const initialLength = connections.length;
-  const remainingConnections = connections.filter(c => c.id !== id);
+  let query = supabase.from('connections').delete().eq('id', id);
+  if (ownerUserId) {
+    query = query.eq('owner_user_id', ownerUserId);
+  }
   
-  if (remainingConnections.length === initialLength) return false;
-  saveConnections(remainingConnections);
+  const { error } = await query;
+  if (error) {
+    console.error('Error deleting connection:', error);
+    return false;
+  }
   
-  // Delete all associated accounts
-  const accounts = (await getAccounts()).filter(a => a.connectionId !== id);
-  saveAccounts(accounts);
-  
-  // Delete all associated activities
-  const activities = (await getActivity()).filter(a => a.connectionId !== id);
-  saveActivity(activities);
-  
+  // Supabase handles cascading deletes via foreign keys, so we don't need to manually delete accounts/activities
   return true;
 }
 
 // Accounts operations
 export async function getAccounts(): Promise<Account[]> {
-  const rawAccounts = readJsonFile(ACCOUNTS_FILE);
-  const connectionsById = new Map((await getConnections()).map(connection => [connection.id, connection]));
-  
-  // Sanitize accounts to ensure all required fields exist
-  // BUT ONLY GENERATE NEW ID IF ACCOUNT DOESN'T HAVE ONE
-  // AND NEVER CHANGE EXISTING IDs!
-  let needsToSave = false;
-  const sanitizedAccounts = rawAccounts.map((account: any, index: number) => {
-    const existingId = account.id;
-    const needsId = !existingId;
-    const needsOtherFields = !account.username || !account.status || !account.lastActivity || !account.createdAt;
-    
-    if (needsId || needsOtherFields) {
-      needsToSave = true;
-    }
-
-    const sanitized = {
-      id: existingId || randomUUID(),
-      ownerUserId: normalizeOwnerUserId(account.ownerUserId) || connectionsById.get(account.connectionId)?.ownerUserId,
-      connectionId: account.connectionId,
-      username: account.username || `Account ${index + 1}`,
-      password: account.password || '',
-      status: account.status || 'ready',
-      lastActivity: account.lastActivity || new Date().toISOString(),
-      createdAt: account.createdAt || new Date().toISOString(),
-    };
-    return sanitized;
-  });
-  
-  if (needsToSave) {
-    saveAccounts(sanitizedAccounts);
+  const { data, error } = await supabase.from('accounts').select('*');
+  if (error) {
+    console.error('Error fetching accounts:', error);
+    return [];
   }
-  
-  return sanitizedAccounts;
+  return convertToCamelCase(data) as Account[];
 }
 
 export async function getAccountsByOwner(ownerUserId: string): Promise<Account[]> {
@@ -370,22 +306,40 @@ export async function getAccountsByOwner(ownerUserId: string): Promise<Account[]
     return [];
   }
 
-  const accounts = await getAccounts();
-  return accounts.filter(account => account.ownerUserId === normalizedOwnerUserId);
+  const { data, error } = await supabase.from('accounts').select('*').eq('owner_user_id', normalizedOwnerUserId);
+  if (error) {
+    console.error('Error fetching accounts by owner:', error);
+    return [];
+  }
+  return convertToCamelCase(data) as Account[];
 }
 
 export async function getAccountsByConnection(connectionId: string, ownerUserId?: string): Promise<Account[]> {
-  const accounts = ownerUserId ? await getAccountsByOwner(ownerUserId) : await getAccounts();
-  return accounts.filter(a => a.connectionId === connectionId);
-}
-
-export function saveAccounts(accounts: Account[]): void {
-  writeJsonFile(ACCOUNTS_FILE, accounts);
+  let query = supabase.from('accounts').select('*').eq('connection_id', connectionId);
+  if (ownerUserId) {
+    query = query.eq('owner_user_id', ownerUserId);
+  }
+  
+  const { data, error } = await query;
+  if (error) {
+    console.error('Error fetching accounts by connection:', error);
+    return [];
+  }
+  return convertToCamelCase(data) as Account[];
 }
 
 export async function getAccount(id: string, ownerUserId?: string): Promise<Account | null> {
-  const accounts = ownerUserId ? await getAccountsByOwner(ownerUserId) : await getAccounts();
-  return accounts.find(a => a.id === id) || null;
+  let query = supabase.from('accounts').select('*').eq('id', id);
+  if (ownerUserId) {
+    query = query.eq('owner_user_id', ownerUserId);
+  }
+  
+  const { data, error } = await query.single();
+  if (error || !data) {
+    console.error('Error fetching account:', error);
+    return null;
+  }
+  return convertToCamelCase(data) as Account;
 }
 
 export async function createAccount(data: Omit<Account, 'id' | 'createdAt'>): Promise<Account> {
@@ -401,118 +355,74 @@ export async function createAccount(data: Omit<Account, 'id' | 'createdAt'>): Pr
     id: randomUUID(),
     createdAt: new Date().toISOString(),
   };
-  const rawAccounts = readJsonFile(ACCOUNTS_FILE);
-  rawAccounts.push(account);
-  writeJsonFile(ACCOUNTS_FILE, rawAccounts);
+  
+  const { error } = await supabase.from('accounts').insert(convertToSnakeCase(account));
+  if (error) {
+    console.error('Error creating account:', error);
+    throw error;
+  }
+  
   return account;
 }
 
 export async function updateAccount(id: string, data: Partial<Account>, ownerUserId?: string): Promise<Account | null> {
-  const accounts = await getAccounts();
-  const index = accounts.findIndex(a => a.id === id);
-  if (index === -1) return null;
-  if (ownerUserId && accounts[index].ownerUserId !== ownerUserId) return null;
-  
   // Prevent overriding id and createdAt
   const sanitizedData = { ...data };
   delete sanitizedData.id;
   delete sanitizedData.createdAt;
   delete sanitizedData.ownerUserId;
   
-  accounts[index] = { ...accounts[index], ...sanitizedData };
-  saveAccounts(accounts);
-  return accounts[index];
+  let query = supabase.from('accounts').update(convertToSnakeCase(sanitizedData)).eq('id', id);
+  if (ownerUserId) {
+    query = query.eq('owner_user_id', ownerUserId);
+  }
+  
+  const { data: updatedAccount, error } = await query.select().single();
+  if (error || !updatedAccount) {
+    console.error('Error updating account:', error);
+    return null;
+  }
+  
+  return convertToCamelCase(updatedAccount) as Account;
 }
 
 export async function deleteAccount(id: string, ownerUserId?: string): Promise<boolean> {
-  const rawAccounts = readJsonFile(ACCOUNTS_FILE);
-  const targetAccount = await getAccount(id);
-  if (!targetAccount) return false;
-  if (ownerUserId && targetAccount.ownerUserId !== ownerUserId) return false;
-  const initialLength = rawAccounts.length;
-  const remainingAccounts = rawAccounts.filter((a: any) => a.id !== id);
-
-  if (remainingAccounts.length === initialLength) return false;
+  let query = supabase.from('accounts').delete().eq('id', id);
+  if (ownerUserId) {
+    query = query.eq('owner_user_id', ownerUserId);
+  }
   
-  writeJsonFile(ACCOUNTS_FILE, remainingAccounts);
-
-  // Delete all associated activities
-  const rawActivities = readJsonFile(ACTIVITY_FILE);
-  const remainingActivities = rawActivities.filter((a: any) => a.accountId !== id);
-  writeJsonFile(ACTIVITY_FILE, remainingActivities);
-
+  const { error } = await query;
+  if (error) {
+    console.error('Error deleting account:', error);
+    return false;
+  }
   return true;
 }
 
 export async function deleteAccounts(ids: string[], ownerUserId?: string): Promise<number> {
-  const idsSet = new Set(ids);
-  const rawAccounts = await getAccounts();
-  const allowedIds = ownerUserId
-    ? new Set(rawAccounts.filter(account => account.ownerUserId === ownerUserId).map(account => account.id))
-    : null;
-
-  const remainingAccounts = rawAccounts.filter((a: any) => !idsSet.has(a.id));
-  const deletedCount = rawAccounts.filter((a: any) => idsSet.has(a.id) && (!allowedIds || allowedIds.has(a.id))).length;
-
-  const filteredRemainingAccounts = rawAccounts.filter((a: any) => {
-    if (!idsSet.has(a.id)) {
-      return true;
-    }
-
-    if (!allowedIds) {
-      return false;
-    }
-
-    return !allowedIds.has(a.id);
-  });
-
-  if (deletedCount > 0) {
-    writeJsonFile(ACCOUNTS_FILE, filteredRemainingAccounts);
-    const rawActivities = await getActivity();
-    const remainingActivities = rawActivities.filter((a: any) => !idsSet.has(a.accountId) || (ownerUserId && a.ownerUserId !== ownerUserId));
-    writeJsonFile(ACTIVITY_FILE, remainingActivities);
+  let query = supabase.from('accounts').delete().in('id', ids);
+  if (ownerUserId) {
+    query = query.eq('owner_user_id', ownerUserId);
   }
-
-  return deletedCount;
+  
+  const { error, count } = await query.select('count', { count: 'exact' });
+  if (error) {
+    console.error('Error deleting accounts:', error);
+    return 0;
+  }
+  
+  return count || 0;
 }
 
 // Activity operations
 export async function getActivity(): Promise<Activity[]> {
-  const rawActivities = readJsonFile(ACTIVITY_FILE);
-  const connectionsById = new Map((await getConnections()).map(connection => [connection.id, connection]));
-  const accountsById = new Map((await getAccounts()).map(account => [account.id, account]));
-  
-  // Sanitize activities
-  let needsToSave = false;
-  const sanitizedActivities = rawActivities.map((act: any, index: number) => {
-    const existingId = act.id;
-    const needsId = !existingId;
-    const needsOtherFields = !act.accountId || !act.connectionId || !act.action || !act.status || !act.timestamp;
-    
-    if (needsId || needsOtherFields) {
-      needsToSave = true;
-    }
-    
-    return {
-      id: existingId || randomUUID(),
-      ownerUserId:
-        normalizeOwnerUserId(act.ownerUserId) ||
-        accountsById.get(act.accountId)?.ownerUserId ||
-        connectionsById.get(act.connectionId)?.ownerUserId,
-      accountId: act.accountId || '',
-      connectionId: act.connectionId || '',
-      action: act.action || 'unknown',
-      details: act.details || '',
-      status: act.status || 'pending',
-      timestamp: act.timestamp || new Date().toISOString(),
-    };
-  });
-  
-  if (needsToSave) {
-    saveActivity(sanitizedActivities);
+  const { data, error } = await supabase.from('activity').select('*');
+  if (error) {
+    console.error('Error fetching activity:', error);
+    return [];
   }
-  
-  return sanitizedActivities;
+  return convertToCamelCase(data) as Activity[];
 }
 
 export async function getActivityByOwner(ownerUserId: string): Promise<Activity[]> {
@@ -521,28 +431,40 @@ export async function getActivityByOwner(ownerUserId: string): Promise<Activity[
     return [];
   }
 
-  const activity = await getActivity();
-  return activity.filter(entry => entry.ownerUserId === normalizedOwnerUserId);
-}
-
-export function saveActivity(activity: Activity[]): void {
-  writeJsonFile(ACTIVITY_FILE, activity);
+  const { data, error } = await supabase.from('activity').select('*').eq('owner_user_id', normalizedOwnerUserId);
+  if (error) {
+    console.error('Error fetching activity by owner:', error);
+    return [];
+  }
+  return convertToCamelCase(data) as Activity[];
 }
 
 export async function getActivityForAccount(accountId: string, limit = 50, ownerUserId?: string): Promise<Activity[]> {
-  const activity = ownerUserId ? await getActivityByOwner(ownerUserId) : await getActivity();
-  return activity
-    .filter(a => a.accountId === accountId)
-    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-    .slice(0, limit);
+  let query = supabase.from('activity').select('*').eq('account_id', accountId).order('timestamp', { ascending: false }).limit(limit);
+  if (ownerUserId) {
+    query = query.eq('owner_user_id', ownerUserId);
+  }
+  
+  const { data, error } = await query;
+  if (error) {
+    console.error('Error fetching activity for account:', error);
+    return [];
+  }
+  return convertToCamelCase(data) as Activity[];
 }
 
 export async function getActivityForConnection(connectionId: string, limit = 100, ownerUserId?: string): Promise<Activity[]> {
-  const activity = ownerUserId ? await getActivityByOwner(ownerUserId) : await getActivity();
-  return activity
-    .filter(a => a.connectionId === connectionId)
-    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-    .slice(0, limit);
+  let query = supabase.from('activity').select('*').eq('connection_id', connectionId).order('timestamp', { ascending: false }).limit(limit);
+  if (ownerUserId) {
+    query = query.eq('owner_user_id', ownerUserId);
+  }
+  
+  const { data, error } = await query;
+  if (error) {
+    console.error('Error fetching activity for connection:', error);
+    return [];
+  }
+  return convertToCamelCase(data) as Activity[];
 }
 
 export async function addActivity(data: Omit<Activity, 'id' | 'timestamp'>): Promise<Activity> {
@@ -557,48 +479,62 @@ export async function addActivity(data: Omit<Activity, 'id' | 'timestamp'>): Pro
     id: randomUUID(),
     timestamp: new Date().toISOString(),
   };
-  const activity = await getActivity();
-  activity.push(activityEntry);
-  saveActivity(activity);
+  
+  const { error } = await supabase.from('activity').insert(convertToSnakeCase(activityEntry));
+  if (error) {
+    console.error('Error adding activity:', error);
+    throw error;
+  }
+  
   return activityEntry;
 }
 
 export async function updateActivity(id: string, data: Partial<Activity>, ownerUserId?: string): Promise<Activity | null> {
-  const activity = await getActivity();
-  const index = activity.findIndex(a => a.id === id);
-  if (index === -1) return null;
-  if (ownerUserId && activity[index].ownerUserId !== ownerUserId) return null;
-  
   // Prevent overriding id and timestamp
   const sanitizedData = { ...data };
   delete sanitizedData.id;
   delete sanitizedData.timestamp;
   delete sanitizedData.ownerUserId;
   
-  activity[index] = { ...activity[index], ...sanitizedData };
-  saveActivity(activity);
-  return activity[index];
+  let query = supabase.from('activity').update(convertToSnakeCase(sanitizedData)).eq('id', id);
+  if (ownerUserId) {
+    query = query.eq('owner_user_id', ownerUserId);
+  }
+  
+  const { data: updatedActivity, error } = await query.select().single();
+  if (error || !updatedActivity) {
+    console.error('Error updating activity:', error);
+    return null;
+  }
+  
+  return convertToCamelCase(updatedActivity) as Activity;
 }
 
 export async function deleteActivity(id: string, ownerUserId?: string): Promise<boolean> {
-  const activity = await getActivity();
-  const targetActivity = activity.find(a => a.id === id);
-  if (!targetActivity) return false;
-  if (ownerUserId && targetActivity.ownerUserId !== ownerUserId) return false;
-  const initialLength = activity.length;
-  const filtered = activity.filter(a => a.id !== id);
-  if (filtered.length === initialLength) return false;
-  saveActivity(filtered);
+  let query = supabase.from('activity').delete().eq('id', id);
+  if (ownerUserId) {
+    query = query.eq('owner_user_id', ownerUserId);
+  }
+  
+  const { error } = await query;
+  if (error) {
+    console.error('Error deleting activity:', error);
+    return false;
+  }
   return true;
 }
 
 export async function deleteActivities(ids: string[], ownerUserId?: string): Promise<number> {
-  const activity = await getActivity();
-  const idsSet = new Set(ids);
-  const filtered = activity.filter(a => !idsSet.has(a.id) || (ownerUserId && a.ownerUserId !== ownerUserId));
-  const deletedCount = activity.filter(a => idsSet.has(a.id) && (!ownerUserId || a.ownerUserId === ownerUserId)).length;
-  if (deletedCount > 0) {
-    saveActivity(filtered);
+  let query = supabase.from('activity').delete().in('id', ids);
+  if (ownerUserId) {
+    query = query.eq('owner_user_id', ownerUserId);
   }
-  return deletedCount;
+  
+  const { error, count } = await query.select('count', { count: 'exact' });
+  if (error) {
+    console.error('Error deleting activities:', error);
+    return 0;
+  }
+  
+  return count || 0;
 }

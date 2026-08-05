@@ -125,12 +125,14 @@ const translations = {
       maps: [
         { title: 'MOUNT BANDA NEIRA', desc: 'Eksplorasi keindahan alam yang megah dengan visual yang memukau.' },
         { title: 'MT BANDA NEIRA JALUR EXTREAM', desc: 'Uji batas kemampuan Anda dalam medan paling menantang.' },
-        { title: 'AV NIGHT VIBES', desc: 'Suasana malam imersif dengan tata cahaya dan audio yang artistik.' },
+        { title: 'NIGHT VIBES', desc: 'Suasana malam imersif dengan tata cahaya dan audio yang artistik.' },
         { title: 'AV ARENA', desc: 'Kompetisi pertempuran dengan mekanik yang responsif dan seimbang.' },
         { title: 'TEMPAT NONGKRONG', desc: 'Ruang kolaborasi sosial untuk berinteraksi dalam lingkungan yang asri.' },
         { title: 'MENJADI PETANI', desc: 'Simulasi manajemen sumber daya dan pembangunan ekonomi yang mendalam.' },
         { title: 'PARKOUR CITY BLUE', desc: 'Navigasi urban futuristik yang mengandalkan presisi dan kecepatan.' },
-        { title: 'ORANG HILANG', desc: 'Pengalaman horor psikologis dengan alur cerita yang mencekam.' }
+        { title: 'ORANG HILANG', desc: 'Pengalaman horor psikologis dengan alur cerita yang mencekam.' },
+        { title: 'BALI Paradise', desc: 'Jelajahi keindahan Pulau Bali dengan pantai, pura, dan budaya yang memukau.' },
+        { title: 'SURGA DUNIA', desc: 'Nikmati suasana surga dunia dengan pemandangan alam yang luar biasa indah.' }
       ]
     },
     services: {
@@ -460,12 +462,14 @@ const translations = {
       maps: [
         { title: 'MOUNT BANDA NEIRA', desc: 'Explore majestic natural beauty with stunning visuals.' },
         { title: 'MT BANDA NEIRA JALUR EXTREAM', desc: 'Test your limits in the most challenging terrain.' },
-        { title: 'AV NIGHT VIBES', desc: 'Immersive night atmosphere with artistic lighting and audio.' },
+        { title: 'NIGHT VIBES', desc: 'Immersive night atmosphere with artistic lighting and audio.' },
         { title: 'AV ARENA', desc: 'Combat competition with responsive and balanced mechanics.' },
         { title: 'TEMPAT NONGKRONG', desc: 'Social collaboration space to interact in a lush environment.' },
         { title: 'MENJADI PETANI', desc: 'Deep resource management and economic building simulation.' },
         { title: 'PARKOUR CITY BLUE', desc: 'Futuristic urban navigation relying on precision and speed.' },
-        { title: 'ORANG HILANG', desc: 'Psychological horror experience with a gripping storyline.' }
+        { title: 'ORANG HILANG', desc: 'Psychological horror experience with a gripping storyline.' },
+        { title: 'BALI Paradise', desc: 'Explore the beauty of Bali Island with stunning beaches, temples, and culture.' },
+        { title: 'SURGA DUNIA', desc: 'Enjoy a heavenly atmosphere with extraordinary natural scenery.' }
       ]
     },
     services: {

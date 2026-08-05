@@ -56,6 +56,15 @@ export async function POST(request: NextRequest) {
     validators.username(body.username);
     validators.password(body.password);
 
+    console.log('POST /api/accounts - Checking connection...');
+    const connection = await storage.getConnection(body.connectionId, user.id);
+    console.log('POST /api/accounts - Found connection:', connection);
+    
+    if (!connection) {
+      console.error('POST /api/accounts - Connection not found');
+      throw new Error('Connection not found or you don\'t have permission');
+    }
+
     console.log('POST /api/accounts - Creating account...');
     const account = await storage.createAccount({
       ownerUserId: user.id,

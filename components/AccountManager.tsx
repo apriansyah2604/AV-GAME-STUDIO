@@ -60,7 +60,8 @@ export default function AccountManager({
       }
     } catch (error) {
       console.error('Error adding account:', error);
-      addToast('An unexpected error occurred!', 'error');
+      const errorMsg = error instanceof Error ? error.message : 'An unexpected error occurred!';
+      addToast(errorMsg, 'error');
     }
   };
 

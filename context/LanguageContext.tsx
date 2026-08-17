@@ -296,6 +296,14 @@ const translations = {
     },
     robux_packages: [
       {
+        name: '10 Robux',
+        price: 'Rp 1.000',
+        description: 'Paket termurah untuk trial, coba-coba, atau kebutuhan item ringan.',
+        badge: 'MURAH',
+        meta: 'Proses 5-15 menit',
+        stock: 'Ready'
+      },
+      {
         name: '100 Robux',
         price: 'Rp 15.000',
         description: 'Pilihan hemat untuk top up kecil, trial buy, atau kebutuhan item ringan.',
@@ -638,6 +646,14 @@ const translations = {
       rights: 'All rights reserved.'
     },
     robux_packages: [
+      {
+        name: '10 Robux',
+        price: 'Rp 1.000',
+        description: 'Cheapest package for trial, testing, or light item needs.',
+        badge: 'CHEAP',
+        meta: 'Process 5-15 minutes',
+        stock: 'Ready'
+      },
       {
         name: '100 Robux',
         price: 'Rp 15.000',

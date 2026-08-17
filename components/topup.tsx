@@ -26,9 +26,17 @@ export function TopUp() {
   const [checkoutUsername, setCheckoutUsername] = useState('')
   const [checkoutStatus, setCheckoutStatus] = useState<'idle' | 'loading' | 'error'>('idle')
   const [checkoutError, setCheckoutError] = useState('')
+  const [paymentStatus, setPaymentStatus] = useState<{ paid: boolean; orderId?: string } | null>(null)
 
   useEffect(() => {
     setIsMounted(true)
+    const params = new URLSearchParams(window.location.search)
+    const orderId = params.get('order_id')
+    const status = params.get('status')
+    if (orderId && status === 'paid') {
+      setPaymentStatus({ paid: true, orderId })
+      window.history.replaceState({}, '', '/topup')
+    }
   }, [])
 
   if (!isMounted) return null
@@ -127,6 +135,29 @@ export function TopUp() {
       <div className="absolute right-10 top-20 h-48 w-48 rounded-full bg-[#00E5FF]/10 blur-3xl" />
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {paymentStatus?.paid && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-5 sm:p-6"
+          >
+            <div className="flex items-center gap-3">
+              <CheckCircle2 className="h-6 w-6 shrink-0 text-emerald-400" />
+              <div>
+                <div className="text-base sm:text-lg font-black text-emerald-300">Pembayaran Berhasil!</div>
+                <p className="mt-1 text-xs sm:text-sm text-emerald-400/80">
+                  Terima kasih! Robux sedang dikirim otomatis ke username kamu. Jika dalam beberapa menit belum masuk, hubungi admin via WhatsApp.
+                </p>
+                {paymentStatus.orderId && (
+                  <p className="mt-2 text-[10px] tracking-widest text-emerald-500/60 uppercase">
+                    Order ID: {paymentStatus.orderId}
+                  </p>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

@@ -15,7 +15,7 @@ export async function getTransactionStatus(orderId: string) {
   return snap.transaction.status(orderId);
 }
 
-export async function createTransaction(orderId: string, amount: number, itemDetails: any, customerDetails: any, metadata: { username: string, robux_amount: number }) {
+export async function createTransaction(orderId: string, amount: number, itemDetails: any, customerDetails: any, metadata: { username: string, robux_amount: number }, redirectUrl?: string) {
   const parameter = {
     transaction_details: {
       order_id: orderId,
@@ -26,6 +26,8 @@ export async function createTransaction(orderId: string, amount: number, itemDet
     // Gunakan custom_field untuk meneruskan data ke webhook
     custom_field1: metadata.username,
     custom_field2: metadata.robux_amount.toString(),
+    // Setelah pembayaran, arahkan user kembali ke website
+    ...(redirectUrl ? { finish_redirect_url: redirectUrl } : {}),
     // Biarkan Midtrans menampilkan semua metode yang aktif di dashboard
     // enabled_payments: ["gopay", "qris", "shopeepay", "bank_transfer"],
     credit_card: {

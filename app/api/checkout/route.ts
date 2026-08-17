@@ -48,12 +48,17 @@ export async function POST(request: Request) {
     };
 
     // 2. Gunakan helper createTransaction yang baru
+    const origin = request.headers.get('origin') || request.headers.get('referer') || '';
+    const baseUrl = origin ? new URL(origin).origin : '';
+    const redirectUrl = baseUrl ? `${baseUrl}/topup?order_id=${orderId}&status=paid` : undefined;
+
     const transaction = await createTransaction(
       orderId, 
       price, 
       itemDetails, 
       customerDetails, 
-      { username, robux_amount: amount }
+      { username, robux_amount: amount },
+      redirectUrl
     );
 
     return NextResponse.json({

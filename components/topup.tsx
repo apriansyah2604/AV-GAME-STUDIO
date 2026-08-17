@@ -23,6 +23,9 @@ export function TopUp() {
   const [isMounted, setIsMounted] = useState(false)
   const [robloxUsername, setRobloxUsername] = useState('')
   const [checkStatus, setCheckStatus] = useState<'idle' | 'loading' | 'member' | 'not_member' | 'error'>('idle')
+  const [checkoutUsername, setCheckoutUsername] = useState('')
+  const [checkoutStatus, setCheckoutStatus] = useState<'idle' | 'loading' | 'error'>('idle')
+  const [checkoutError, setCheckoutError] = useState('')
 
   useEffect(() => {
     setIsMounted(true)
@@ -59,6 +62,50 @@ export function TopUp() {
           setCheckStatus('not_member')
         }
       }, 1000)
+    }
+  };
+
+  const handleCheckout = async (item: any) => {
+    if (!checkoutUsername.trim()) {
+      setCheckoutError(t('topup.checkout_error_username'))
+      setCheckoutStatus('error')
+      return
+    }
+    setCheckoutStatus('loading')
+    setCheckoutError('')
+
+    try {
+      const amount = parseInt(item.name)
+      const price = Number(String(item.price || '').replace(/[^0-9]/g, ''))
+      if (!amount || !price) {
+        setCheckoutError(t('topup.checkout_error_general'))
+        setCheckoutStatus('error')
+        return
+      }
+
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: checkoutUsername.trim(),
+          amount,
+          packageName: item.name,
+          price,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (data.success && data.redirect_url) {
+        window.location.href = data.redirect_url
+      } else {
+        setCheckoutError(data.message || t('topup.checkout_error_general'))
+        setCheckoutStatus('error')
+      }
+    } catch (err) {
+      console.error('Checkout Error:', err)
+      setCheckoutError(t('topup.checkout_error_general'))
+      setCheckoutStatus('error')
     }
   };
 
@@ -179,6 +226,31 @@ export function TopUp() {
               </div>
             </motion.div>
 
+            <div className="mb-5 rounded-2xl border border-[#00AFFF]/15 bg-[#08111F]/80 p-4 sm:p-5">
+              <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.25em] text-[#00E5FF]/80">
+                {t('topup.username_input')}
+              </label>
+              <input
+                type="text"
+                value={checkoutUsername}
+                onChange={(e) => {
+                  setCheckoutUsername(e.target.value)
+                  setCheckoutStatus('idle')
+                }}
+                placeholder={t('topup.username_input_placeholder')}
+                className="w-full rounded-xl bg-[#0b1421]/70 border border-[#1e293b] px-4 py-3.5 text-sm text-white placeholder-white/30 outline-none focus:border-[#00AFFF] transition-all"
+              />
+              {checkoutStatus === 'error' && (
+                <p className="mt-2 flex items-center gap-2 text-xs font-medium text-red-400">
+                  <AlertCircle className="h-4 w-4 shrink-0" />
+                  {checkoutError}
+                </p>
+              )}
+              <p className="mt-3 text-[10px] text-white/30 uppercase tracking-widest">
+                {t('topup.checkout_desc')}
+              </p>
+            </div>
+
             <div className="space-y-5">
               {robuxPackages.map((item: any, index: number) => (
                 <motion.div
@@ -268,25 +340,33 @@ export function TopUp() {
                         </div>
                         <div className="mt-1 text-xs tracking-widest text-white/35">{t('topup.final_price')}</div>
                         <div className="mt-4 rounded-xl border border-[#00AFFF]/15 bg-[#0b1421]/70 px-3 py-3 text-xs sm:text-sm text-white/55">
-                          {t('topup.order_desc')}
+                          {t('topup.checkout_desc')}
                         </div>
                       </div>
 
-                      <motion.a
-                        href={`https://wa.me/62895327025015?text=${encodeURIComponent(item.message)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <motion.button
+                        onClick={() => handleCheckout(item)}
+                        disabled={checkoutStatus === 'loading'}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        className={`mt-5 flex w-full items-center justify-center gap-2 rounded-xl py-4 text-xs sm:text-sm font-bold tracking-wider transition-all ${
+                        className={`mt-5 flex w-full items-center justify-center gap-2 rounded-xl py-4 text-xs sm:text-sm font-bold tracking-wider transition-all disabled:opacity-50 ${
                           item.featured
                             ? 'bg-gradient-to-r from-[#00AFFF] to-[#00E5FF] text-[#030303] hover:shadow-lg hover:shadow-[#00AFFF]/30'
                             : 'border border-[#00AFFF]/30 text-white hover:border-[#00AFFF] hover:bg-[#00AFFF]/10'
                         }`}
                       >
-                        {t('topup.order_btn')}
-                        <ArrowRight className="h-4 w-4" />
-                      </motion.a>
+                        {checkoutStatus === 'loading' ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            {t('topup.checkout_loading')}
+                          </>
+                        ) : (
+                          <>
+                            {t('topup.order_btn')}
+                            <ArrowRight className="h-4 w-4" />
+                          </>
+                        )}
+                      </motion.button>
                     </div>
                   </div>
                 </motion.div>

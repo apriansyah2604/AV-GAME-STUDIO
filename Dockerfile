@@ -1,22 +1,17 @@
 FROM node:20
 
-# Buat direktori kerja
 WORKDIR /app
 
-# Salin package.json
-COPY package.json ./
+# Install hanya dependensi bot (express, cors, noblox.js, dotenv)
+COPY server/package.json ./
+RUN npm install --production
 
-# Install dependensi
-RUN npm install
+# Salin kode bot
+COPY server/ ./
 
-# Salin index.js (Hugging Face upload manual biasanya ditaruh di root)
-COPY index.js ./
-
-# Expose port 7860 (Port default Hugging Face Spaces)
 EXPOSE 7860
 
-# Gunakan port 7860 untuk aplikasi
-ENV ROBLOX_SERVER_PORT=7860
+# Port default Hugging Face Spaces
+ENV PORT=7860
 
-# Jalankan server
 CMD ["node", "index.js"]

@@ -26,7 +26,7 @@ export async function GET() {
       
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 8000); // Timeout 8 detik
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // Timeout 30 detik (Space HF gratis butuh waktu bangun)
 
         const response = await fetch(targetUrl, { 
           cache: 'no-store',

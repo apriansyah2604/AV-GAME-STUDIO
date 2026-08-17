@@ -1,0 +1,16 @@
+{
+  "name": "av-payout-bot",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Roblox payout bot untuk AV Game Studio (Hugging Face Spaces)",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "noblox.js": "^9.0.0"
+  }
+}

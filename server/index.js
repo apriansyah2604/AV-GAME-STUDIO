@@ -3,23 +3,25 @@ const noblox = require('noblox.js');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+require('dotenv').config();
 
 /**
  * =================================================================
  * CONFIGURATION
+ * Semua nilai rahasia diambil dari environment variables.
+ * Untuk Hugging Face Spaces, set di: Settings -> Variables and secrets
  * =================================================================
  */
 const CONFIG = {
-    // Cookie terbaru Anda (Edisi Hong Kong)
-    ROBLOX_COOKIE: "_|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|_CAEaAhADIhwKBGR1aWQSFDE0NDExNDY4MjgwNjcwNzMxMjM3KAM.tbkIIJ-s2p6oSCQsYgqI9Jz3taI8VhMmZfjqDSqJJC_8G2_P5XLytYRa7nProb5IWkoUpqFd4KLxROC-crt5gdMn5Q0XLCdkEfK3qfCD-sCPSHhx9PBuCskHhlVBhm3ZLcDeTrkYEXsVtqnGr98FCoSzqLmulPEvM2Kpt1A-s36Cs3D3N4a4d5vSX_i_X6XaxCppns7FessgIcmVjuIsqM2iFkWTAmqI8j_TrAmeCHzSdyxPlDza5YOI0dP_eTTkt5TmJdifiHEyl-61skOfMT47eJmiNF7iyVuxTUDz-zSuE4h1BHuNsbrWkZOThp5Tau0-SXB4duIADM3vovIHmOZ0y5EFUY4zhZs1MlvqctOgnokhL14uWgru7JVgSnYxfX-dC58fZu_9JCSGgjIW_UloF0G6hujkDOZA6qQnk0dmOWhrle6H6E8IkwezIi5uTa223hKv9mYfRhfPfBYxLSwHoOkVbpoEG06Dyjm1zv1_4nyri4wNC7NskTnstNTlsf7m8hJl1jvuqkCPf2NH6HIU031-4KbjolHIZ3xZyW0UwiaFTbhA9hBQc4zGWd61591COy8NJgTJeskcV_br9CVFC5WRk_rIPFbUSxprbDB4PWarr9ju9E0gYyqumXQk5TbwsDWZcPeMouI-e7-YE4FbbyoYsd_0euG6DP0En5rKsqaokjtLu49FO5bvoeUZLJjf7VcDmf0uaIRJbLDGFXNIqsUN6z5KbRzvlz67O2xOQTgeLjOa7bwhjNqH-pX-1H1hE2xMvAR8BZzLlaXjPPlcfctJhfCak8ckJG3heufGRjX5Qn87DmsUmP_kryZ1R-iBLo-SdyjNAFy_o9JFAUHrDH0lzq9717BimrsTMBL6MsOnZjYwqB9v1jYkadzHMeYx_lsXDHYKWBMlNM-Rt1ArI-fkWT7NzcO0b2vFtAL7MJ0kkF7dO84pzem2haeU_R642w",
-    
-    ROBLOX_GROUP_ID: 390244299,
-    PAYOUT_SECRET_KEY: "av-studio-super-secret-key",
+    // Cookie akun Roblox Anda (.ROBLOSECURITY). WAJIB diisi via env.
+    ROBLOX_COOKIE: process.env.ROBLOX_COOKIE,
+    ROBLOX_GROUP_ID: Number(process.env.ROBLOX_GROUP_ID) || 390244299,
+    PAYOUT_SECRET_KEY: process.env.PAYOUT_SECRET_KEY,
     PORT: process.env.PORT || 7860,
-    
+
     // [OPSIONAL] Gunakan Proxy Residensial jika sering kena Error 403/Challenge
     // Format: http://username:password@ip:port
-    PROXY_URL: process.env.PROXY_URL || null 
+    PROXY_URL: process.env.PROXY_URL || null
 };
 
 const app = express();
@@ -174,6 +176,12 @@ app.get('/', (req, res) => res.send('Roblox Payout Bot is Online!'));
 
 app.listen(CONFIG.PORT, "0.0.0.0", () => {
     console.log(`Server aktif di port ${CONFIG.PORT}`);
+    if (!CONFIG.ROBLOX_COOKIE) {
+        log('PERINGATAN: ROBLOX_COOKIE belum di-set. Bot tidak bisa login ke Roblox.', 'WARNING');
+    }
+    if (!CONFIG.PAYOUT_SECRET_KEY) {
+        log('PERINGATAN: PAYOUT_SECRET_KEY belum di-set. Endpoint payout akan menolak semua request.', 'WARNING');
+    }
     loadCookie();
     initRoblox().catch(err => console.error('Startup Error:', err.message));
 });

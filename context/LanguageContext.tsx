@@ -122,6 +122,7 @@ const translations = {
         fighting: 'Arena Kompetitif',
         farming: 'Simulator Ekonomi',
         parkour: 'Ketangkasan Fisik',
+        racing: 'Balapan',
         mystery: 'Narasi & Misteri'
       },
       status: {
@@ -479,6 +480,7 @@ const translations = {
         fighting: 'Competitive Arena',
         farming: 'Economic Simulator',
         parkour: 'Physical Agility',
+        racing: 'Racing',
         mystery: 'Narrative & Mystery'
       },
       status: {

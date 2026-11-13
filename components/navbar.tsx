@@ -153,7 +153,7 @@ export function Navbar() {
                 href="/management"
                 className="hidden md:flex relative px-6 py-2 rounded-none overflow-hidden group items-center"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-[#0066ff] to-[#00a8ff] skew-x-[-12deg]" />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#b51e2a] to-[#ff4655] skew-x-[-12deg]" />
                 <span className="relative font-black tracking-normal text-white uppercase text-sm skew-x-[12deg]">
                   Roblox Management
                 </span>
@@ -205,7 +205,7 @@ export function Navbar() {
               {user ? (
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-2 px-3 py-1.5 rounded-none border border-white/20 bg-white/5">
-                    <User className="w-4 h-4 text-[#00AFFF]" />
+                    <User className="w-4 h-4 text-[#ff4655]" />
                     <span className="text-xs font-black text-white/80">
                       {user.username}
                     </span>
@@ -224,9 +224,9 @@ export function Navbar() {
               ) : (
                 <Link
                   href="/login"
-                  className="flex items-center gap-2 px-4 py-2 rounded-none border border-white/20 hover:border-[#00AFFF]/50 hover:bg-[#00AFFF]/5 transition-all"
+                  className="flex items-center gap-2 px-4 py-2 rounded-none border border-white/20 hover:border-[#ff4655]/50 hover:bg-[#ff4655]/5 transition-all"
                 >
-                  <User className="w-4 h-4 text-[#00AFFF]" />
+                  <User className="w-4 h-4 text-[#ff4655]" />
                   <span className="text-xs font-black text-white/80">Login</span>
                 </Link>
               )}

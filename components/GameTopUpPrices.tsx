@@ -84,8 +84,8 @@ export function GameTopUpPrices({ game }: { game: GameDetails }) {
   }
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#030303] px-4 pb-20 pt-32 sm:px-6">
-      <div className="absolute inset-0 bg-gradient-to-b from-[#07101d] via-[#030303] to-[#030303]" />
+    <main className="relative min-h-screen overflow-hidden bg-[#0b0b0d] px-4 pb-20 pt-32 sm:px-6">
+      <div className="absolute inset-0 bg-gradient-to-b from-[#171216] via-[#0b0b0d] to-[#0b0b0d]" />
       <div className="absolute left-1/2 top-24 h-96 w-96 -translate-x-1/2 rounded-full bg-[#ff4655]/10 blur-3xl" />
 
       <section className="relative z-10 mx-auto max-w-5xl">
@@ -98,7 +98,7 @@ export function GameTopUpPrices({ game }: { game: GameDetails }) {
         </Link>
 
         <div className="mb-8 mt-8">
-          <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#ff7780]">
+          <p className="valorant-eyebrow">
             {isIndonesian ? 'Toko partner' : 'Partner stores'}
           </p>
           <h1 className="mt-3 text-3xl font-black uppercase sm:text-5xl">{game.name}</h1>
@@ -151,7 +151,7 @@ export function GameTopUpPrices({ game }: { game: GameDetails }) {
             {isIndonesian ? 'Memuat toko partner...' : 'Loading partner stores...'}
           </div>
         ) : products.length === 0 ? (
-          <div className="rounded-2xl border border-white/10 bg-[#08111F]/80 p-8 text-center">
+          <div className="border border-white/10 bg-[#141416]/90 p-8 text-center">
             <Store className="mx-auto h-10 w-10 text-[#ff7780]" />
             <h2 className="mt-4 text-xl font-black text-white">
               {isIndonesian ? 'Belum ada paket tersedia' : 'No packages available yet'}
@@ -161,14 +161,14 @@ export function GameTopUpPrices({ game }: { game: GameDetails }) {
                 ? 'Partner untuk game ini belum memiliki produk aktif.'
                 : 'No partner has active products for this game yet.'}
             </p>
-            <Link href="/partner/register" className="mt-5 inline-flex rounded-xl bg-[#ff4655] px-5 py-3 text-sm font-black text-white">
+            <Link href="/partner/register" className="mt-5 inline-flex bg-[#ff4655] px-5 py-3 text-sm font-black text-white">
               {isIndonesian ? 'Daftar jadi partner' : 'Become a partner'}
             </Link>
           </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">
             {products.map((product) => (
-              <article key={product.id} className="rounded-2xl border border-white/10 bg-[#08111F]/85 p-5">
+              <article key={product.id} className="valorant-game-card relative overflow-hidden border border-white/10 bg-[#141416]/90 p-5">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-xs font-bold uppercase tracking-wider text-[#ff7780]">
@@ -186,7 +186,7 @@ export function GameTopUpPrices({ game }: { game: GameDetails }) {
                     type="button"
                     onClick={() => handleCheckout(product.id)}
                     disabled={checkoutId !== null}
-                    className="inline-flex min-w-32 items-center justify-center gap-2 rounded-xl bg-[#ff4655] px-4 py-3 text-xs font-black uppercase text-white transition hover:bg-[#ff5c69] disabled:opacity-50"
+                    className="inline-flex min-w-32 items-center justify-center gap-2 bg-[#ff4655] px-4 py-3 text-xs font-black uppercase text-white transition hover:bg-[#ff5c69] disabled:opacity-50"
                   >
                     {checkoutId === product.id && <Loader2 className="h-4 w-4 animate-spin" />}
                     {isIndonesian ? 'Bayar' : 'Pay'}

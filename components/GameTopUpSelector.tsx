@@ -21,35 +21,35 @@ export function GameTopUpSelector() {
   const isIndonesian = language === 'id'
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#030303] px-4 pb-20 pt-32 sm:px-6">
-      <div className="absolute inset-0 bg-gradient-to-b from-[#07101d] via-[#030303] to-[#030303]" />
+    <main className="relative min-h-screen overflow-hidden bg-[#0b0b0d] px-4 pb-20 pt-32 sm:px-6">
+      <div className="absolute inset-0 bg-gradient-to-b from-[#171216] via-[#0b0b0d] to-[#0b0b0d]" />
       <div className="absolute left-1/2 top-24 h-96 w-96 -translate-x-1/2 rounded-full bg-[#ff4655]/10 blur-3xl" />
 
       <section className="relative z-10 mx-auto max-w-6xl">
         <div className="mx-auto mb-12 max-w-2xl text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-[#ff4655]/30 bg-[#ff4655]/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#ff7780]">
+          <span className="valorant-eyebrow">
             <Gamepad2 className="h-4 w-4" />
-            {isIndonesian ? 'Pilih Game' : 'Choose a Game'}
+            {isIndonesian ? 'Pilih misi' : 'Select your mission'}
           </span>
-          <h1 className="mt-5 text-3xl font-black uppercase sm:text-5xl">
-            {isIndonesian ? 'Mau Top Up Game Apa?' : 'Which Game Do You Play?'}
+          <h1 className="mt-5 text-4xl font-black uppercase leading-[0.95] sm:text-6xl">
+            {isIndonesian ? 'Pilih game.' : 'Choose your game.'}
           </h1>
-          <p className="mt-4 text-sm leading-relaxed text-white/55 sm:text-base">
+          <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-white/55 sm:text-base">
             {isIndonesian
-              ? 'Pilih game untuk membuka halaman top up atau menghubungi seller.'
-              : 'Choose a game to open its top-up page or contact the seller.'}
+              ? 'Temukan paket pilihanmu. Transaksi top up tersedia dari toko partner terverifikasi.'
+              : 'Find your next top-up. Packages are available from verified partner stores.'}
           </p>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {games.map((game) => {
+          {games.map((game, index) => {
             const href = `/topup-game/${game.slug}`
 
             return (
               <Link
                 key={game.name}
                 href={href}
-                className="group relative flex min-h-64 flex-col justify-end overflow-hidden rounded-2xl border border-white/10 bg-[#08111F]/80 p-5 transition hover:-translate-y-1 hover:border-[#ff4655]/50"
+                className="valorant-game-card group relative flex min-h-64 flex-col justify-end overflow-hidden border border-white/10 bg-[#141416]/90 p-5 transition duration-300 hover:-translate-y-1 hover:border-[#ff4655]/60"
               >
                 <Image
                   src={`/games/${game.image}`}
@@ -59,7 +59,10 @@ export function GameTopUpSelector() {
                   className="object-cover transition duration-500 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-black/5 transition group-hover:from-black/90" />
-                <div className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-sm">
+                <div className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center border border-white/20 bg-black/50 text-white backdrop-blur-sm">
+                  <span className="absolute -left-2 -top-2 text-[9px] font-black tracking-widest text-[#ff6874]">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
                   <ArrowRight className="h-5 w-5 transition group-hover:translate-x-1 group-hover:text-[#ff6873]" />
                 </div>
 
@@ -73,7 +76,7 @@ export function GameTopUpSelector() {
             )
           })}
         </div>
-        <div className="mt-10 flex flex-col items-center justify-between gap-4 rounded-2xl border border-[#ff4655]/20 bg-[#ff4655]/5 p-5 text-center sm:flex-row sm:text-left">
+        <div className="mt-10 flex flex-col items-center justify-between gap-4 border border-[#ff4655]/20 bg-[#141416]/80 p-5 text-center sm:flex-row sm:text-left">
           <div>
             <h2 className="font-black text-white">
               {isIndonesian ? 'Punya toko top up?' : 'Have a top-up store?'}
@@ -85,10 +88,10 @@ export function GameTopUpSelector() {
             </p>
           </div>
           <div className="flex flex-wrap justify-center gap-3">
-            <Link href="/partner/login" className="rounded-xl border border-white/15 px-4 py-3 text-sm font-bold text-white hover:bg-white/10">
+            <Link href="/partner/login" className="border border-white/15 px-4 py-3 text-sm font-bold text-white hover:bg-white/10">
               {isIndonesian ? 'Login partner' : 'Partner login'}
             </Link>
-            <Link href="/partner/register" className="rounded-xl bg-[#ff4655] px-4 py-3 text-sm font-black text-white hover:bg-[#ff5c69]">
+            <Link href="/partner/register" className="bg-[#ff4655] px-4 py-3 text-sm font-black text-white hover:bg-[#ff5c69]">
               {isIndonesian ? 'Daftar toko' : 'Register store'}
             </Link>
           </div>

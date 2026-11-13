@@ -6,10 +6,9 @@ import {
   ArrowRight,
   BadgeCheck,
   Clock3,
-  Search,
+  MessageCircle,
   ShieldCheck,
   Shirt,
-  Store,
   Users,
   CheckCircle2,
   AlertCircle,
@@ -18,15 +17,22 @@ import {
 import { useLanguage } from '@/context/LanguageContext'
 import { useState, useEffect } from 'react'
 
+const sellerWhatsApp = '62895327025015'
+
 export function TopUp() {
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
   const [isMounted, setIsMounted] = useState(false)
   const [robloxUsername, setRobloxUsername] = useState('')
   const [checkStatus, setCheckStatus] = useState<'idle' | 'loading' | 'member' | 'not_member' | 'error'>('idle')
   const [checkoutUsername, setCheckoutUsername] = useState('')
   const [checkoutStatus, setCheckoutStatus] = useState<'idle' | 'loading' | 'error'>('idle')
   const [checkoutError, setCheckoutError] = useState('')
-  const [paymentStatus, setPaymentStatus] = useState<{ paid: boolean; orderId?: string } | null>(null)
+  const [paymentStatus, setPaymentStatus] = useState<{
+    paid: boolean
+    verifying: boolean
+    orderId: string
+    message?: string
+  } | null>(null)
 
   useEffect(() => {
     setIsMounted(true)
@@ -34,8 +40,33 @@ export function TopUp() {
     const orderId = params.get('order_id')
     const status = params.get('status')
     if (orderId && status === 'paid') {
-      setPaymentStatus({ paid: true, orderId })
-      window.history.replaceState({}, '', '/topup')
+      setPaymentStatus({ paid: false, verifying: true, orderId })
+
+      fetch('/api/checkout/confirm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId }),
+      })
+        .then(async (response) => {
+          const result = await response.json()
+          setPaymentStatus({
+            paid: response.ok && result.success,
+            verifying: false,
+            orderId,
+            message: result.message,
+          })
+          if (response.ok && result.success) {
+            window.history.replaceState({}, '', '/topup')
+          }
+        })
+        .catch(() => {
+          setPaymentStatus({
+            paid: false,
+            verifying: false,
+            orderId,
+            message: t('topup.payment_pending_desc'),
+          })
+        })
     }
   }, [])
 
@@ -84,8 +115,7 @@ export function TopUp() {
 
     try {
       const amount = parseInt(item.name)
-      const price = Number(String(item.price || '').replace(/[^0-9]/g, ''))
-      if (!amount || !price) {
+      if (!amount) {
         setCheckoutError(t('topup.checkout_error_general'))
         setCheckoutStatus('error')
         return
@@ -97,8 +127,6 @@ export function TopUp() {
         body: JSON.stringify({
           username: checkoutUsername.trim(),
           amount,
-          packageName: item.name,
-          price,
         }),
       })
 
@@ -119,14 +147,6 @@ export function TopUp() {
 
   const robuxPackages = t('robux_packages')
   const avatarServices = t('avatar_services')
-  const marketCategories = t('market_categories')
-
-  const marketplaceStats = [
-    { label: t('topup.stats.fast'), value: t('topup.stats.fast_val') },
-    { label: t('topup.stats.safe'), value: t('topup.stats.safe_val') },
-    { label: t('topup.stats.price'), value: t('topup.stats.price_val') },
-    { label: t('topup.stats.fit'), value: t('topup.stats.fit_val') },
-  ]
   
   return (
     <section id="topup" className="relative overflow-hidden py-20 sm:py-32">
@@ -135,23 +155,52 @@ export function TopUp() {
       <div className="absolute right-10 top-20 h-48 w-48 rounded-full bg-[#00E5FF]/10 blur-3xl" />
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {paymentStatus?.paid && (
+        {paymentStatus && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-8 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-5 sm:p-6"
+            className={`mb-8 rounded-2xl border p-5 sm:p-6 ${
+              paymentStatus.paid
+                ? 'border-emerald-500/30 bg-emerald-500/10'
+                : 'border-amber-500/30 bg-amber-500/10'
+            }`}
           >
             <div className="flex items-center gap-3">
-              <CheckCircle2 className="h-6 w-6 shrink-0 text-emerald-400" />
+              {paymentStatus.verifying
+                ? <Loader2 className="h-6 w-6 shrink-0 animate-spin text-amber-400" />
+                : paymentStatus.paid
+                  ? <CheckCircle2 className="h-6 w-6 shrink-0 text-emerald-400" />
+                  : <AlertCircle className="h-6 w-6 shrink-0 text-amber-400" />}
               <div>
-                <div className="text-base sm:text-lg font-black text-emerald-300">Pembayaran Berhasil!</div>
-                <p className="mt-1 text-xs sm:text-sm text-emerald-400/80">
-                  Terima kasih! Robux sedang dikirim otomatis ke username kamu. Jika dalam beberapa menit belum masuk, hubungi admin via WhatsApp.
+                <div className={`text-base sm:text-lg font-black ${paymentStatus.paid ? 'text-emerald-300' : 'text-amber-300'}`}>
+                  {paymentStatus.verifying
+                    ? t('topup.payment_verifying')
+                    : paymentStatus.paid
+                      ? t('topup.payment_success')
+                      : t('topup.payment_pending')}
+                </div>
+                <p className={`mt-1 text-xs sm:text-sm ${paymentStatus.paid ? 'text-emerald-400/80' : 'text-amber-400/80'}`}>
+                  {paymentStatus.paid
+                    ? t('topup.payment_success_desc')
+                    : paymentStatus.message || t('topup.payment_pending_desc')}
                 </p>
                 {paymentStatus.orderId && (
                   <p className="mt-2 text-[10px] tracking-widest text-emerald-500/60 uppercase">
                     Order ID: {paymentStatus.orderId}
                   </p>
+                )}
+                {paymentStatus.paid && (
+                  <a
+                    href={`https://wa.me/${sellerWhatsApp}?text=${encodeURIComponent(language === 'id'
+                      ? `Halo seller, pembayaran saya sudah terverifikasi. Mohon proses pesanan Robux saya.\nOrder ID: ${paymentStatus.orderId}`
+                      : `Hello seller, my payment has been verified. Please process my Robux order.\nOrder ID: ${paymentStatus.orderId}`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-4 py-2.5 text-sm font-bold text-black transition hover:bg-emerald-400"
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                    {t('topup.whatsapp_seller')}
+                  </a>
                 )}
               </div>
             </div>
@@ -175,68 +224,6 @@ export function TopUp() {
             {t('topup.subtitle')}
           </p>
         </motion.div>
-
-        <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mb-8 overflow-hidden rounded-2xl border border-[#00AFFF]/15 bg-[#08111F]/75 backdrop-blur-xl"
-          >
-            <div className="grid gap-6 p-4 sm:p-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:p-8">
-              <div>
-                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#00AFFF]/20 bg-[#00AFFF]/10 px-3 py-1.5 text-[10px] tracking-[0.25em] text-[#00E5FF] sm:text-xs">
-                  <Store className="h-3.5 w-3.5" />
-                  {t('topup.market_badge')}
-                </div>
-                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white">
-                  {t('topup.market_title')}
-                </h3>
-                <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/55">
-                  {t('topup.market_desc')}
-                </p>
-                <div className="mt-6 flex flex-wrap gap-2 sm:gap-3">
-                  {marketCategories.map((category: string, index: number) => (
-                    <div
-                      key={category}
-                      className={`rounded-full px-3 py-1.5 text-xs sm:text-sm ${
-                        index === 0
-                          ? 'bg-gradient-to-r from-[#00AFFF] to-[#00E5FF] font-semibold text-[#030303]'
-                          : 'border border-[#00AFFF]/20 bg-[#0b1421]/80 text-white/65'
-                      }`}
-                    >
-                      {category}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-4 rounded-2xl border border-[#00AFFF]/15 bg-[#0b1421]/70 p-4 sm:p-5">
-                <div className="flex items-center gap-3 rounded-2xl border border-[#1e293b] bg-[#09111c] px-3 py-3">
-                  <Search className="h-4 w-4 text-[#00AFFF]" />
-                  <span className="text-xs sm:text-sm text-white/45">{t('topup.search_placeholder') || '...'}</span>
-                </div>
-                <div className="rounded-2xl border border-[#00AFFF]/15 bg-gradient-to-r from-[#00AFFF]/10 to-[#00E5FF]/10 p-4 sm:p-5">
-                  <div className="mb-2 text-[10px] tracking-[0.25em] text-[#00E5FF]/80 sm:text-xs">{t('topup.promo_flow')}</div>
-                  <div className="text-base sm:text-lg font-black text-white">{t('topup.promo_title')}</div>
-                  <p className="mt-2 text-xs sm:text-sm leading-relaxed text-white/55">
-                    {t('topup.promo_desc')}
-                  </p>
-                </div>
-
-                <div className="grid gap-2 grid-cols-2 lg:grid-cols-4">
-                  {marketplaceStats.map((stat: any) => (
-                    <div
-                      key={stat.label}
-                      className="rounded-2xl border border-[#1e293b] bg-[#08111F]/80 p-2.5 sm:p-3"
-                    >
-                      <div className="text-[9px] sm:text-[10px] tracking-widest text-white/35 uppercase">{stat.label}</div>
-                      <div className="mt-1 text-xs sm:text-sm font-bold text-white line-clamp-1">{stat.value}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </motion.div>
 
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(280px,0.8fr)]">
           <div>

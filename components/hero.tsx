@@ -1,40 +1,14 @@
 "use client"
 
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { ChevronDown, Gamepad2, Rocket, ShoppingCart, Users } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
 import { useTransition } from '@/context/TransitionContext'
-import { ADMIN_WHATSAPP } from '@/lib/utils'
+import Link from 'next/link'
 
 export function Hero() {
   const { t } = useLanguage()
   const { triggerTransition } = useTransition()
-  const [isTopUpMenuOpen, setIsTopUpMenuOpen] = useState(false)
-
-  const topUpGames = [
-    {
-      name: 'Roblox Robux',
-      label: 'Top Up Robux (Proses Admin)',
-      href: '#topup',
-    },
-    {
-      name: 'Mobile Legends',
-      label: 'Request top up diamond',
-      href: `https://wa.me/${ADMIN_WHATSAPP}?text=Halo%20AV%20GAME%20STUDIO,%20saya%20ingin%20top%20up%20Mobile%20Legends.`,
-    },
-    {
-      name: 'Free Fire',
-      label: 'Request top up diamond',
-      href: `https://wa.me/${ADMIN_WHATSAPP}?text=Halo%20AV%20GAME%20STUDIO,%20saya%20ingin%20top%20up%20Free%20Fire.`,
-    },
-    {
-      name: 'PUBG Mobile',
-      label: 'Request top up UC',
-      href: `https://wa.me/${ADMIN_WHATSAPP}?text=Halo%20AV%20GAME%20STUDIO,%20saya%20ingin%20top%20up%20PUBG%20Mobile.`,
-    },
-  ]
-
   const handleCtaClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     setIsTopUpMenuOpen(false)
@@ -187,54 +161,16 @@ export function Hero() {
             </span>
           </motion.a>
 
-          <div className="relative">
-            <motion.button
-              type="button"
-              onClick={() => setIsTopUpMenuOpen((open) => !open)}
-              className="group relative w-full px-6 py-3 sm:py-4 rounded-none overflow-hidden text-center border-2 border-[#ff4655]/40"
-              whileHover={{ scale: 1.02, borderColor: '#ff4655' }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <div className="absolute inset-0 bg-[#ff4655]/10 skew-x-[-12deg] group-hover:bg-[#ff4655]/20 transition-colors" />
-              <span className="relative flex items-center justify-center gap-2 font-black tracking-normal text-white uppercase text-sm sm:text-lg skew-x-[12deg]">
-                <Gamepad2 className="w-4 h-4 sm:w-5 sm:h-5 text-[#ff4655]" />
-                Top Up Game
-                <ChevronDown className={`w-4 h-4 transition-transform ${isTopUpMenuOpen ? 'rotate-180' : ''}`} />
-              </span>
-            </motion.button>
-
-            {isTopUpMenuOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: 10, scale: 0.98 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 10, scale: 0.98 }}
-                className="absolute left-0 right-0 top-full z-30 mt-3 overflow-hidden border border-[#ff4655]/25 bg-[#090405]/95 text-left shadow-lg shadow-[#ff4655]/10 backdrop-blur-xl"
-              >
-                {topUpGames.map((game) => (
-                  <a
-                    key={game.name}
-                    href={game.href}
-                    target={game.href.startsWith('http') ? '_blank' : undefined}
-                    rel={game.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                    onClick={(e) => {
-                      if (game.href.startsWith('#')) {
-                        handleCtaClick(e, game.href)
-                      } else {
-                        setIsTopUpMenuOpen(false)
-                      }
-                    }}
-                    className="flex items-center justify-between gap-4 border-b border-white/5 px-4 py-3 transition-colors last:border-b-0 hover:bg-[#ff4655]/10"
-                  >
-                    <span>
-                      <span className="block text-sm font-black uppercase text-white">{game.name}</span>
-                      <span className="mt-1 block text-[10px] font-bold uppercase tracking-normal text-white/40">{game.label}</span>
-                    </span>
-                    <ShoppingCart className="w-4 h-4 shrink-0 text-[#ff4655]" />
-                  </a>
-                ))}
-              </motion.div>
-            )}
-          </div>
+          <Link
+            href="/topup-game"
+            className="group relative w-full px-6 py-3 sm:py-4 rounded-none overflow-hidden text-center border-2 border-[#ff4655]/40"
+          >
+            <div className="absolute inset-0 bg-[#ff4655]/10 skew-x-[-12deg] group-hover:bg-[#ff4655]/20 transition-colors" />
+            <span className="relative flex items-center justify-center gap-2 font-black tracking-normal text-white uppercase text-sm sm:text-lg skew-x-[12deg]">
+              <Gamepad2 className="w-4 h-4 sm:w-5 sm:h-5 text-[#ff4655]" />
+              Top Up Game
+            </span>
+          </Link>
 
           <motion.a
             href="#community"

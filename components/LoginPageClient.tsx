@@ -10,11 +10,13 @@ import { useToast } from '@/context/ToastContext'
 interface LoginPageClientProps {
   hasDiscordAuth: boolean
   hasLocalAuth: boolean
+  hasSupabaseConfig: boolean
 }
 
 export function LoginPageClient({
   hasDiscordAuth,
   hasLocalAuth,
+  hasSupabaseConfig,
 }: LoginPageClientProps) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -51,7 +53,7 @@ export function LoginPageClient({
     setIsLoading(false)
   }
 
-  if (loading) {
+  if (loading && (hasDiscordAuth || hasSupabaseConfig)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#030303]">
         <div className="text-center">
@@ -122,10 +124,19 @@ export function LoginPageClient({
             </>
           )}
 
-          {!hasDiscordAuth && (
+          {!hasSupabaseConfig && (
             <div className="rounded-xl border border-amber-400/20 bg-amber-400/10 px-4 py-3 text-sm text-amber-100 mb-6">
-              Discord login belum dikonfigurasi. Silakan isi variabel lingkungan
-              AUTH_DISCORD_ID, AUTH_DISCORD_SECRET, dan REQUIRED_DISCORD_SERVER_ID di file .env.local
+              Login belum bisa digunakan karena Supabase belum dikonfigurasi.
+              Tambahkan NEXT_PUBLIC_SUPABASE_URL dan NEXT_PUBLIC_SUPABASE_ANON_KEY
+              ke file .env.local, lalu restart server.
+            </div>
+          )}
+
+          {hasSupabaseConfig && !hasDiscordAuth && (
+            <div className="rounded-xl border border-amber-400/20 bg-amber-400/10 px-4 py-3 text-sm text-amber-100 mb-6">
+              Login Discord belum dikonfigurasi. Untuk mengaktifkannya, isi
+              AUTH_DISCORD_ID, AUTH_DISCORD_SECRET, dan REQUIRED_DISCORD_SERVER_ID
+              di file .env.local.
             </div>
           )}
 

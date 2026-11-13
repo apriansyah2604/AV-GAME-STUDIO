@@ -1,97 +1,94 @@
 import { supabase } from '@/lib/supabase';
-import { executeRobuxPayout } from '@/lib/payout';
 
 type FulfillOrderInput = {
   orderId: string;
-  username: string;
-  amount: number;
-  price?: string | number;
+  paidAmount: number;
   source: string;
 };
 
-export async function fulfillRobuxOrder({ orderId, username, amount, price, source }: FulfillOrderInput) {
-  if (!orderId || !username || !amount || amount <= 0) {
+export async function fulfillRobuxOrder({ orderId, paidAmount, source }: FulfillOrderInput) {
+  if (!orderId || !Number.isFinite(paidAmount) || paidAmount <= 0) {
     return {
       success: false,
-      message: 'Data transaksi tidak lengkap untuk payout Robux.',
+      message: 'Data transaksi tidak lengkap untuk memproses pesanan.',
     };
   }
 
-  try {
-    const { data: existingOrder } = await supabase
+  const { data: order, error: orderError } = await supabase
+    .from('orders')
+    .select('username, package, price, status')
+    .eq('id', orderId)
+    .maybeSingle();
+
+  if (orderError) throw orderError;
+  if (!order) {
+    return { success: false, message: 'Pesanan tidak ditemukan.' };
+  }
+
+  if (Number(order.price) !== paidAmount) {
+    return { success: false, message: 'Nominal pembayaran tidak cocok dengan pesanan.' };
+  }
+
+  if (order.status === 'manual_payout') {
+    return {
+      success: true,
+      manual: true,
+      alreadyProcessed: true,
+      message: 'Pembayaran sudah tercatat. Silakan chat seller untuk proses manual.',
+    };
+  }
+
+  if (order.status === 'completed') {
+    return {
+      success: true,
+      manual: false,
+      alreadyProcessed: true,
+      message: 'Pesanan sudah selesai.',
+    };
+  }
+
+  if (!order.username || !/^\d+\s+Robux$/i.test(order.package || '')) {
+    return { success: false, message: 'Data pesanan tidak valid.' };
+  }
+
+  const { data: updatedOrder, error: updateError } = await supabase
+    .from('orders')
+    .update({
+      status: 'manual_payout',
+      proof: `PAID VIA MIDTRANS (${source}) - WAITING FOR SELLER`,
+    })
+    .eq('id', orderId)
+    .in('status', ['pending', 'payout_failed'])
+    .select('id')
+    .maybeSingle();
+
+  if (updateError) throw updateError;
+
+  if (!updatedOrder) {
+    const { data: currentOrder, error: currentOrderError } = await supabase
       .from('orders')
-      .select('status, proof')
+      .select('status')
       .eq('id', orderId)
       .maybeSingle();
 
-    const { data: updatedOrder, error: updateError } = await supabase
-      .from('orders')
-      .update({
-        status: 'processing',
-        proof: `PAID VIA MIDTRANS (${source})`,
-        username, // Pastikan username terisi
-        package: `${amount} Robux`,
-        price: typeof price === 'number' ? price : Number(String(price || '').replace(/[^0-9]/g, '')) || null,
-      })
-      .eq('id', orderId)
-      .in('status', ['pending', 'payout_failed']) // Hanya proses jika statusnya aman untuk diproses
-      .select()
-      .maybeSingle();
-
-    if (updateError) throw updateError;
-
-    // Jika tidak ada data yang diupdate, berarti order sudah diproses atau sedang diproses oleh request lain
-    if (!updatedOrder) {
-      const { data: currentOrder } = await supabase
-        .from('orders')
-        .select('status')
-        .eq('id', orderId)
-        .maybeSingle();
-      
-      if (currentOrder?.status === 'completed') {
-        return { success: true, alreadyProcessed: true, message: 'Order sudah selesai.' };
-      }
-      if (currentOrder?.status === 'processing') {
-        return { success: true, alreadyProcessed: true, message: 'Order sedang diproses sistem lain.' };
-      }
-      return { success: false, message: 'Gagal mengunci status order untuk diproses.' };
+    if (currentOrderError) throw currentOrderError;
+    if (currentOrder?.status === 'manual_payout') {
+      return {
+        success: true,
+        manual: true,
+        alreadyProcessed: true,
+        message: 'Pembayaran sudah tercatat. Silakan chat seller untuk proses manual.',
+      };
     }
-  } catch (error: any) {
-    console.warn('Order locking failed:', error.message);
-    // Jika gagal mengunci, kita sebaiknya tidak lanjut untuk menghindari double payout
-    return { success: false, message: 'Sistem sedang sibuk memproses pesanan ini.' };
+
+    return { success: false, message: 'Pesanan tidak dapat diproses saat ini.' };
   }
 
-  // Lakukan Payout (Sekarang Manual)
-  const payoutResult = await executeRobuxPayout(username, amount);
-  console.log(`[PAYOUT] Result for ${username} (${amount} Robux):`, JSON.stringify(payoutResult));
-
-  try {
-    // Tentukan status berdasarkan apakah ini manual atau otomatis (sekarang selalu manual)
-    const finalStatus = payoutResult.manual ? 'manual_payout' : (payoutResult.success ? 'completed' : 'payout_failed');
-    const finalProof = payoutResult.manual 
-      ? `WAITING FOR MANUAL PAYOUT (${source})` 
-      : (payoutResult.success ? `PAID VIA MIDTRANS (${source})` : `PAYOUT FAILED: ${payoutResult.message || 'Unknown error'}`);
-
-    // Hanya update status jika payout benar-benar dieksekusi atau gagal
-    await supabase
-      .from('orders')
-      .upsert({
-        id: orderId,
-        username,
-        package: `${amount} Robux`,
-        price: typeof price === 'number' ? price : Number(String(price || '').replace(/[^0-9]/g, '')) || null,
-        status: finalStatus,
-        proof: finalProof,
-      });
-    
-    // Logging kegagalan payout agar admin tahu alasannya
-    if (!payoutResult.success && !payoutResult.manual) {
-      console.error(`PAYOUT FAILED for ${orderId}:`, payoutResult.message);
-    }
-  } catch (error) {
-    console.warn('Order tracking unavailable after payout:', error);
-  }
-
-  return payoutResult;
+  return {
+    success: true,
+    manual: true,
+    username: order.username,
+    amount: Number(order.package.match(/^\d+/)?.[0]),
+    message: 'Pembayaran terverifikasi. Silakan chat seller untuk proses manual.',
+  };
 }

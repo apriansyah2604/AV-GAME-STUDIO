@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { getUserById } from '@/lib/storage';
 
 export async function GET() {
   try {
@@ -11,6 +10,14 @@ export async function GET() {
       return NextResponse.json({ user: null }, { status: 200 });
     }
 
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      return NextResponse.json(
+        { user: null, error: 'Supabase is not configured.' },
+        { status: 503, headers: { 'Cache-Control': 'no-store' } }
+      );
+    }
+
+    const { getUserById } = await import('@/lib/storage');
     const user = await getUserById(sessionId.value);
 
     if (!user) {

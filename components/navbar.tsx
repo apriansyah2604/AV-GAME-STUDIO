@@ -140,7 +140,7 @@ export function Navbar() {
             {/* Language Switcher & User Menu */}
             <div className="hidden lg:flex items-center gap-4">
               <Link
-                href="/topup"
+                href="/topup-game"
                 className="hidden md:flex relative px-6 py-2 rounded-none overflow-hidden group items-center"
               >
                 <div className="absolute inset-0 bg-[#ff4655] skew-x-[-12deg]" />
@@ -298,7 +298,7 @@ export function Navbar() {
               <div className="mt-auto space-y-8 pt-8 border-t border-[#ff4655]/10">
                 {/* Top Up CTA Mobile */}
                 <Link
-                  href="/topup"
+                  href="/topup-game"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex relative px-6 py-4 rounded-none overflow-hidden group items-center justify-center w-full"
                 >

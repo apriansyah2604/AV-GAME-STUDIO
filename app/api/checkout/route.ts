@@ -2,6 +2,14 @@ import { NextResponse } from 'next/server';
 import { createTransaction } from '@/lib/midtrans';
 import { supabase } from '@/lib/supabase';
 
+const packagePrices: Record<number, number> = {
+  10: 1000,
+  100: 15000,
+  300: 50000,
+  1000: 150000,
+  2000: 290000,
+};
+
 /**
  * API Endpoint untuk membuat transaksi Midtrans.
  * POST /api/checkout
@@ -9,28 +17,28 @@ import { supabase } from '@/lib/supabase';
 
 export async function POST(request: Request) {
   try {
-    const { username, amount, packageName, price } = await request.json();
+    const { username: submittedUsername, amount } = await request.json();
+    const username = typeof submittedUsername === 'string' ? submittedUsername.trim() : '';
+    const price = packagePrices[amount];
 
-    if (!username || !amount || !price) {
+    if (!/^[a-zA-Z0-9_]{3,20}$/.test(username) || !Number.isInteger(amount) || !price) {
       return NextResponse.json({ success: false, message: 'Data tidak lengkap.' }, { status: 400 });
     }
 
-    const orderId = `ROBUX${amount}-${Date.now()}-${username.substring(0, 5)}`;
+    const packageName = `${amount} Robux`;
+    const orderId = `ROBUX${amount}-${crypto.randomUUID()}`;
     
     // 1. Simpan pesanan ke Supabase sebagai 'pending' sebelum memanggil Midtrans
-    try {
-      await supabase.from('orders').upsert({
-        id: orderId,
-        username,
-        package: packageName,
-        price: price,
-        status: 'pending',
-        proof: 'MIDTRANS (INIT)'
-      });
-    } catch (dbError) {
-      console.error('Gagal mencatat order awal ke Supabase:', dbError);
-      // Tetap lanjut meskipun gagal catat, karena Midtrans lebih kritis
-    }
+    const { error: orderError } = await supabase.from('orders').insert({
+      id: orderId,
+      username,
+      package: packageName,
+      price,
+      status: 'pending',
+      proof: 'MIDTRANS (INIT)'
+    });
+
+    if (orderError) throw orderError;
 
     const itemDetails = [
       {

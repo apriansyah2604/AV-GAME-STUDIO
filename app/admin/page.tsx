@@ -21,6 +21,7 @@ import { toast } from 'sonner'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -460,6 +461,12 @@ export default function AdminDashboard() {
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               Refresh
             </button>
+            <Link
+              href="/admin/partners"
+              className="flex items-center gap-2 border border-[#ff4655]/30 px-6 py-4 text-xs font-black uppercase text-[#ff7780] transition-all hover:bg-[#ff4655]/10"
+            >
+              Toko Partner
+            </Link>
             <button 
               onClick={handleLogout}
               className="flex items-center gap-2 bg-[#ff4655]/10 border border-[#ff4655]/20 px-8 py-4 text-xs font-black uppercase text-[#ff4655] hover:bg-[#ff4655]/20 transition-all active:scale-95"

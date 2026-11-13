@@ -24,6 +24,15 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
+## Partner game stores
+
+1. Copy `.env.example` to `.env.local` and configure Supabase, `SUPABASE_SERVICE_ROLE_KEY`, `AUTH_SECRET`, and Midtrans keys. Keep the Supabase service-role key server-only; never prefix it with `NEXT_PUBLIC_`.
+2. Run `supabase/migrations/20261113090000_partner_marketplace.sql` in the Supabase SQL Editor.
+3. Use a configured admin account to sign in at `/login`, then review applications and partner payout records at `/admin/partners`.
+4. Partners register at `/partner/register`. Approved partners manage packages and paid orders at `/partner/dashboard`.
+
+Partner checkout charges 5% platform commission and records 95% for the partner. Payment is received by the platform Midtrans account; partners fulfill orders manually, and an admin records payout only after transferring the partner share.
+
 ## Learn More
 
 To learn more, take a look at the following resources:

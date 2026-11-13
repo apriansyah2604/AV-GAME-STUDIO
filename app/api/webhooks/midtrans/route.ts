@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { fulfillRobuxOrder } from '@/lib/fulfillment';
 import { getTransactionStatus } from '@/lib/midtrans';
+import { confirmPartnerOrder } from '@/lib/partner-orders';
 
 /**
  * Webhook Midtrans untuk menangani notifikasi pembayaran.
@@ -14,48 +15,33 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const notification = await request.json();
-    
     const orderId = notification.order_id;
-    const transactionStatus = notification.transaction_status;
-    const fraudStatus = notification.fraud_status;
+    if (typeof orderId !== 'string' || !orderId) {
+      return NextResponse.json({ status: 'Invalid notification' }, { status: 400 });
+    }
 
-    console.log(`Webhook received: ${orderId} - ${transactionStatus}`);
+    const status = await getTransactionStatus(orderId);
+    const paid = status.transaction_status === 'settlement'
+      || (status.transaction_status === 'capture' && status.fraud_status !== 'challenge');
 
-    // Logika pengiriman Robux jika pembayaran sukses
-    if (transactionStatus === 'capture' || transactionStatus === 'settlement') {
-      if (fraudStatus === 'challenge') {
-        console.warn(`Transaction ${orderId} is challenged by Midtrans.`);
-      } else if (fraudStatus === 'accept' || !fraudStatus) {
-        console.log(`Payment success for ${orderId}. Processing Payout...`);
-
-        // Ambil data dari custom_field yang kita kirim saat checkout
-        let username = notification.custom_field1;
-        let amount = notification.custom_field2 ? parseInt(notification.custom_field2) : undefined;
-        
-        // Fallback: Jika custom_fields kosong di notification, coba ambil dari API Midtrans langsung
-        if (!username || !amount) {
-          console.log(`Custom fields missing in webhook for ${orderId}, fetching from Midtrans API...`);
-          const status = await getTransactionStatus(orderId);
-          username = status.custom_field1;
-          amount = status.custom_field2 ? parseInt(status.custom_field2) : undefined;
+    if (paid) {
+      if (orderId.startsWith('PARTNER-')) {
+        const result = await confirmPartnerOrder(orderId, Number(status.gross_amount));
+        if (!result.success) {
+          console.error(`Webhook could not confirm partner order ${orderId}:`, result.message);
+          return NextResponse.json({ status: 'Could not process partner order' }, { status: 500 });
         }
-        
-        if (username && amount) {
-          console.log(`Fulfilling order for ${amount} Robux to ${username}.`);
-          const payoutResult = await fulfillRobuxOrder({
-            orderId,
-            username,
-            amount,
-            price: notification.gross_amount,
-            source: 'webhook',
-          });
-          console.log('Payout result:', payoutResult);
-        } else {
-          console.error('Data transaksi tidak lengkap bahkan setelah fallback API:', {
-            username,
-            amount
-          });
-        }
+        return NextResponse.json({ status: 'OK' });
+      }
+
+      const result = await fulfillRobuxOrder({
+        orderId,
+        paidAmount: Number(status.gross_amount),
+        source: 'webhook',
+      });
+      if (!result.success) {
+        console.error(`Webhook could not process paid order ${orderId}:`, result.message);
+        return NextResponse.json({ status: 'Could not process order' }, { status: 500 });
       }
     }
 

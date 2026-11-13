@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { loginUser } from '@/lib/storage';
+import { setAdminSessionCookie } from '@/lib/admin-session';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,6 +15,10 @@ export async function POST(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json({ error: 'Invalid username or password' }, { status: 401 });
+    }
+
+    if (user.role === 'admin') {
+      await setAdminSessionCookie(user.id);
     }
 
     // Set session cookie

@@ -23,7 +23,7 @@ const translations = {
       topgame: 'Top Up Game',
       pricing: 'Harga',
       contact: 'Kontak',
-      topup_btn: 'TOP UP SEKARANG'
+      topup_btn: 'TOP UP GAME'
     },
     hero: {
       status: 'AV STUDIO • SIAP MEMBANGUN PROYEK IMPIANMU',
@@ -46,7 +46,7 @@ const translations = {
       title2: 'ROBUX',
       subtitle: 'Layanan pengisian Robux aman dan efisien. Harga kompetitif dengan sistem pengiriman diproses admin.',
       market_badge: 'ROBUX MARKET',
-      market_title: 'Dapatkan Robux Secara Instan',
+      market_title: 'Pesan Robux dengan Mudah',
       market_desc: 'Pilih nominal yang Anda butuhkan dan selesaikan transaksi melalui sistem pembayaran kami.',
       search_placeholder: 'Cari nominal atau paket...',
       promo_flow: 'ALUR TRANSAKSI',
@@ -56,7 +56,7 @@ const translations = {
         fast: 'Layanan Kilat',
         fast_val: 'Proses Cepat',
         safe: 'Terjamin',
-        safe_val: '100% Keamanan',
+        safe_val: 'Pembayaran Terverifikasi',
         price: 'Efisiensi',
         price_val: 'Harga Terbaik',
         fit: 'Fleksibel',
@@ -76,7 +76,13 @@ const translations = {
       checkout_loading: 'Membuat transaksi...',
       checkout_error_username: 'Masukkan username Roblox terlebih dahulu',
       checkout_error_general: 'Gagal membuat transaksi. Coba lagi.',
-      checkout_desc: 'Setelah pembayaran sukses, Robux dikirim otomatis oleh bot ke username kamu.',
+      checkout_desc: 'Setelah membayar, chat seller via WhatsApp dengan nomor order. Pesanan diproses manual.',
+      payment_verifying: 'Memeriksa pembayaran...',
+      payment_success: 'Pembayaran Terverifikasi!',
+      payment_pending: 'Pembayaran Belum Terkonfirmasi',
+      payment_success_desc: 'Pesanan diproses manual oleh seller. Chat seller melalui WhatsApp untuk konfirmasi.',
+      payment_pending_desc: 'Pembayaran belum terverifikasi. Tunggu sebentar lalu muat ulang halaman ini.',
+      whatsapp_seller: 'Chat seller via WhatsApp',
       avatar_services: {
         title: 'Layanan Item Avatar',
         desc: 'Tingkatkan identitas visual karakter Anda dengan aset kustom berkualitas tinggi.',
@@ -85,7 +91,7 @@ const translations = {
       info_transaksi: {
         title: 'PANDUAN TRANSAKSI',
         flow_title: 'Sistem Pembayaran Terintegrasi',
-        flow_desc: 'Integrasi Midtrans memungkinkan setiap pesanan terkonfirmasi secara instan untuk segera diproses admin.',
+        flow_desc: 'Midtrans memverifikasi pembayaran, lalu seller memproses pesanan secara manual.',
         easy_title: 'Kemudahan Pemesanan',
         easy_desc: 'Cukup masukkan username Roblox Anda, pilih paket, selesaikan pembayaran, dan klaim via WA.'
       },
@@ -300,7 +306,7 @@ const translations = {
         price: 'Rp 1.000',
         description: 'Paket termurah untuk trial, coba-coba, atau kebutuhan item ringan.',
         badge: 'MURAH',
-        meta: 'Proses 5-15 menit',
+        meta: 'Proses manual via WhatsApp',
         stock: 'Ready'
       },
       {
@@ -308,7 +314,7 @@ const translations = {
         price: 'Rp 15.000',
         description: 'Pilihan hemat untuk top up kecil, trial buy, atau kebutuhan item ringan.',
         badge: 'FAST',
-        meta: 'Proses 5-15 menit',
+        meta: 'Proses manual via WhatsApp',
         stock: 'Ready'
       },
       {
@@ -316,7 +322,7 @@ const translations = {
         price: 'Rp 50.000',
         description: 'Nominal favorit untuk gamepass, UGC basic, dan kebutuhan top up harian.',
         badge: 'BEST SELLER',
-        meta: 'Paling sering dipesan',
+        meta: 'Proses manual via WhatsApp',
         stock: 'Ready',
         featured: true
       },
@@ -325,7 +331,7 @@ const translations = {
         price: 'Rp 150.000',
         description: 'Cocok untuk pembelian item premium, bundle avatar, dan kebutuhan creator.',
         badge: 'SAVE MORE',
-        meta: 'Paket hemat besar',
+        meta: 'Proses manual via WhatsApp',
         stock: 'Ready'
       },
       {
@@ -333,7 +339,7 @@ const translations = {
         price: 'Rp 290.000',
         description: 'Pilihan terbaik untuk top up skala besar dengan harga lebih bersahabat.',
         badge: 'BIG VALUE',
-        meta: 'Untuk player aktif',
+        meta: 'Proses manual via WhatsApp',
         stock: 'Ready'
       }
     ],
@@ -374,7 +380,7 @@ const translations = {
       topgame: 'Top Up Game',
       pricing: 'Pricing',
       contact: 'Contact',
-      topup_btn: 'TOP UP NOW'
+      topup_btn: 'TOP UP GAME'
     },
     hero: {
       status: 'AV STUDIO • READY TO BUILD YOUR DREAM PROJECT',
@@ -397,7 +403,7 @@ const translations = {
       title2: 'ROBUX',
       subtitle: 'Safe and efficient Robux top up services. Competitive pricing with manual delivery system.',
       market_badge: 'ROBUX MARKET',
-      market_title: 'Get Your Robux Instantly',
+      market_title: 'Order Robux Easily',
       market_desc: 'Select your desired nominal and complete transactions through our payment system.',
       search_placeholder: 'Search nominal or package...',
       promo_flow: 'TRANSACTION FLOW',
@@ -407,7 +413,7 @@ const translations = {
         fast: 'Express Service',
         fast_val: 'Quick Process',
         safe: 'Guaranteed',
-        safe_val: '100% Secure',
+        safe_val: 'Verified Payment',
         price: 'Efficiency',
         price_val: 'Best Value',
         fit: 'Flexible',
@@ -427,7 +433,13 @@ const translations = {
       checkout_loading: 'Creating transaction...',
       checkout_error_username: 'Please enter your Roblox username first',
       checkout_error_general: 'Failed to create transaction. Please try again.',
-      checkout_desc: 'After successful payment, Robux will be sent automatically by the bot to your username.',
+      checkout_desc: 'After payment, chat the seller on WhatsApp with your order ID. Orders are processed manually.',
+      payment_verifying: 'Verifying payment...',
+      payment_success: 'Payment Verified!',
+      payment_pending: 'Payment Not Yet Confirmed',
+      payment_success_desc: 'The seller processes orders manually. Chat the seller on WhatsApp to confirm.',
+      payment_pending_desc: 'Payment is not verified yet. Wait a moment, then reload this page.',
+      whatsapp_seller: 'Chat seller on WhatsApp',
       avatar_services: {
         title: 'Avatar Item Services',
         desc: 'Enhance your character\'s visual identity with high-quality custom assets.',
@@ -436,7 +448,7 @@ const translations = {
       info_transaksi: {
         title: 'TRANSACTION GUIDE',
         flow_title: 'Integrated Payment System',
-        flow_desc: 'Midtrans integration allows every order to be confirmed instantly for immediate admin processing.',
+        flow_desc: 'Midtrans verifies payment, then the seller processes the order manually.',
         easy_title: 'Ease of Ordering',
         easy_desc: 'Simply enter your Roblox username, select a package, complete payment, and claim via WA.'
       },
@@ -651,7 +663,7 @@ const translations = {
         price: 'Rp 1.000',
         description: 'Cheapest package for trial, testing, or light item needs.',
         badge: 'CHEAP',
-        meta: 'Process 5-15 minutes',
+        meta: 'Manual processing via WhatsApp',
         stock: 'Ready'
       },
       {
@@ -659,7 +671,7 @@ const translations = {
         price: 'Rp 15.000',
         description: 'Budget-friendly choice for small top ups, trial buys, or light item needs.',
         badge: 'FAST',
-        meta: '5-15 mins process',
+        meta: 'Manual processing via WhatsApp',
         stock: 'Ready'
       },
       {
@@ -667,7 +679,7 @@ const translations = {
         price: 'Rp 50.000',
         description: 'Favorite nominal for gamepasses, basic UGC, and daily top up needs.',
         badge: 'BEST SELLER',
-        meta: 'Most frequently ordered',
+        meta: 'Manual processing via WhatsApp',
         stock: 'Ready',
         featured: true
       },
@@ -676,7 +688,7 @@ const translations = {
         price: 'Rp 150.000',
         description: 'Suitable for premium item purchases, avatar bundles, and creator needs.',
         badge: 'SAVE MORE',
-        meta: 'Big savings pack',
+        meta: 'Manual processing via WhatsApp',
         stock: 'Ready'
       },
       {
@@ -684,7 +696,7 @@ const translations = {
         price: 'Rp 290.000',
         description: 'Best choice for large-scale top up with friendlier prices.',
         badge: 'BIG VALUE',
-        meta: 'For active players',
+        meta: 'Manual processing via WhatsApp',
         stock: 'Ready'
       }
     ],

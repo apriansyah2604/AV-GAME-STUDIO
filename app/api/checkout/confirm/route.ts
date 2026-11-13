@@ -14,9 +14,9 @@ function isPaidStatus(status: any) {
 
 export async function POST(request: Request) {
   try {
-    const { orderId, username, amount, price } = await request.json();
+    const { orderId } = await request.json();
 
-    if (!orderId || !username || !amount) {
+    if (typeof orderId !== 'string' || !orderId) {
       return NextResponse.json(
         { success: false, message: 'Data konfirmasi transaksi tidak lengkap.' },
         { status: 400 }
@@ -38,9 +38,7 @@ export async function POST(request: Request) {
 
     const payoutResult = await fulfillRobuxOrder({
       orderId,
-      username,
-      amount: Number(amount),
-      price,
+      paidAmount: Number(status?.gross_amount),
       source: 'confirm',
     });
 
@@ -58,7 +56,7 @@ export async function POST(request: Request) {
       success: true,
       message: payoutResult.alreadyProcessed 
         ? 'Order sudah diproses.' 
-        : (payoutResult.manual ? 'Pembayaran sukses! Silakan klaim via WhatsApp.' : 'Robux berhasil dikirim.'),
+        : (payoutResult.manual ? 'Pembayaran sukses! Silakan chat seller via WhatsApp.' : 'Pesanan sudah selesai.'),
       manual: payoutResult.manual
     });
   } catch (error: any) {

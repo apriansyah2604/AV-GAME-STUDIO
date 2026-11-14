@@ -1,71 +1,91 @@
 import type { NextAuthOptions } from 'next-auth'
-import DiscordProvider from 'next-auth/providers/discord'
+import { getRobloxAdminUserId, hasRobloxAuthConfiguration, isAllowedRobloxUserId } from '@/lib/roblox-auth'
+import { getUserById } from '@/lib/storage'
 
-export const authOptions: NextAuthOptions = {
-  providers: [
-    DiscordProvider({
-      clientId: process.env.AUTH_DISCORD_ID || '',
-      clientSecret: process.env.AUTH_DISCORD_SECRET || '',
-      authorization: {
-        params: {
-          scope: 'identify email guilds',
+const robloxOAuthConfigured = Boolean(
+  process.env.AUTH_ROBLOX_CLIENT_ID?.trim() && process.env.AUTH_ROBLOX_CLIENT_SECRET?.trim()
+)
+
+const providers: NextAuthOptions['providers'] = robloxOAuthConfigured
+  ? [
+      {
+        id: 'roblox',
+        name: 'Roblox',
+        type: 'oauth',
+        wellKnown: 'https://apis.roblox.com/oauth/.well-known/openid-configuration',
+        clientId: process.env.AUTH_ROBLOX_CLIENT_ID!,
+        clientSecret: process.env.AUTH_ROBLOX_CLIENT_SECRET!,
+        authorization: {
+          params: {
+            scope: 'openid profile',
+          },
+        },
+        idToken: true,
+        checks: ['pkce', 'state'],
+        profile(profile: {
+          sub?: string
+          name?: string
+          preferred_username?: string
+          email?: string
+          picture?: string
+        }) {
+          const id = String(profile.sub || '')
+          return {
+            id,
+            name: profile.name || profile.preferred_username || `Roblox ${id}`,
+            email: profile.email ?? null,
+            image: profile.picture ?? null,
+          }
         },
       },
-    }),
-  ],
+    ]
+  : []
+
+export const authOptions: NextAuthOptions = {
+  providers,
   secret: process.env.AUTH_SECRET,
   session: {
     strategy: 'jwt',
   },
   callbacks: {
-    async signIn({ user, account, profile }) {
-      // Check if user is a member of the required Discord server
-      const requiredGuildId = process.env.REQUIRED_DISCORD_SERVER_ID
-      if (!requiredGuildId) {
-        console.error('REQUIRED_DISCORD_SERVER_ID is not set in environment variables')
-        return false // If no server ID is set, block login
-      }
+    async signIn({ account, profile }) {
+      const robloxUserId = String(profile?.sub ?? account?.providerAccountId ?? '')
+      const isAllowedLogin =
+        account?.provider === 'roblox' &&
+        hasRobloxAuthConfiguration() &&
+        isAllowedRobloxUserId(robloxUserId)
+      if (!isAllowedLogin) return false
 
-      // Fetch the user's guilds from Discord API
-      try {
-        const response = await fetch('https://discord.com/api/users/@me/guilds', {
-          headers: {
-            Authorization: `Bearer ${account?.access_token}`,
-          },
-        })
-
-        if (!response.ok) {
-          console.error('Failed to fetch user guilds from Discord')
-          return false
-        }
-
-        const guilds = await response.json()
-        const isMember = guilds.some((guild: any) => guild.id === requiredGuildId)
-
-        if (!isMember) {
-          console.error(`User ${user.id} is not a member of the required Discord server`)
-          // Return false to block login, or you could redirect to an error page
-          return false
-        }
-
-        return true
-      } catch (error) {
-        console.error('Error checking Discord server membership:', error)
-        return false
-      }
+      const adminUser = await getUserById(getRobloxAdminUserId())
+      return adminUser?.role === 'admin'
     },
     async redirect({ url, baseUrl }) {
-      return baseUrl
+      const base = new URL(baseUrl)
+      const target = new URL(url, base)
+      return target.origin === base.origin ? target.toString() : baseUrl
     },
     async session({ session, token }) {
       if (session.user) {
-        // Use Discord's unique user ID
-        const userId = token.sub || (session.user.email ? `discord-${session.user.email}` : 'discord-user')
-        ;(session.user as { id?: string }).id = userId
+        const robloxUserId =
+          token.authProvider === 'roblox' && isAllowedRobloxUserId(token.robloxUserId)
+            ? token.robloxUserId
+            : ''
+        const dashboardUserId = robloxUserId ? getRobloxAdminUserId() : ''
+
+        session.user.id = dashboardUserId
+        session.user.role = dashboardUserId ? 'admin' : 'user'
+        session.user.robloxUserId = robloxUserId
       }
       return session
     },
-    async jwt({ token, user, account }) {
+    async jwt({ token, account, profile }) {
+      if (account) {
+        token.authProvider = account.provider
+        token.robloxUserId =
+          account.provider === 'roblox'
+            ? String(profile?.sub ?? account.providerAccountId ?? '')
+            : undefined
+      }
       return token
     },
   },

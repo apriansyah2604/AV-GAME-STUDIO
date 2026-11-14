@@ -26,10 +26,11 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 ## Partner game stores
 
-1. Copy `.env.example` to `.env.local` and configure Supabase, `SUPABASE_SERVICE_ROLE_KEY`, `AUTH_SECRET`, and Midtrans keys. Keep the Supabase service-role key server-only; never prefix it with `NEXT_PUBLIC_`.
+1. Copy `.env.example` to `.env.local` and configure Supabase, `SUPABASE_SERVICE_ROLE_KEY`, `AUTH_SECRET`, the Roblox OAuth values, and Midtrans keys. Keep the Supabase service-role key server-only; never prefix it with `NEXT_PUBLIC_`.
 2. Run `supabase/migrations/20261113090000_partner_marketplace.sql` in the Supabase SQL Editor.
-3. Use a configured admin account to sign in at `/login`, then review applications and partner payout records at `/admin/partners`.
-4. Partners register at `/partner/register`. Approved partners manage packages and paid orders at `/partner/dashboard`.
+3. [Register a Roblox OAuth app](https://create.roblox.com/docs/cloud/auth/oauth2-registration) with the `openid` and `profile` scopes and add `http://localhost:3000/api/auth/callback/roblox` as a local redirect URL (and your production callback URL when deploying). Configure `AUTH_ROBLOX_ALLOWED_USER_IDS` with authorized Roblox IDs and `AUTH_ROBLOX_ADMIN_USER_ID` with the existing admin row's `users.id` in Supabase to preserve dashboard data ownership.
+4. Sign in with Roblox at `/login`, then review applications and partner payout records at `/admin/partners`.
+5. Partners register at `/partner/register`. Approved partners manage packages and paid orders at `/partner/dashboard`.
 
 Partner checkout charges 5% platform commission and records 95% for the partner. Payment is received by the platform Midtrans account; partners fulfill orders manually, and an admin records payout only after transferring the partner share.
 

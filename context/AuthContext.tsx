@@ -13,9 +13,8 @@ interface User {
 interface AuthContextType {
   user: User | null
   loading: boolean
-  login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>
   logout: () => Promise<void>
-  signInWithDiscord: () => Promise<void>
+  signInWithRoblox: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -25,92 +24,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
-  // Safety timeout to prevent infinite loading
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (loading) {
-        console.warn('Auth loading timeout, forcing check custom session')
-        checkCustomSession()
-      }
-    }, 3000) // 3 seconds timeout
-    return () => clearTimeout(timeout)
-  }, [loading])
-
-  // Handle session from NextAuth
-  useEffect(() => {
-    if (status === 'authenticated' && session?.user) {
-      const discordUser: User = {
-        id: session.user.id || 'discord-user-' + Date.now(),
-        username: session.user.name || session.user.email || 'Discord User',
-        email: session.user.email,
-        role: 'admin', // Default to admin for Discord users
-      }
-      setUser(discordUser)
-      setLoading(false)
-    } else if (status === 'unauthenticated') {
-      // Check our custom session
-      checkCustomSession()
-    } else if (status === 'loading') {
-      // Still loading NextAuth, wait a bit then check custom as fallback
-      const fallbackTimeout = setTimeout(() => {
-        checkCustomSession()
-      }, 2000)
-      return () => clearTimeout(fallbackTimeout)
+    if (status === 'loading') {
+      setLoading(true)
+      return
     }
+
+    if (status === 'authenticated' && session?.user?.id && session.user.role === 'admin') {
+      setUser({
+        id: session.user.id,
+        username: session.user.name || 'Roblox User',
+        email: session.user.email,
+        role: 'admin',
+      })
+    } else {
+      setUser(null)
+    }
+    setLoading(false)
   }, [session, status])
 
-  // Check our custom session (for username/password login)
-  const checkCustomSession = async () => {
-    try {
-      const res = await fetch('/api/local-auth/session', { cache: 'no-store' })
-      if (res.ok) {
-        const data = await res.json()
-        if (data.user) {
-          setUser(data.user)
-        } else {
-          setUser(null)
-        }
-      } else {
-        setUser(null)
-      }
-    } catch (error) {
-      console.error('Failed to check session:', error)
-      setUser(null)
-    } finally {
-      // Always set loading to false after checking
-      setLoading(false)
-    }
-  }
-
-  const login = async (username: string, password: string): Promise<{ success: boolean; error?: string }> => {
-    try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-        cache: 'no-store',
-      })
-
-      const data = await res.json()
-      if (res.ok && data.user) {
-        setUser(data.user)
-        return { success: true }
-      } else {
-        return { success: false, error: data.error || 'Login failed' }
-      }
-    } catch (error) {
-      return { success: false, error: 'An unexpected error occurred' }
-    }
-  }
-
   const logout = async () => {
-    // Sign out from NextAuth
     try {
       await signOut({ redirect: false })
     } catch (error) {
       console.error('NextAuth sign out failed:', error)
     }
-    // Sign out from our custom session
     try {
       await fetch('/api/auth/logout', { method: 'POST', cache: 'no-store' })
     } catch (error) {
@@ -119,12 +57,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null)
   }
 
-  const signInWithDiscord = async () => {
-    await signIn('discord')
+  const signInWithRoblox = async () => {
+    await signIn('roblox', { callbackUrl: '/login' })
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, signInWithDiscord }}>
+    <AuthContext.Provider value={{ user, loading, logout, signInWithRoblox }}>
       {children}
     </AuthContext.Provider>
   )
